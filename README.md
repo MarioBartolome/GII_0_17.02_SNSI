@@ -19,4 +19,7 @@ destinado a la asistencia en vigilancia de seguridad mediante drones.
 Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando video 
 que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad.
 
+# Gracias a los contribuidores
+César Ignacio García Osorio, Álvar Arnaiz Gonzalez, Álvaro López Cantero, Roberto Izquierdo Amo, José Francisco Díez Pastor.
+
 
