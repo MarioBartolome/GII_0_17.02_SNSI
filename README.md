@@ -23,6 +23,8 @@ que será emitido a un servidor, y transmitiendo su posición dentro del mapa a 
 
 Latex es un lenguaje de marcado. Para crear y editar documentos en latex se necesita un editor de latex, que puede estar instalado en nuestro ordenador http://www.xm1math.net/texmaker/ o puede tratarse de un servicio web http://sharelatex.com/.
 
+Un videotutorial de la instalación de Miktex + TexMaker en windows puede verse en 
+https://www.youtube.com/watch?v=DIdHfVpIiAk
 
 # Petición de cambios y sugerencias
 
