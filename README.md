@@ -1,6 +1,6 @@
 # GII_0_17.02_SNSI
 
-This is Mario Bartolme's Final Year Project for Computer Science BS. 
+This is Mario Bartolome's Final Year Project for Computer Science BS. 
 
 The point of this project is to design a semi-autonomous navigation system for indoor use,
 destined to aid security vigilance using drones. 
