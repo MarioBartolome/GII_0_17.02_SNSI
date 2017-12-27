@@ -353,19 +353,21 @@
   }
 \makeatother
 
-\newcommand{\nombre}{Nombre del alumno} %%% cambio de comando
+\newcommand{\nombre}{Mario Bartolomé Manovel} %%% cambio de comando
 
 % Datos de portada
-\title{título del TFG}
+\title{Sistema de Navegación Semiautomático en Interiores}
 \author{\nombre}
-\tutor{nombre tutor}
+\tutor{Alejandro Merino Gómez}
 \date{\today}
 
 \begin{document}
 
 \maketitle
-
-
+\def\titulo{Sistema de Navegación Semiautónomo en Interiores}
+\def\tutor{Alejandro Merino Gómez}
+\def\cotutorOne{César Ignacio García Osorio}
+\def\cotutorTwo{José Francisco Díez Pastor}
 \newpage\null\thispagestyle{empty}\newpage
 
 
@@ -375,11 +377,11 @@
 
 \noindent\includegraphics[width=\textwidth]{cabecera}\vspace{1cm}
 
-\noindent D. nombre tutor, profesor del departamento de nombre departamento, área de nombre área.
+\noindent D. \tutor, profesor del departamento de Ingeniería Electromecánica, área de Ingeniería de Sistemas y Automática.
 
 \noindent Expone:
 
-\noindent Que el alumno D. \nombre, con DNI dni, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado título de TFG. 
+\noindent Que el alumno D. \nombre, con DNI 71298657-Z, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado \titulo. 
 
 \noindent Y que dicho trabajo ha sido realizado por el alumno bajo la dirección del que suscribe, en virtud de lo cual se autoriza su presentación y defensa.
 
@@ -389,23 +391,44 @@ En Burgos, {\large \today}
 
 \vfill\vfill\vfill
 
-% Author and supervisor
-\begin{minipage}{0.45\textwidth}
-\begin{flushleft} %\large
-Vº. Bº. del Tutor:\\[2cm]
-D. nombre tutor
-\end{flushleft}
-\end{minipage}
-\hfill
-\begin{minipage}{0.45\textwidth}
-\begin{flushleft} %\large
-Vº. Bº. del co-tutor:\\[2cm]
-D. nombre co-tutor
-\end{flushleft}
-\end{minipage}
-\hfill
 
+\begin{minipage}{0.3\textwidth}
+\raggedright
+Vº. Bº. del Tutor:\\[2cm]
+D. \tutor
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\textwidth}
+\centering
+Vº. Bº. del co-Tutor:\\[2cm]
+D. \cotutorOne
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\textwidth}
+\raggedleft
+Vº. Bº. del co-Tutor:\\[2cm]
+D. \cotutorTwo
+\end{minipage}
+\hfill
 \vfill
+
+% Author and supervisor
+%\begin{minipage}{0.45\textwidth}
+%\begin{flushleft} %\large
+%Vº. Bº. del Tutor:\\[2cm]
+%D. nombre tutor
+%\end{flushleft}
+%\end{minipage}
+%\hfill
+%\begin{minipage}{0.45\textwidth}
+%\begin{flushleft} %\large
+%Vº. Bº. del co-tutor:\\[2cm]
+%D. nombre co-tutor
+%\end{flushleft}
+%\end{minipage}
+%\hfill
+%
+%\vfill
 
 % para casos con solo un tutor comentar lo anterior
 % y descomentar lo siguiente
@@ -423,12 +446,12 @@ D. nombre co-tutor
 % Abstract en castellano
 \renewcommand*\abstractname{Resumen}
 \begin{abstract}
-En este primer apartado se hace una \textbf{breve} presentación del tema que se aborda en el proyecto.
+El objetivo del proyecto es diseñar un sistema de navegación semi-autónomo en espacios cerrados, destinado a la asistencia en vigilancia de seguridad mediante drones. Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando video que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad.
 \end{abstract}
 
 \renewcommand*\abstractname{Descriptores}
 \begin{abstract}
-Palabras separadas por comas que identifiquen el contenido del proyecto Ej: servidor web, buscador de vuelos, android \ldots
+drone, UAV, semi-autónomo, semi-automático, vigilancia, navegación, interior, video, filtro de partículas, campos potenciales, busqueda de ruta
 \end{abstract}
 
 \clearpage
@@ -436,12 +459,12 @@ Palabras separadas por comas que identifiquen el contenido del proyecto Ej: serv
 % Abstract en inglés
 \renewcommand*\abstractname{Abstract}
 \begin{abstract}
-A \textbf{brief} presentation of the topic addressed in the project.
+The point of this project is to design a semi-autonomous navigation system in enclosed spaces, destined to aid security vigilance using drones. Given an enclosed space, the drone should be able to make its path through it, recording video which will be streamed to a server, and updating its position inside of it to the security guard in charge.
 \end{abstract}
 
 \renewcommand*\abstractname{Keywords}
 \begin{abstract}
-keywords separated by commas.
+drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, video, particle filter, potential fields, path searching
 \end{abstract}
 
 \clearpage
