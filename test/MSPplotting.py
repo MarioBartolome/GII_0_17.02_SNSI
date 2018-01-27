@@ -1,0 +1,50 @@
+import matplotlib
+matplotlib.use('MacOsX')
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import threading
+import numpy as np
+from MultiWiiProtocol import MSPio
+
+signal = {'x':[], 'y':[], 'z':[]}
+fig, ax = plt.subplots()
+lines = [ax.plot([], [])[0] for _ in signal.keys()]
+
+timelim = ()
+
+
+def stream():
+	att = ser.readAttitude()
+	signal['x'].append(att['x'])
+	signal['y'].append(att['y'])
+	signal['z'].append(att['heading'])
+
+	if ser.isOpen():
+		threading.Timer(10/1000., stream).start()
+
+def update(i):
+	global timelim
+	ax.relim()
+	ax.autoscale_view()
+
+	if ax.get_ylim() != timelim:
+		timelim = ax.get_ylim()
+		fig.canvas.draw()
+
+	for k, line in zip(signal.keys(), lines):
+		_, ly = line.get_data()
+		ly = np.append(ly, signal[k])
+		_xdata = np.arange(ly.size)
+		line.set_data(_xdata, ly)
+		signal[k] = []
+
+	return lines,
+
+
+if __name__ == '__main__':
+	ser = MSPio()
+	if ser.isOpen():
+		ani = animation.FuncAnimation(fig, update, interval=20)
+		stream()
+		plt.show()
+
