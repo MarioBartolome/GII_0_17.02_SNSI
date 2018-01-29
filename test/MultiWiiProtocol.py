@@ -136,19 +136,15 @@ class MSPio:
 						if parse_to is not None:
 							response = struct.unpack(parse_to, response)
 						status_ok = True
+						self._serial.read(1) # Checksum... just to clean up the buffer
 					else:
 						print('<readResponse> to {0}: FC seems to be responding to some other command: {1}'.format(command, response_command))
 				else:
-					print("<readResponse>: Cant' get a good answer from FC")
+					print("<readResponse>: Cant' get a good answer from FC when looking for {0} command".format(command))
 
 		except serial.SerialException as err:
 
 			print("Can't read from port: {0}".format(err))
-
-		finally:
-
-			self._serial.flushInput()
-			self._serial.flushOutput()
 
 		return response, status_ok
 
@@ -216,6 +212,7 @@ class MSPio:
 		data = [ROLL, PITCH, YAW, THROTTLE, AUX1, AUX2, AUX3, AUX4]
 		#self.sendCMDOLD(16, command, data)
 		self.sendCMD(command, data, len(data) * 2)
+		self.readResponse(command, self.RC_SET_PARSE)
 
 	def setMotor(self, motors=None):
 		"""
@@ -280,7 +277,7 @@ if __name__ == '__main__':
 			time.sleep(0.5)
 			ser.setRawRC([1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000])
 
-		# Getting about 15Hz refresh rate.
+		# Getting about 25Hz refresh rate.
 		print("Arming")
 		start = time.time()
 		while time.time() - start < 5:
