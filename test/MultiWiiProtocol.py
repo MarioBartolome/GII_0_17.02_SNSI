@@ -11,7 +11,6 @@ import time
 import struct
 
 
-
 class MSPio:
 	"""
 	This class provides a quick implementation to get and send data to a serial port using MSP protocol.
@@ -23,11 +22,25 @@ class MSPio:
 	           'fromFC': [b'>'],
 	           }
 
-	ATTITUDE = 108      # GET attitude (angle x, angle y, heading)
-	STATUS = 110        # GET status (battery voltage, consumed power, RSSI, instant current)
-	SET_RAW_RC = 200    # SET rc input (injects RC channel, overriding RX input if upd. every second)
-	SET_RAW_MOTOR = 214 # SET individual motor value [1000 , 2000]
+	###  Supported codes
+	MSP_MOTOR = 104             # GET µs being write to the motors. (8 motors returned u2bytes each)
+	MSP_RC = 105                # GET RC channel reading (18 channel returned u2bytes each).
+	MSP_ATTITUDE = 108          # GET attitude (angle x, angle y, heading).
+	MSP_ANALOG = 110            # GET status (battery voltage, consumed power, RSSI, instant current).
+	MSP_SET_RAW_RC = 200        # SET rc input (injects RC channel, overriding RX input if upd. every second)
+	MSP_SET_RAW_MOTOR = 214     # SET individual motor value [1000 , 2000]
 
+	###  Parsing schemes for struct function:
+	#   < : Little Endian
+	#   number : Amount of ...
+	#       H  : Unsigned int16_t (2Bytes)
+	#       B  : Unsigned char (1Byte)
+
+	MOTOR_PARSE = '<8H'
+	RC_PARSE = '<18H'
+	ATTITUDE_PARSE = '<3h'
+	STATUS_PARSE = '<B3H'
+	RC_SET_PARSE = None
 	def __init__(self, serial_port='/dev/tty.SLAB_USBtoUART', baud_rate=115200):
 		"""
 		Constructor method for MSPio class.
@@ -48,7 +61,6 @@ class MSPio:
 			print("Can't find port to open: {0}".format(str(err)))
 
 
-
 	def isOpen(self):
 		"""
 		Checks if serial communication is open.
@@ -63,6 +75,7 @@ class MSPio:
 
 		"""
 		if self.isOpen():
+			print("WARNING: Device will enter FAILSAFE mode!")
 			self._serial.close()
 
 
@@ -75,7 +88,7 @@ class MSPio:
 		self._serial.flushOutput()
 
 
-	def sendCMD(self, command, data=[], size=0):
+	def sendCMD(self, command, data=None, size=0):
 		"""
 		Sends the given command.
 
@@ -83,7 +96,10 @@ class MSPio:
 		:param data: The data to send. Defaults to an empty list.
 		:param size: Size of the data. Defaults to 0.
 		"""
-		checksum = len(data)
+
+		if data is None:
+			data = []
+		checksum = 0
 		msg = self.message['preamble'] + self.message['toFC'] + [size] + [command] + data
 
 		# Checksum calc is XOR between <size>, <command> and (each byte) <data>
@@ -91,9 +107,8 @@ class MSPio:
 
 		for i in msg[3:]:
 			checksum ^= i
-
 		# Add checksum at the end of the msg
-		msg += bytes(chr(checksum), encoding='UTF-8')
+		msg += bytes([checksum])
 		try:
 			self._serial.write(msg)
 		except serial.SerialException as err:
@@ -115,16 +130,16 @@ class MSPio:
 			if self.isOpen():
 				if self._serial.read(3) == b'$M>':  # Seems like a good answer...
 					length = struct.unpack('<b', self._serial.read(1))[0]
-					response_command = self._serial.read(1)
-					if response_command == struct.pack('<b', command):  # and a good command response...
+					response_command = struct.unpack('<B', self._serial.read(1))[0]
+					if response_command == command:  # and a good command response...
 						response = self._serial.read(length)
 						if parse_to is not None:
 							response = struct.unpack(parse_to, response)
 						status_ok = True
 					else:
-						print('FC seems to be responding to some other command: {0}'.format(struct.unpack('<b', response_command))[0])
+						print('<readResponse> to {0}: FC seems to be responding to some other command: {1}'.format(command, response_command))
 				else:
-					print("Cant' get a good answer from FC")
+					print("<readResponse>: Cant' get a good answer from FC")
 
 		except serial.SerialException as err:
 
@@ -138,9 +153,6 @@ class MSPio:
 		return response, status_ok
 
 
-
-
-
 	def readAttitude(self) -> dict:
 		"""
 		Reads the attitude values from the IMU.
@@ -150,12 +162,11 @@ class MSPio:
 
 		:return: a dictionary containing those values, and a timestamp
 		"""
-		command = self.ATTITUDE
+		command = self.MSP_ATTITUDE
 
 		attitude = {'x':0, 'y':0, 'heading':-361, 'timestamp':0}
 		self.sendCMD(command)
-		parse_to = '<3h'  # returns 3 int16, therefore 6 bytes to read on 2 by 2
-		tmp, status_ok = self.readResponse(command, parse_to)
+		tmp, status_ok = self.readResponse(command, self.ATTITUDE_PARSE)
 		if status_ok:
 			attitude['x'] = tmp[0] / 10.0
 			attitude['y'] = tmp[1]/10.0
@@ -175,12 +186,11 @@ class MSPio:
 
 		:return: a dictionary containing those values, and a timestamp
 		"""
-		command = self.STATUS
+		command = self.MSP_ANALOG
 
 		status = {'vbat': 0.0, 'cons_mah': 0, 'RSSI': 0, 'current': 0}
 		self.sendCMD(command)
-		parse_to = '<B3H'
-		tmp, status_ok = self.readResponse(command, parse_to)
+		tmp, status_ok = self.readResponse(command, self.STATUS_PARSE)
 		if status_ok:
 			status['vbat'] = tmp[0]/10
 			status['cons_mah'] = tmp[1]
@@ -188,6 +198,63 @@ class MSPio:
 			status['current'] = tmp[3]
 
 		return status
+
+
+	def arm(self):
+		"""
+		* **** WARNING! ****
+				IN FACT, A HUGE ONE: NEVER EVER ARM THE DEVICE WITH THE PROPS ON UNLESS YOU KNOW WHAT YOU'RE DOING.
+		(Or if need to chop something to pieces like... your fingers or whatever)
+
+		Arms the device.
+
+		"""
+
+		command = self.MSP_SET_RAW_RC
+		# All centered, but THROTTLE. AUX1 is arming. AUX2 is mode
+		ROLL, PITCH, YAW, THROTTLE, AUX1, AUX2, AUX3, AUX4= 1500, 1500, 1500, 1000, 2000, 1000, 0, 0
+		data = [ROLL, PITCH, YAW, THROTTLE, AUX1, AUX2, AUX3, AUX4]
+		#self.sendCMDOLD(16, command, data)
+		self.sendCMD(command, data, len(data) * 2)
+
+	def setMotor(self, motors=None):
+		"""
+		* **** WARNING! ****
+				IN FACT, A HUGE ONE: NEVER EVER MOVE THE MOTORS WITH THE PROPS ON UNLESS YOU KNOW WHAT YOU'RE DOING.
+		(Or if need to chop something to pieces like... your fingers or whatever)
+
+		Writes speed to motor.
+
+		:param motors: A list containing the values to write to the motors. Max 8 motors. Defaults to a list of 1000's
+		"""
+		if motors is None:
+			motors = [1000]*8
+
+		command = self.MSP_SET_RAW_MOTOR
+		if len(motors) <= 8:
+			self.sendCMD(command, motors, len(motors)*2)
+		else:
+			print("Expected 'motors' parameter to have maximum 8 motors")
+
+
+	def setRawRC(self, channels=None):
+		"""
+		Sends input to RC channels.
+
+		:param channels: A list of values in µs to send.
+
+		"""
+		if channels is None:
+			channels = [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000]
+
+		command = self.MSP_SET_RAW_RC
+
+		if len(channels) <= 8:
+			self.sendCMD(command, channels, len(channels)*2)
+			self.readResponse(command, self.RC_SET_PARSE)
+		else:
+			print("Expected 'channels' parameter to have maximum 8 channels")
+
 
 
 # To test it:
@@ -204,8 +271,26 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, signal_handler)
 
 	if ser.isOpen():
+		ser._serial.read_all()
 
-		while True:
+		print("Give it a couple secs to fully init...")
+		start = time.time()
+		while time.time() - start < 2:
 			print("Readings: {0} // Voltage: {1}".format(ser.readAttitude(), ser.readStatus()['vbat']))
-			time.sleep(0.1)
-	
+			time.sleep(0.5)
+			ser.setRawRC([1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000])
+
+		# Getting about 15Hz refresh rate.
+		print("Arming")
+		start = time.time()
+		while time.time() - start < 5:
+			print("Readings: {0} // Voltage: {1}".format(ser.readAttitude(), ser.readStatus()['vbat']))
+			ser.sendCMD(ser.MSP_MOTOR)
+			print("Motors running at: {0}".format(ser.readResponse(ser.MSP_MOTOR, ser.MOTOR_PARSE)))
+			ser.setRawRC([1500, 1500, 1000, 1500, 2000, 1000, 1000, 1000])
+			# time.sleep(0.05)
+
+		print("Disarming")
+		while True:
+			ser.setRawRC([1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000])
+
