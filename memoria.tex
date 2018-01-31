@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,twoside]{memoir}
+\documentclass[a4paper,11pt,twoside]{memoir}
 
 % Castellano
 \usepackage[spanish,es-tabla]{babel}
@@ -8,6 +8,9 @@
 \usepackage{lmodern} % Scalable font
 \usepackage{microtype}
 \usepackage{placeins}
+
+\usepackage{float}
+\usepackage{footnote}
 
 \RequirePackage{booktabs}
 \RequirePackage[table]{xcolor}
@@ -29,6 +32,8 @@
 % Párrafos
 \nonzeroparskip
 
+% Code style
+\def\code#1{\colorbox{black!5}{\texttt{#1}}}
 
 % Imagenes
 \usepackage{graphicx}
@@ -94,7 +99,7 @@
 %
 % Nuevo comando para tablas pequeñas (menos de una página).
 \newcommand{\tablaSmall}[5]{%
- \begin{table}
+ \begin{table}[H]
   \begin{center}
    \rowcolors {2}{gray!35}{}
    \begin{tabular}{#2}
@@ -315,6 +320,8 @@
 \makeatletter
 \usepackage{xcolor}
 \newcommand{\tutor}[1]{\def\@tutor{#1}}
+\newcommand{\cotutorOne}[1]{\def\@cotutorOne{#1}}
+\newcommand{\cotutorTwo}[1]{\def\@cotutorTwo{#1}}
 \newcommand{\course}[1]{\def\@course{#1}}
 \definecolor{cpardoBox}{HTML}{E6E6FF}
 \def\maketitle{
@@ -325,11 +332,11 @@
   \vfill
   % Título proyecto y escudo informática ----------------
   \colorbox{cpardoBox}{%
-    \begin{minipage}{.8\textwidth}
-      \vspace{.5cm}\Large
+    \begin{minipage}{.9\textwidth}
+      \vspace{.5cm}\large
       \begin{center}
       \textbf{TFG del Grado en Ingeniería Informática}\vspace{.6cm}\\
-      \textbf{\LARGE\@title{}}
+      \textbf{\@title{}}
       \end{center}
       \vspace{.2cm}
     \end{minipage}
@@ -342,10 +349,10 @@
   % Datos de alumno, curso y tutores ------------------
   \begin{center}%
   {%
-    \noindent\LARGE
+    \noindent\large
     Presentado por \@author{}\\ 
-    en Universidad de Burgos --- \@date{}\\
-    Tutor: \@tutor{}\\
+    en Universidad de Burgos --- \@date{}\vspace{.6cm}\\
+    \noindent Tutores: \@tutor{}\\\@cotutorOne{}\\\@cotutorTwo{}
   }%
   \end{center}%
   \null
@@ -356,18 +363,20 @@
 \newcommand{\nombre}{Mario Bartolomé Manovel} %%% cambio de comando
 
 % Datos de portada
-\title{Sistema de Navegación Semiautomático en Interiores}
+\title{Sistema de Navegación Semiautónomo en Interiores}
 \author{\nombre}
-\tutor{Alejandro Merino Gómez}
+\tutor{Dr. Alejandro Merino Gómez}
+\cotutorOne{Dr. César Ignacio García Osorio}
+\cotutorTwo{Dr. José Francisco Díez Pastor}
 \date{\today}
 
 \begin{document}
 
 \maketitle
 \def\titulo{Sistema de Navegación Semiautónomo en Interiores}
-\def\tutor{Alejandro Merino Gómez}
-\def\cotutorOne{César Ignacio García Osorio}
-\def\cotutorTwo{José Francisco Díez Pastor}
+\def\tutor{Dr. Alejandro Merino Gómez}
+\def\cotutorOne{Dr. César Ignacio García Osorio}
+\def\cotutorTwo{Dr. José Francisco Díez Pastor}
 \newpage\null\thispagestyle{empty}\newpage
 
 
@@ -377,11 +386,11 @@
 
 \noindent\includegraphics[width=\textwidth]{cabecera}\vspace{1cm}
 
-\noindent D. \tutor, profesor del departamento de Ingeniería Electromecánica, área de Ingeniería de Sistemas y Automática.
+\noindent D. \tutor, profesor del departamento de Ingeniería Electromecánica, área de Ingeniería de Sistemas y Automática. D. \cotutorOne{} y D. \cotutorTwo{}, profesores del departamento de Ingeniería Civil, área de Lenguajes y Sistemas Informáticos.
 
-\noindent Expone:
+\noindent Exponen:
 
-\noindent Que el alumno D. \nombre, con DNI 71298657-Z, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado \titulo. 
+\noindent Que el alumno D. \nombre, con DNI 71298657Z, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado <<\titulo>>. 
 
 \noindent Y que dicho trabajo ha sido realizado por el alumno bajo la dirección del que suscribe, en virtud de lo cual se autoriza su presentación y defensa.
 
@@ -400,13 +409,13 @@ D. \tutor
 \hfill
 \begin{minipage}{0.3\textwidth}
 \centering
-Vº. Bº. del co-Tutor:\\[2cm]
+Vº. Bº. del Tutor:\\[2cm]
 D. \cotutorOne
 \end{minipage}
 \hfill
 \begin{minipage}{0.3\textwidth}
 \raggedleft
-Vº. Bº. del co-Tutor:\\[2cm]
+Vº. Bº. del Tutor:\\[2cm]
 D. \cotutorTwo
 \end{minipage}
 \hfill
@@ -446,12 +455,12 @@ D. \cotutorTwo
 % Abstract en castellano
 \renewcommand*\abstractname{Resumen}
 \begin{abstract}
-El objetivo del proyecto es diseñar un sistema de navegación semi-autónomo en espacios cerrados, destinado a la asistencia en vigilancia de seguridad mediante drones. Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando video que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad.
+El objetivo del proyecto es diseñar un sistema de navegación semi-autónomo en espacios cerrados, destinado a la asistencia en vigilancia de seguridad mediante drones. Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando vídeo que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad.
 \end{abstract}
 
 \renewcommand*\abstractname{Descriptores}
 \begin{abstract}
-drone, UAV, semi-autónomo, semi-automático, vigilancia, navegación, interior, video, filtro de partículas, campos potenciales, busqueda de ruta
+drone, UAV, semi-autónomo, semi-automático, vigilancia, navegación, interior, vídeo, filtro de partículas, campos potenciales, búsqueda de ruta, MSP, raspberry pi
 \end{abstract}
 
 \clearpage
@@ -464,7 +473,7 @@ The point of this project is to design a semi-autonomous navigation system in en
 
 \renewcommand*\abstractname{Keywords}
 \begin{abstract}
-drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, video, particle filter, potential fields, path searching
+drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, video, particle filter, potential fields, path searching, MSP, raspberry pi
 \end{abstract}
 
 \clearpage

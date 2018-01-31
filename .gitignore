@@ -331,3 +331,7 @@ TSWLatexianTemp*
 
 # End of https://www.gitignore.io/api/latex,tex
 >>>>>>> Add .gitignore #3
+
+*.jpg
+
+*.png
