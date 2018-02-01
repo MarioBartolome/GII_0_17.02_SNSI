@@ -92,13 +92,64 @@ Una vez encendida, se accede a ella con el usuario por defecto \code{pi} y la co
 \end{itemize} 
 
 
+\subsection{Controladora de Vuelo}
+
+Una controladora de vuelo (\textit{FC} de aquí en adelante) es un pequeño circuito integrado, que contiene un procesador, una serie de sensores, y una serie de entradas y salidas. 
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{flip32}
+\caption{Controladora de Vuelo Flip32.}\label{fig:fc}
+\end{figure}
+La FC se encarga de mantener el sistema de estabilización del drone, tomando medidas de los sensores de que dispone, tales como un acelerómetro, giroscopio, magnetómetro, barómetro... etc. 
+
+En el caso de la FC usada para este proyecto, llamada Flip32 y mostrada en la imagen \ref{fig:fc}, se dispone de un IC MPU-6050, en rojo, con acelerómetro y giroscopio, así como de un barómetro M55611, en verde, y un magnetómetro HMC5883L, en amarillo.
+El núcleo de esta pequeña placa es un procesador STM32F103, en cyan, a 72MHz y basado en arquitectura ARM el cual dispone de dos puertos serie, que permiten establecer comunicación entre la FC y otros dispositivos, como emisoras u otros sensores.
+
+El puerto micro-USB de que dispone es utilizado para establecer comunicación entre el configurador de opciones del drone, o en el caso de nuestro proyecto, para hacer uso del \hyperref[subsec:MSP]{MultiWii Serial Protocol}. 
 
 
+\subsubsection{Entradas}
+En el lado derecho de la imagen \ref{fig:fc} pueden verse una serie de pines que actúan como 8 canales de entrada desde el receptor de radio.
+Dichos canales de entrada, por defecto, reciben una señal modulada en ancho de pulso o \hyperref[subsec:PWM]{PWM}
+
+ 
+
+\subsubsection{Salidas}
+En el lado izquierdo de la imagen \ref{fig:fc}, pueden verse otros pines que actúan como salida de señal hacia los controladores de velocidad de los motores del drone (ESC o \textit{Electronic Speed Controller}).
+Estos pines de salida, emiten una señal que será interpretada por los ESC del drone, para determinar la frecuencia dada al voltaje que alimenta los motores. En el caso de nuestro proyecto, los ESC disponibles reciben una señal PWM, al igual que la FC desde un receptor de radio.
+
+\newpage
+\subsubsection{Sensores}
+La controladora de vuelo Flip32 en su versión más completa, dispone de los siguientes sensores:
+\begin{itemize}
+\item IMU\footnote{Unidad de Medición Inercial.} MPU-6050: Se trata de un circuito integrado compuesto de un acelerómetro de tres (3) ejes y un giroscopio de tres (3) ejes. El acelerómetro mide las fuerzas en los tres diferentes ejes (en \textit{g}) , el giroscopio se encarga de medir la velocidad angular en cada uno de los tres ejes (en degº/s )
+\item Magnetómetro HMC5883L: Se trata de un pequeño magnetómetro digital capaz de medir el campo magnético terrestre (en Gauss). Se debe tener en cuenta que según la posición en el planeta, el campo magnético varía entre \si{\gauss{0.25}} - \si{\gauss{0.65}}, así como la declinación magnética de la zona en la que se realiza la medición.\footnote{Disponible en: http://magnetic-declination.com/}
+\item Barómetro M55611: Se trata de un altímetro de alta precisión, con resoluciones de hasta 10cm, que funciona midiendo la presión atmosférica (en milibar). Hay que tener en cuenta que los cambios de presión, como los generados por las hélices del drone, hace variar la medida del sensor. Por ello, en el caso de usarlo, se cubre con un pequeño filtro de un material absorbente.
+\end{itemize}
+\newpage
 \section{Protocolos}
 
-\subsection{MultiWii Serial Protocol}
+\subsection{Pulse Width Modulation}
+\label{subsec:PWM}
 
-\noindent Conocido como \textit{MSP}, se trata de un protocolo para la transferencia de información desde, o hacia una controladora de vuelo\footnote{Una controladora de vuelo es una pequeña placa electrónica que contiene un procesador, una serie de sensores (como acelerómetro, giroscopio, barómetro o magnetómetro) así como entradas y salidas, y que se encarga del control de estabilidad del drone.}.\\\\Generalmente es utilizado durante la configuración de la controladora de vuelo, para transmitir y recibir información de ella.
+\externaldocument[5-]{./tex/5_Aspectos_relevantes_del_desarrollo_del_proyecto}
+
+La modulación por ancho de pulso, se basa en medir el transcurso de tiempo entre el flanco de subida de una señal, y el flanco de bajada, tal y como puede verse en la imágen \ref{fig:PWM}.
+En este contexto, un receptor de radio recibe una señal de la emisora,  y genera una señal PWM acorde que será transmitida a la FC.
+Estas son capaces de entender señales de entre 1000 y 2000\si{\us}. Cualquier valor por debajo, o por encima, haría entrar la controladora en FailSafe\footnote{Al recibir una señal inválida por parte del receptor, la controladora de vuelo puede ser configurada para desactivar el drone, mantener la última medida buena conocida, intentar aterrizar... etc. Este modo es conocido como FailSafe}
+En el caso de este proyecto, se ha determinado que no se hará uso de este protocolo para la comunicación entre la Raspberry Pi y la controladora de vuelo, véase \ref{5-sec:MSP_implementation}, y por lo tanto el uso de estos pines queda descartado.
+
+Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tipo de señal, por ello se ha considerado relevante explicar su funcionamiento.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{PWM}
+	\caption{Modulación en Ancho de Pulso. Arriba 100\% del ciclo usado. Centro 25\% del ciclo usado. Abajo 50\% del ciclo usado}\label{fig:PWM}
+\end{figure}
+
+
+\subsection{MultiWii Serial Protocol}
+\label{subsec:MSP}
+\noindent Conocido como \textit{MSP}, se trata de un protocolo para la transferencia de información desde, o hacia una controladora de vuelo.\\\\Generalmente es utilizado durante la configuración del sistema, para transmitir y recibir información de ella.
 \\En el caso de este proyecto, se hará uso de este protocolo dado que existe la posibilidad de establecer la recepción de los canales de radio a través de un puerto serie. Es decir, en lugar de utilizar un receptor de radio, se utilizará un puerto serie para obtener la telemetría\footnote{La telemetría es el sistema de medición de magnitudes a distancia; i.e, transmite la información de los diferentes sensores de la controladora de vuelo. }, y establecer las entradas de los canales de radio.
 
 

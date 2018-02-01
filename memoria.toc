@@ -13,13 +13,18 @@
 \contentsline {section}{\numberline {3.2}Dispositivos F\IeC {\'\i }sicos}{6}{section.3.2}
 \contentsline {subsection}{Raspberry Pi}{6}{section*.10}
 \contentsline {subsubsection}{Modificaciones}{8}{section*.11}
-\contentsline {section}{\numberline {3.3}Protocolos}{8}{section.3.3}
-\contentsline {subsection}{MultiWii Serial Protocol}{8}{section*.12}
-\contentsline {section}{\numberline {3.4}Referencias}{9}{section.3.4}
-\contentsline {section}{\numberline {3.5}Im\IeC {\'a}genes}{9}{section.3.5}
-\contentsline {section}{\numberline {3.6}Listas de items}{10}{section.3.6}
-\contentsline {section}{\numberline {3.7}Tablas}{11}{section.3.7}
-\contentsline {chapter}{T\IeC {\'e}cnicas y herramientas}{13}{chapter*.13}
-\contentsline {chapter}{Aspectos relevantes del desarrollo del proyecto}{15}{chapter*.14}
-\contentsline {chapter}{Trabajos relacionados}{17}{chapter*.15}
-\contentsline {chapter}{Conclusiones y L\IeC {\'\i }neas de trabajo futuras}{19}{chapter*.16}
+\contentsline {subsection}{Controladora de Vuelo}{8}{section*.12}
+\contentsline {subsubsection}{Entradas}{9}{section*.13}
+\contentsline {subsubsection}{Salidas}{9}{section*.14}
+\contentsline {subsubsection}{Sensores}{10}{section*.15}
+\contentsline {section}{\numberline {3.3}Protocolos}{11}{section.3.3}
+\contentsline {subsection}{Pulse Width Modulation}{11}{section*.16}
+\contentsline {subsection}{MultiWii Serial Protocol}{12}{section*.17}
+\contentsline {section}{\numberline {3.4}Referencias}{12}{section.3.4}
+\contentsline {section}{\numberline {3.5}Im\IeC {\'a}genes}{12}{section.3.5}
+\contentsline {section}{\numberline {3.6}Listas de items}{13}{section.3.6}
+\contentsline {section}{\numberline {3.7}Tablas}{14}{section.3.7}
+\contentsline {chapter}{T\IeC {\'e}cnicas y herramientas}{15}{chapter*.18}
+\contentsline {chapter}{Aspectos relevantes del desarrollo del proyecto}{17}{chapter*.19}
+\contentsline {chapter}{Trabajos relacionados}{19}{chapter*.20}
+\contentsline {chapter}{Conclusiones y L\IeC {\'\i }neas de trabajo futuras}{21}{chapter*.21}
