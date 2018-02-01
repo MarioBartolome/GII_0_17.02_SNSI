@@ -25,24 +25,41 @@ A la hora de lograr una navegación segura en un entorno determinado, es necesar
 
 \subsection{Raspberry Pi}
 
-\noindent Una Raspberry Pi es un pequeño ordenador desarrollado en UK por la Raspberry Pi Foundation, con la intención de promover el aprendizaje de informática básica en colegios y países en desarrollo. El modelo base se compone de una única placa de medidas 85mm x 56mm (LxA), y unos 42g de peso.\\Concretamente el modelo empleado es una Raspberry Pi 3B, y consta de las siguientes especificaciones:
 
-\tablaSmall{Componentes de una Raspberry Pi 3 Model B}{l | c}{raspi3hardware}
-{ \multicolumn{1}{l}{Componente} &Raspberry Pi 3B\\}{ 
-CPU & BCM2837\\
-Núcleos & 4\\
-Velocidad & 1.2GHz\\
-RAM & 1GB\\
-Coms & Ethernet, WiFi, Bluetooth\\
-USB & 4 (2.0)\\
-GPIO & 40\\
-Consumo máximo & 6.7W\\
-}
+\begin{table}
+	\begin{center}
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{l | c}\hline
+			\toprule
+			Componente & Raspberry Pi 3B\\
+			\otoprule
+			CPU & BCM2837\\
+			Núcleos & 4\\
+			Velocidad & 1.2GHz\\
+			RAM & 1GB\\
+			Coms & Ethernet, WiFi, Bluetooth\\
+			USB & 4 (2.0)\\
+			GPIO & 40\\
+			Consumo máximo & 6.7W\\
+			\bottomrule
+		\end{tabular}
+		\caption{Componentes de una Raspberry Pi 3 Model B}
+		\label{tb:raspi3hardware}
+	\end{center}
+\end{table}
+
+\noindent Una Raspberry Pi es un pequeño ordenador desarrollado en UK por la Raspberry Pi Foundation, con la intención de promover el aprendizaje de informática básica en colegios y países en desarrollo. El modelo base se compone de una única placa de medidas 85mm x 56mm (LxA), y unos 42g de peso.\\Concretamente el modelo empleado es una Raspberry Pi 3B, y consta de los componentes detallados en la tabla \ref{tb:raspi3hardware}
+
+
+
 \noindent Su reducido tamaño y bajo consumo lo hacen ideal para este tipo de proyecto. \\En este caso se utiliza bajo una distribución GNU/Linux llamada Raspbian\footnote{Descargable desde: https://www.raspberrypi.org/downloads/raspbian}, basada en Debian. Para tratar de mejorar su rendimiento y reducir al mínimo el consumo, se ha escogido la versión Lite del sistema, es decir, un sistema mínimo sin entorno de escritorio y con la mayor parte de servicios desactivados por defecto.
 
-\imagen{raspi}{Raspberry Pi 3.}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{raspi}
+	\caption{Raspberry Pi 3.}\label{fig:raspi3b}
+\end{figure}
 
-% ATENCIÓN!!!! CARNE DE ANEXO!
 Una vez descargado el sistema, este ha sido instalado en una micro SD mediante el siguiente procedimiento por consola\footnote{Realizado en OSX, aunque en Linux es muy similar}:
 \begin{itemize}
 \item\code{diskutil list} Permite localizar el dispositivo en el que se encuentra la tarjeta. En nuestro caso \code{/dev/disk4}
@@ -61,14 +78,21 @@ Una vez encendida, se accede a ella con el usuario por defecto \code{pi} y la co
 
 \subsubsection{Modificaciones}
 \label{subsec:Modificaciones}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{sdbench}
+	\caption{Benchmark de lector microSD OC.}\label{fig:sdbenchmark}
+\end{figure}
+
 \begin{itemize}
 \item Se ha desactivado el puerto HDMI para reducir el consumo en \textasciitilde{}30mA: \\Para ello se ha incluido en \code{/etc/rc.local} la línea \code{/usr/bin/tvservice -o}.
-\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los siguientes resultados en un test:\imagen{sdbench}{Benchmark de lector microSD OC.}
+\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los resultados mostrados en la imagen \ref{fig:sdbenchmark}
+\item Se han incluido una serie de disipadores para evitar sobrecalentamiento de la placa. Así como un pequeño ventilador de bajo consumo.
 \end{itemize} 
 
 
 
-% HASTA AQUÍ ^ CARNE DE ANEXO!
 
 \section{Protocolos}
 
