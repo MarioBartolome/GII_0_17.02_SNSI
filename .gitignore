@@ -335,3 +335,5 @@ TSWLatexianTemp*
 *.jpg
 
 *.png
+
+*.gz
