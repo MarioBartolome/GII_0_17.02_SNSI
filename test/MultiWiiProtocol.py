@@ -39,14 +39,38 @@ class MSPio:
 	MOTOR_PARSE = '<8H'
 	RC_PARSE = '<18H'
 	ATTITUDE_PARSE = '<3h'
-	STATUS_PARSE = '<B3H'
+	ANALOG_PARSE = '<B3H'
 	RC_SET_PARSE = None
-	def __init__(self, serial_port='/dev/tty.SLAB_USBtoUART', baud_rate=115200):
+
+	MSP_LENGTH_PARSE = '<B'
+	MSP_COMMAND_PARSE = '<B'
+
+	MSP_MSG_PARSE = '<3c2B%iHB'
+	"""  
+	General MSP structure:
+	
+	Preamble:   b'$M'.
+	
+	Direction:  b'<' or b'>' From // To the FC.
+	
+	Size:       uint8_t.
+	
+	Command:    uint8_t.
+	
+	Data:       Size * uint16_t.
+	
+	Checksum:   XOR(<size>, <command>, *<data>)
+	"""
+
+	def __init__(self, serial_port : str ='/dev/tty.SLAB_USBtoUART', baud_rate : int =115200):
 		"""
 		Constructor method for MSPio class.
 
 		:param serial_port: The port to connect to. Defaults to '/dev/tty.SLAB_USBtoUART'.
+		:type serial_port: str
 		:param baud_rate: Speed of the connection in bauds. Defaults to 115200.
+		:type baud_rate: int
+
 		"""
 		self._serial = serial.Serial()
 		self._serial.port = serial_port
@@ -61,7 +85,7 @@ class MSPio:
 			print("Can't find port to open: {0}".format(str(err)))
 
 
-	def isOpen(self):
+	def isOpen(self) -> bool:
 		"""
 		Checks if serial communication is open.
 
@@ -69,7 +93,7 @@ class MSPio:
 		"""
 		return self._serial.isOpen()
 
-	def close(self):
+	def close(self) -> None:
 		"""
 		Closes the communication if it was open.
 
@@ -79,22 +103,24 @@ class MSPio:
 			self._serial.close()
 
 
-	def cleanup(self):
+	def cleanup(self) -> None:
 		"""
 		Cleans up the remaining buffers.
-		:return:
 		"""
 		self._serial.flushInput()
 		self._serial.flushOutput()
 
 
-	def sendCMD(self, command, data=None, size=0):
+	def sendCMD(self, command: int, data: list = None, size: int = 0) -> None:
 		"""
 		Sends the given command.
 
 		:param command: The command to send.
+		:type command: int
 		:param data: The data to send. Defaults to an empty list.
+		:type data: list
 		:param size: Size of the data. Defaults to 0.
+		:type size: int
 		"""
 
 		if data is None:
@@ -103,7 +129,7 @@ class MSPio:
 		msg = self.message['preamble'] + self.message['toFC'] + [size] + [command] + data
 
 		# Checksum calc is XOR between <size>, <command> and (each byte) <data>
-		msg = struct.pack('<3c2B%iH' % len(data), *msg)
+		msg = struct.pack(self.MSP_MSG_PARSE[:-1] % len(data), *msg)
 
 		for i in msg[3:]:
 			checksum ^= i
@@ -115,12 +141,14 @@ class MSPio:
 			print("Could not write to port: {0}".format(str(err)))
 
 
-	def readResponse(self, command, parse_to=None) -> (bytes, bool):
+	def readResponse(self, command: int, parse_to: str = None) -> (bytes, bool):
 		"""
 		Read FC's response. Remember to use this AFTER calling sendCMD.
 
 		:param command: The command that was sent previously.
+		:type command: int
 		:param parse_to: The format of the response. Defaults to None. If none, raw data to be returned
+		:type parse_to: str
 		:return: FC's response applying parsing method given.
 		"""
 
@@ -128,9 +156,9 @@ class MSPio:
 		status_ok = False
 		try:
 			if self.isOpen():
-				if self._serial.read(3) == b'$M>':  # Seems like a good answer...
-					length = struct.unpack('<b', self._serial.read(1))[0]
-					response_command = struct.unpack('<B', self._serial.read(1))[0]
+				if self._serial.read(3) == b''.join(self.message['preamble'] + self.message['fromFC']):  # Seems like a good answer...
+					length = struct.unpack(self.MSP_LENGTH_PARSE, self._serial.read(1))[0]
+					response_command = struct.unpack(self.MSP_COMMAND_PARSE, self._serial.read(1))[0]
 					if response_command == command:  # and a good command response...
 						response = self._serial.read(length)
 						if parse_to is not None:
@@ -186,7 +214,7 @@ class MSPio:
 
 		status = {'vbat': 0.0, 'cons_mah': 0, 'RSSI': 0, 'current': 0}
 		self.sendCMD(command)
-		tmp, status_ok = self.readResponse(command, self.STATUS_PARSE)
+		tmp, status_ok = self.readResponse(command, self.ANALOG_PARSE)
 		if status_ok:
 			status['vbat'] = tmp[0]/10
 			status['cons_mah'] = tmp[1]
@@ -210,11 +238,10 @@ class MSPio:
 		# All centered, but THROTTLE. AUX1 is arming. AUX2 is mode
 		ROLL, PITCH, YAW, THROTTLE, AUX1, AUX2, AUX3, AUX4= 1500, 1500, 1500, 1000, 2000, 1000, 0, 0
 		data = [ROLL, PITCH, YAW, THROTTLE, AUX1, AUX2, AUX3, AUX4]
-		#self.sendCMDOLD(16, command, data)
 		self.sendCMD(command, data, len(data) * 2)
 		self.readResponse(command, self.RC_SET_PARSE)
 
-	def setMotor(self, motors=None):
+	def setMotor(self, motors: list = None) -> None:
 		"""
 		* **** WARNING! ****
 				IN FACT, A HUGE ONE: NEVER EVER MOVE THE MOTORS WITH THE PROPS ON UNLESS YOU KNOW WHAT YOU'RE DOING.
@@ -223,6 +250,7 @@ class MSPio:
 		Writes speed to motor.
 
 		:param motors: A list containing the values to write to the motors. Max 8 motors. Defaults to a list of 1000's
+		:type motors: list
 		"""
 		if motors is None:
 			motors = [1000]*8
@@ -234,18 +262,17 @@ class MSPio:
 			print("Expected 'motors' parameter to have maximum 8 motors")
 
 
-	def setRawRC(self, channels=None):
+	def setRawRC(self, channels: list = None) -> None:
 		"""
 		Sends input to RC channels.
 
 		:param channels: A list of values in µs to send.
-
+		:type channels: list
 		"""
 		if channels is None:
 			channels = [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000]
 
 		command = self.MSP_SET_RAW_RC
-
 		if len(channels) <= 8:
 			self.sendCMD(command, channels, len(channels)*2)
 			self.readResponse(command, self.RC_SET_PARSE)
