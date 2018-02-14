@@ -337,3 +337,5 @@ TSWLatexianTemp*
 *.png
 
 *.gz
+
+\.idea/
