@@ -28,11 +28,16 @@ class VideoServer(threading.Thread):
 		self._port = port
 		print("Video server ready to start")
 
-	def startVideoServer(self):
+	def startVideoServer(self, resolution:tuple = (1280,720), fps:int = 30, format:str = 'h264'):
 		"""
 		Starts the VideoServer stream.
 
+		:param resolution: The resolution of the video recording.
+		:type resolution: tuple(int, int)
+		:param fps: The frames per second.
+		:type fps: int
 		"""
+
 		try:
 			stream = socket.socket()
 			stream.bind((self._address, self._port))
@@ -42,10 +47,10 @@ class VideoServer(threading.Thread):
 			print("Hello! New client from {0}".format(client_address[0]))
 		except socket.error as err:
 			print('Could not bind socket! <err {0}>: {1}'.format(err.errno, str(err)))
-			sys.exit()
+			sys.exit(1)
 
-		camera = VideoStreamer(conn)
-		camera.run()
+		camera = VideoStreamer(conn, resolution, fps)
+		camera.run(format)
 
 		while True:
 			try:
@@ -68,15 +73,21 @@ class VideoServer(threading.Thread):
 
 class VideoStreamer:
 
-	def __init__(self, stream: socket):
+	def __init__(self, stream: socket, resolution: tuple, fps: int):
 		"""
 		Constructor for the VideoStreamer
+
 		:param stream: The stream to record video to.
-		:type stream: socket.
+		:type stream: socket
+		:param resolution: The resolution of the video recording.
+		:type resolution: tuple(int, int)
+		:param fps: The frames per second.
+		:type fps: int
+
 		"""
 		self._camera = picamera.PiCamera()
-		self._camera.resolution = (640, 360)
-		self._camera.framerate = 18
+		self._camera.resolution = resolution
+		self._camera.framerate = fps
 		self._stream = stream
 
 	def setStream(self, stream: socket):
@@ -88,14 +99,16 @@ class VideoStreamer:
 		"""
 		self._stream = stream
 
-	def run(self):
+	def run(self, format: str = 'h264'):
 		"""
 		Starts to write video to the chosen stream.
 
+		:param format: The format to record to.
+		:type format: str
 		"""
 
 		self._stream = self._stream.makefile('wb')
-		self._camera.start_recording(self._stream, format='h264')
+		self._camera.start_recording(self._stream, format=format)
 
 	def stop(self):
 		"""
@@ -115,5 +128,10 @@ class VideoStreamer:
 
 
 if __name__ == '__main__':
+	format = 'yuv'
+	resolution = (384,192)
+	fps = 18
 	server = VideoServer()
-	server.startVideoServer()
+	server.startVideoServer(resolution=resolution, fps=fps, format=format)
+	# server = VideoServer()
+	# server.startVideoServer()
