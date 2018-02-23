@@ -1,6 +1,7 @@
 """
 Author: Mario Bartolomé
 Date: Feb 07, 2018
+
 ######
 
 This file is an implementation of a Vector Field Histogram.
@@ -31,7 +32,8 @@ class HistogramGrid:
 	"""
 	UNKNOWN_STATE = 0
 
-	def __init__(self, sensors: list, Rmax: int, Rmin: int, Ru: int, map: np.ndarray, windowSize: int = 35, cellSize: int = 10, epsilon: float = 0.05, omega: int = 30, sense: function = None):
+	def __init__(self, sensors: list, Rmax: int, Rmin: int, Ru: int, windowSize: int = 141, cellSize: int = 5,
+	             epsilon: float = 0.05, omega: int = 30):
 		"""
 		Constructor method for Cartesian Histogram Grid.
 
@@ -43,77 +45,133 @@ class HistogramGrid:
 		:type Rmin: int
 		:param Ru: measurement threshold. Under it, is considered safe to navigate.
 		:type Ru: int
-		:param map: The map the robot is moving on. Representing square cells.
-		:type map: ndarray
 		:param windowSize: Size of the, square, window that *follows* the robot.
 		:type windowSize: int
-		:param cellSize: Side length of each cell. The lower, the higher the accurate. Defaults to 5.
+		:param cellSize: Side length of each cell in cm. The lower, the higher the accurate. Defaults to 5.
 		:type cellSize: int
 		:param epsilon: Optional, defaults to 0.05. Mean sonar deviation error.
 		:type epsilon: float, optional
 		:param omega: Optional, defaults to 30. Beam aperture in deg.
 		:type omega: int
-		:param sense: If defined, will be triggered to construct the Histogram Grid.
-		:type sense: function
 
 		"""
 		self._sensors = sensors
-		self._Rmax = Rmax
-		self._Rmin = Rmin
+		self._Rmax = Rmax//cellSize
+		self._Rmin = Rmin//cellSize
 		self._Ru = Ru
-		self._map = map
 		self._windowSize = windowSize
 		self._cellSize = cellSize
 		self._epsilon = epsilon
 		self._omega = omega
-		self._sense = sense
-		self._distances = self.getDistances()
+		self._windowDronePos = np.array([self._windowSize//2, self._windowSize//2])
+		self._window = self.getWindow()
+		self._deltas = self.getDistances()
+		self._angles = self.getAngles()
 
-	def resetMap(self):
-		self._map = np.zeros_like(self._map)
 
 	def getDistances(self) -> np.ndarray:
 		"""
 		Will calculate the Euclidean distance from the center of the Active Window to each cell on the active window.
 
-		:return: A matrix of distances from the center point.
+		:return: A matrix of distances from the center point. dᵢⱼ
 		"""
 		return np.linalg.norm(
-			np.indices((self._windowSize, self._windowSize))
-			.ravel(order='F')
+			self._window
+			- self._windowDronePos,
+			axis=1
+		).reshape(
+			self._windowSize, self._windowSize
+		)
+
+	def getAngles(self):
+		"""
+		Will calculate the angle from the center of the Active Window to each cell on the active window over *OX*.
+
+		:return: A matrix of angles from the center point.
+		"""
+		_tempDst = self._window - self._windowDronePos
+		return np.arctan2(
+			_tempDst[:, 0], _tempDst[:, 1]
+		).reshape(
+			self._window, self._window
+		)
+
+	def getWindow(self):
+		"""
+		Makes a grid
+
+		:return: A (windowSize * windowSize) matrix representing the Active window
+		"""
+		return np.indices(
+			(self._windowSize, self._windowSize)
+		)[::-1]\
+			.ravel(order='F')\
 			.reshape(self._windowSize ** 2, 2)
-			- np.array([self._windowSize // 2, self._windowSize // 2]), axis=1
-		).reshape(self._windowSize, self._windowSize)
 
-	def getAngles(self, sensor, heading, window):
-		return 0
+	def computeEmptiness(self, droneHeading: int, sensors: list) -> np.ndarray:
+		"""
+		Computes emptiness making use of the active window the drone is moving on and the heading.
 
-	def getActiveRegion(self):
-		return 0
+		:param droneHeading: Heading of the drone.
+		:type droneHeading: int
+		:param sensors: The sensors taking the measurements
+		:type sensors: list
+		:return: A Histogram Grid containing emptiness chances.
+		"""
 
-	def getSampledPoints(self, sensor, heading, P) -> tuple:
-		window = self.getWindow(P)
-		angles = self.getAngles(sensor, heading, window)
-
-		return 0,0
-
-	def computeEmptyness(self, S: tuple, P: list(tuple)) -> float:
-		dst = 0
-		measured_dst = 0
+		empt_window = np.zeros_like(self._deltas)
 		# Distance to the point inside the range [Rmin, R]
-		if self._Rmin < dst < measured_dst - self._epsilon:
-			empt_dst = 1 - ((dst - self._Rmin) / (measured_dst - self._epsilon - self._Rmin)) ** 2
-		else:
-			empt_dst = 0
+		for sensor in sensors:
+			R = sensor.getDistance()
+			dst_indexes = np.where((self._Rmin < self._deltas) & (self._deltas < R // self._cellSize))
+			empt_window[dst_indexes] += \
+				1 - (
+					(self._deltas[dst_indexes] - self._Rmin)
+					/ (R - self._epsilon - self._Rmin)
+			) ** 2 * self.angularOccupancy(droneHeading, sensors)
 
-		return empt_dst + self.angularOccupancy(S, P)
+		return empt_window
 
-	def angularOccupancy(self, S: tuple, P: list(tuple)) -> float:
+	def computeOccupancy(self, droneHeading: int, sensors: list) -> np.ndarray:
+		"""
+		Computes occupancy making use of the active window the drone is moving on and the heading.
 
+		:param droneHeading: Heading of the drone.
+		:type droneHeading: int
+		:param sensors: The sensors taking the measurements
+		:type sensors: list
+		:return: A Histogram Grid containing emptiness chances.
+		"""
+
+		ocp_window = np.zeros_like(self._deltas)
+		for sensor in sensors:
+			R = sensor.getDistance()
+			dst_indexes = np.where((R - self._epsilon < self._deltas) & (self._deltas < R + self._epsilon))
+			ocp_window[dst_indexes] += \
+				1 - (
+						(self._deltas[dst_indexes] - R)
+						/ self._epsilon
+				) ** 2 * self.angularOccupancy(droneHeading, sensors)
+
+		return ocp_window
+
+	def angularOccupancy(self, droneHeading: int, sensors: list) -> np.ndarray:
+		"""
+		Computes occupancy making use of the heading.
+
+		:param droneHeading: Heading of the drone.
+		:type droneHeading: int
+		:param sensors: The sensors taking the measurements
+		:type sensors: list
+		:return: A Histogram Grid containing vicinity to the center of the beam chances.
+		"""
+
+		ang_window = np.zeros_like(self._angles)
 		# Angle to the point inside the range [-omega/2, omega/2]
-		effective_angle = self._omega/2
-		if -effective_angle < theta < effective_angle:
-			return 1 - (2 * theta/self._omega) ** 2
-		else:
-			return 0
+		for sensor in sensors:
+			Theta = self._angles + np.deg2rad(droneHeading) + np.deg2rad(sensor.getAngle())
+			effective_angle = np.deg2rad(self._omega/2.0)
+			ang_indexes = np.where((-effective_angle < Theta) & (Theta < effective_angle))
+			ang_window[ang_indexes] += 1 - (2 * Theta[ang_indexes] / self._omega) ** 2
 
+		return ang_window
