@@ -119,8 +119,8 @@ class HistogramGrid:
 		empt_window = np.zeros_like(self._deltas)
 		# Distance to the point inside the range [Rmin, R]
 		for sensor in self._sensors:
-			R = sensor.getDistance() / self._windowSize
-			dst_indexes = np.where((self._Rmin < self._deltas) & (self._deltas < R // self._cellSize))
+			R = sensor.getDistance() / self._cellSize
+			dst_indexes = np.where((self._Rmin <= self._deltas) & (self._deltas <= R - self._epsilon))
 			empt_window[dst_indexes] += \
 				1 - (
 					(self._deltas[dst_indexes] - self._Rmin)
@@ -141,8 +141,8 @@ class HistogramGrid:
 
 		ocp_window = np.zeros_like(self._deltas)
 		for sensor in self._sensors:
-			R = sensor.getDistance() / self._windowSize
-			dst_indexes = np.where((R - self._epsilon < self._deltas) & (self._deltas < R + self._epsilon))
+			R = sensor.getDistance() / self._cellSize
+			dst_indexes = np.where((R - self._epsilon <= self._deltas) & (self._deltas <= R + self._epsilon))
 			ocp_window[dst_indexes] += \
 				1 - (
 						(self._deltas[dst_indexes] - R)
