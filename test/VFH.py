@@ -1,6 +1,6 @@
 """
 Author: Mario Bartolomé
-Date: Feb 07, 2018
+Date: Feb 14, 2018
 
 ######
 
@@ -33,7 +33,7 @@ class HistogramGrid:
 	UNKNOWN_STATE = 0
 
 	def __init__(self, sensors: list, Rmax: int, Rmin: int, Ru: int, windowSize: int = 141, cellSize: int = 5,
-	             epsilon: float = 0.05, omega: int = 30):
+	             epsilon: float = 0.5, omega: int = 30):
 		"""
 		Constructor method for Cartesian Histogram Grid.
 
@@ -58,7 +58,7 @@ class HistogramGrid:
 		self._sensors = sensors
 		self._Rmax = Rmax//cellSize
 		self._Rmin = Rmin//cellSize
-		self._Ru = Ru
+		self._Ru = Ru//cellSize
 		self._windowSize = windowSize
 		self._cellSize = cellSize
 		self._epsilon = epsilon
@@ -67,7 +67,6 @@ class HistogramGrid:
 		self._window = self.getWindow()
 		self._deltas = self.getDistances()
 		self._angles = self.getAngles()
-
 
 	def getDistances(self) -> np.ndarray:
 		"""
@@ -93,7 +92,7 @@ class HistogramGrid:
 		return np.arctan2(
 			_tempDst[:, 0], _tempDst[:, 1]
 		).reshape(
-			self._window, self._window
+			self._windowSize, self._windowSize
 		)
 
 	def getWindow(self):
@@ -108,70 +107,76 @@ class HistogramGrid:
 			.ravel(order='F')\
 			.reshape(self._windowSize ** 2, 2)
 
-	def computeEmptiness(self, droneHeading: int, sensors: list) -> np.ndarray:
+	def computeEmptiness(self, droneHeading: int) -> np.ndarray:
 		"""
 		Computes emptiness making use of the active window the drone is moving on and the heading.
 
 		:param droneHeading: Heading of the drone.
 		:type droneHeading: int
-		:param sensors: The sensors taking the measurements
-		:type sensors: list
 		:return: A Histogram Grid containing emptiness chances.
 		"""
 
 		empt_window = np.zeros_like(self._deltas)
 		# Distance to the point inside the range [Rmin, R]
-		for sensor in sensors:
-			R = sensor.getDistance()
+		for sensor in self._sensors:
+			R = sensor.getDistance() / self._windowSize
 			dst_indexes = np.where((self._Rmin < self._deltas) & (self._deltas < R // self._cellSize))
 			empt_window[dst_indexes] += \
 				1 - (
 					(self._deltas[dst_indexes] - self._Rmin)
 					/ (R - self._epsilon - self._Rmin)
-			) ** 2 * self.angularOccupancy(droneHeading, sensors)
+			) ** 2
+			empt_window *= self.angularOccupancy(droneHeading)
 
 		return empt_window
 
-	def computeOccupancy(self, droneHeading: int, sensors: list) -> np.ndarray:
+	def computeOccupancy(self, droneHeading: int) -> np.ndarray:
 		"""
 		Computes occupancy making use of the active window the drone is moving on and the heading.
 
 		:param droneHeading: Heading of the drone.
 		:type droneHeading: int
-		:param sensors: The sensors taking the measurements
-		:type sensors: list
 		:return: A Histogram Grid containing emptiness chances.
 		"""
 
 		ocp_window = np.zeros_like(self._deltas)
-		for sensor in sensors:
-			R = sensor.getDistance()
+		for sensor in self._sensors:
+			R = sensor.getDistance() / self._windowSize
 			dst_indexes = np.where((R - self._epsilon < self._deltas) & (self._deltas < R + self._epsilon))
 			ocp_window[dst_indexes] += \
 				1 - (
 						(self._deltas[dst_indexes] - R)
 						/ self._epsilon
-				) ** 2 * self.angularOccupancy(droneHeading, sensors)
+				) ** 2
+			ocp_window *= self.angularOccupancy(droneHeading)
 
 		return ocp_window
 
-	def angularOccupancy(self, droneHeading: int, sensors: list) -> np.ndarray:
+	def angularOccupancy(self, droneHeading: int) -> np.ndarray:
 		"""
 		Computes occupancy making use of the heading.
 
 		:param droneHeading: Heading of the drone.
 		:type droneHeading: int
-		:param sensors: The sensors taking the measurements
-		:type sensors: list
 		:return: A Histogram Grid containing vicinity to the center of the beam chances.
 		"""
 
 		ang_window = np.zeros_like(self._angles)
 		# Angle to the point inside the range [-omega/2, omega/2]
-		for sensor in sensors:
-			Theta = self._angles + np.deg2rad(droneHeading) + np.deg2rad(sensor.getAngle())
+		for sensor in self._sensors:
+			Theta = self._angles - np.deg2rad(droneHeading) - np.deg2rad(sensor.getAngle())
 			effective_angle = np.deg2rad(self._omega/2.0)
 			ang_indexes = np.where((-effective_angle < Theta) & (Theta < effective_angle))
 			ang_window[ang_indexes] += 1 - (2 * Theta[ang_indexes] / self._omega) ** 2
 
 		return ang_window
+
+
+if __name__ == '__main__':
+	from Sensors import Sensors
+	np.core.arrayprint._line_width = 150
+	sensor = Sensors()
+	histog = HistogramGrid([sensor], 375, 5, 10, cellSize=5, windowSize=7)
+	print(histog.computeOccupancy(0))
+	print(histog.computeEmptiness(0))
+	print("Done...")
