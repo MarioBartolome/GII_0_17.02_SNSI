@@ -150,11 +150,13 @@ Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tip
 \subsection{MultiWii Serial Protocol}
 \label{subsec:MSP}
 
-MultiWii es un software de control de multirotores y está basado en componentes de la Nintendo Wii. Los mandos de control de la consola de Nintendo poseen tres acelerómetros para determinar la posición angular y medir aceleraciones laterales. El problema es que los acelerómetros no son precisos para variaciones pequeñas, de forma que Nintendo creó un complemento que se podía conectar al propio mando, el Wii Motion Plus, que dispone de tres giroscopios, de forma que unidos a los tres acelerómetros iniciales, proporcionan una medición mucho más precisa de la posición del mando.
+MultiWii es un software de control de multirotores y está basado en componentes de la Nintendo Wii. Concretamente, los mandos de control de la consola de Nintendo poseen tres acelerómetros para determinar la posición angular y medir aceleraciones laterales. El problema es que los acelerómetros no son precisos para variaciones pequeñas, de forma que Nintendo creó un complemento que se podía conectar al propio mando, el Wii Motion Plus, que dispone de tres giroscopios, de forma que unidos a los tres acelerómetros iniciales, proporcionan una medición mucho más precisa de la posición del mando.
+
+A los primeros creadores del sistema de control MultiWii se les ocurrió la posiblidad de hacer uso de estos sensores para crear un sistema de control de drones. Uniendo estos sensores a un controlador, en principio se trató de un Arduino Mini, y programándolo para tal efecto, se logra crear una FC algo rudimentaria, pero que da muy buenos resultados.
 
 Para crear un entorno amigable para el usuario común, se desarrolló una aplicación de escritorio capaz de configurar los parámetros de esta controladora de vuelo poco convencional. De alguna forma debía lograrse una comunicación entre la FC y la aplicación, y así se implementó MultiWii Serial Protocol.\\Conocido como \textit{MSP}, se trata de un protocolo que se ha mantenido en diferentes implementaciones de sistemas de control de vuelo. No solo aquellos basados en sensores de la Nintendo Wii controlados por Arduino, sino en otros más modernos y potentes que han ido surgiendo los últimos años. Como el utilizado en nuestro proyecto.
 
-Se trata de un protocolo eficiente y sencillo, que permite una comunicación rápida y completa. Su composición puede verse en la imagen \ref{fig:MSPlayout}
+Es un protocolo eficiente y sencillo, que permite una comunicación rápida y completa. Su composición puede verse en la imagen \ref{fig:MSPlayout}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{MSPlayout}
@@ -172,17 +174,71 @@ Se trata de un protocolo eficiente y sencillo, que permite una comunicación rá
 
 \end{itemize}
 
-En el caso de nuestro proyecto, se hará uso de este protocolo dado que existe la posibilidad de establecer la recepción de los canales de radio a través de un puerto serie, así como de solicitar información sobre el estado del drone a la FC. Es decir, en lugar de utilizar un receptor de radio, se utilizará un puerto serie para obtener la telemetría\footnote{Se define telemetría como un sistema de medición de magnitudes a distancia; en este contexto el término se ha desvirtuado y se entiende como la información que es transmitida de vuelta a la emisora de vuelo, siendo esta generalmente información de los sensores de la FC, GPS o voltaje disponible en la batería.}, y establecer las entradas de los canales de radio. Para más detalles sobre la implementación de este protocolo, véase \ref{5-sec:MSP_implementation}
+En el caso de nuestro proyecto, se hará uso de este protocolo dado que existe la posibilidad de establecer la recepción de los canales de radio a través de un puerto serie, así como de solicitar información sobre el estado del drone a la FC. Es decir, en lugar de utilizar un receptor de radio, se utilizará un puerto serie para obtener la telemetría\footnote{Se define telemetría como un sistema de medición de magnitudes a distancia; en este contexto el término se ha desvirtuado y se entiende como la información que es transmitida de vuelta a la emisora de vuelo, siendo esta generalmente información de los sensores de la FC, GPS o voltaje disponible en la batería.}, y establecer las entradas de los canales de radio. 
+En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para la realización de este proyecto. 
+
+
+\begin{table}
+	\begin{center}	
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{m{5cm} | c | m{2cm} | c | m{5cm}}\hline
+			\toprule
+			Mensaje & Código & Estructura & Parse & Descripción\\
+			\otoprule
+			MSP\_MOTOR & 104 & 8x UINT16 & <8H & Devuelve la señal PWM que los ESC envían a los motores.\\
+			MSP\_RC & 105 & 18x UINT16 & <18H & Devuelve la señal PWM disponible en cada canal.\\
+			MSP\_ATTITUDE & 108  & 3x INT16 & <3h & Devuelve las inclinaciones de los ejes X e Y, así como la orientación.\\
+			MSP\_ANALOG & 110 & 1x UINT8, 3x UINT16 & <B3H & Devuelve el estado de los sensores incluidos en la FC: voltaje de la batería, RSSI, corriente instantánea y consumo\\
+			MSP\_SET\_RAW\_RC & 200 & Nx UINT16 & N/A & Establece el valor de los canales de radio-control.\\
+			MSP\_SET\_RAW\_MOTOR & 214 & Nx UINT16 & N/A & Establece la señal PWM a enviar a los motores.\\
+			\bottomrule
+		\end{tabular}
+		\caption{Mensajes MSP. Estructura de datos y representación}
+		\label{tb:MSP_MESSAGES}
+	\end{center}
+\end{table} 
+
+La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta cohesión con la tabla disponible en la descripción del protocolo MultiWii,\cite{MSP Definition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
+\\La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, descrita en la tabla \ref{tb:PY35STRUCT}
+
+\begin{table}
+	\begin{center}	
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{c | p{10cm}}\hline
+			\toprule
+			Elemento & Descripción\\
+			\otoprule
+			'<', '>' & Little o Big Endian respectivamente. Establece la ubicación del byte menos significativo, y por lo tanto determina la dirección de lectura de los grupos de bytes de la cadena recibida.\\
+			'B' & Caracter utilizado para representar un entero de un byte sin signo.\\
+			'H' & Caracter utilizado para representar un entero de dos bytes sin signo.\\
+			'c' & Caracter utilizado para representar un caracter de un byte.\\
+			\bottomrule
+		\end{tabular}
+		\caption{Nomenclatura del módulo Struct de la implementación 3.5 de Python}
+		\label{tb:PY35STRUCT}
+	\end{center}
+\end{table} 
+
+Los enteros sin signo representados en la tabla \ref{tb:PY35STRUCT}, tienen su equivalencia a enteros con signo mediante el mismo caracter en minúscula.\\La implementación realizada sigue un paradigma funcional, de forma que la función utilizada para leer las respuestas de la FC puede ser utilizada con nuevas solicitudes de información, con tan solo pasar un nuevo parser en forma de cadena de texto.
+
+
 
 \subsection{Secure SHell}
 \label{subsec:ssh}
-Secure SHell, o \textit{SSH} de aquí en adelante, es un protocolo de red cifrado. Se basa en el uso de claves públicas compartidas para crear un canal de comunicación seguro en una red no segura. Para llevar a cabo el acceso a la Raspberry Pi que controla el drone, se hace uso de este protocolo, siguiendo los siguientes pasos para su configuración:
+Secure SHell o \textit{SSH} de aquí en adelante, es un protocolo de red cifrado el cual se basa en el uso de claves públicas compartidas para crear un canal de comunicación seguro en una red no segura. Al aceptar una conexión, el servicio SSH presenta una shell sobre la que el cliente puede realizar las operaciones necesarias y propias de su nivel de privilegio. Además proporciona la posibilidad de redirigir el sistema de ventanas remoto al cliente, aunque en este caso se está haciendo uso de una versión reducida del SO, y por lo tanto no presenta entorno de escritorio. El acceso a la Raspberry Pi que controla el drone, se lleva a cabo mediante el uso de este protocolo, siguiendo los siguientes pasos para su configuración:
 \begin{itemize}
 \item Generar el par de claves pública-privada en el cliente mediante el comando \code{ssh-keygen}
 \item Copiar la clave pública del cliente en el archivo \code{.ssh/authorized\_keys} de la carpeta \code{home} del usuario a utilizar en el sistema remoto.
-\item Editar el archivo \code{/etc/ssh/sshd\_config} 
+\item Editar el archivo \code{/etc/ssh/sshd\_config} para:
+	\begin{itemize}
+	\item permitir unicamente acceso a usuarios que envíen una clave pública contenida en \code{authorized\_keys}.
+	\item desactivar el acceso al usuario root, estableciendo la propiedad \code{PermitRootLogin} a \code{no}.
+	\item desactivar el acceso por contraseña, estsableciendo la propiedad \code{PasswordAuthentication} a \code{no}.
+	\end{itemize}	 
 \end{itemize} 
 
+De esta forma se logra dotar de acceso seguro a un cliente autorizado. Al tratar de conectar al sistema de control del drone, se muestra un banner en el que se advierte a usarios malintencionados de la existencia de un log de conexiones recibidas. 
+Para tratra de mitigar los intentos más comunes de intrusión en el sistema, algo tan simple como cambiar el puerto en el que responde el servidor SSH, se ha mostrado tremnedamente efectivo contra los ataques automatizados más simples y comunes.
 
 
 
