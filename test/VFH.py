@@ -68,15 +68,15 @@ class HistogramGrid:
 		self._windowDronePos = np.array([self._windowSize//2, self._windowSize//2])
 		self._fullMap = fullMap
 		self._window = self.getWindow()
-		self._deltas = self.getDistances()
-		self._angles = self.getAngles()
+		self._deltas = self.computeDistances()
+		self._angles = self.computeAngles()
 		self._emptiness = self.resetWindow()
-		self._ocuppiness = self.resetWindow()
+		self._occupiness = self.resetWindow()
 
-	def resetWindow(self):
+	def resetWindow(self)  -> np.ndarray:
 		return np.zeros((self._windowSize, self._windowSize))
 
-	def getDistances(self) -> np.ndarray:
+	def computeDistances(self) -> np.ndarray:
 		"""
 		Will calculate the Euclidean distance from the center of the Active Window to each cell on the active window.
 
@@ -90,7 +90,7 @@ class HistogramGrid:
 			self._windowSize, self._windowSize
 		)
 
-	def getAngles(self):
+	def computeAngles(self)  -> np.ndarray:
 		"""
 		Will calculate the angle from the center of the Active Window to each cell on the active window over *OX*.
 
@@ -103,7 +103,7 @@ class HistogramGrid:
 			self._windowSize, self._windowSize
 		)
 
-	def getWindow(self):
+	def getWindow(self) -> np.ndarray:
 		"""
 		Makes a grid
 
@@ -114,6 +114,70 @@ class HistogramGrid:
 		)[::-1]\
 			.ravel(order='F')\
 			.reshape(self._windowSize ** 2, 2)
+
+	def getAngles(self) -> np.ndarray:
+		"""
+		Returns the angles from the center of the Active Window to each cell on the active window over *OX*.
+
+		:return: the angles
+		"""
+		return self._angles
+
+	def getDistances(self) -> np.ndarray:
+		"""
+		Returns the Euclidean distance from the center of the Active Window to each cell on the active window.
+
+		:return: the deltas
+		"""
+		return self._deltas
+
+	def getSensors(self) -> list:
+		"""
+		Returns the sensor list.
+
+		:return: the list of sensors
+		"""
+		return self._sensors
+
+	def getEpsilon(self) -> float:
+		"""
+		Returns the approximate deviance of the sonar readings in number of cells.
+
+		:return: the number of cells the sonar will misread
+		"""
+		return self._epsilon
+
+	def getOmega(self) -> int:
+		"""
+		Returns the maximum angle covered by the sonar.
+
+		:return: the angle
+		"""
+		return self._omega
+
+	def getCellSize(self) -> int:
+		"""
+		Returns the cell size in cm
+
+		:return: the cell size
+		"""
+		return self._cellSize
+
+	def getWindowSize(self) -> int:
+		"""
+		Returns the window size in cells.
+
+		:return: the window size
+		"""
+		return self._windowSize
+
+	def getOcpWindow(self) -> np.ndarray:
+		"""
+		Returns the occupancy window
+
+		:return: the occupancy window
+		"""
+		return self._occupiness
 
 	def computeEmptiness(self, droneHeading: int) -> np.ndarray:
 		"""
@@ -161,9 +225,9 @@ class HistogramGrid:
 			norm = np.sum(ocp_window)
 			norm = norm if norm != 0 else 1
 			ocp_window *= (1 - self._emptiness) / norm
-			self._ocuppiness += ocp_window - self._ocuppiness * ocp_window
+			self._occupiness += ocp_window - self._occupiness * ocp_window
 
-		return self._ocuppiness
+		return self._occupiness
 
 	def angularOccupancy(self, droneHeading: int) -> np.ndarray:
 		"""
@@ -196,8 +260,8 @@ class HistogramGrid:
 		:return: An numpy ndArray matrix representing the whole Histogram Grid.
 		"""
 
-		tmp_ocp = self.computeOccupancy(droneHeading)
 		tmp_empt = self.computeEmptiness(droneHeading)
+		tmp_ocp = self.computeOccupancy(droneHeading)
 
 		# Begin and End points on the fullMap to convolve the window
 		tmp_begin_map = location - self._windowSize // 2
@@ -206,7 +270,7 @@ class HistogramGrid:
 		end_map = np.min([self._fullMap.shape, tmp_end_map], axis=0)
 
 		# The start point of the window is 0,0 unless the drone is so close to the border its window overflows the Map
-		begin_window = np.array([0,0])
+		begin_window = np.array([0, 0])
 		neg_idx = tmp_begin_map < 0
 		if np.any(neg_idx):
 			begin_window[neg_idx] = np.abs(tmp_begin_map[neg_idx])
@@ -230,13 +294,92 @@ class HistogramGrid:
 
 		return self._fullMap
 
+class PolarHistogram:
+	def __init__(self, histogrid: HistogramGrid):
+		self._histogrid = histogrid
+
+	def computeOccupancy(self, droneHeading:int) -> np.ndarray:
+		"""
+		Computes the VFH simpler occupancy of an active Window. Everytime a reading comes from a sensor, only the cell
+		laying at the beam's bisector and at the given distance increases its value.
+		:param droneHeading:
+		:return:
+		"""
+		ocp_window = self._histogrid.getOcpWindow()
+		for sensor in self._histogrid.getSensors():
+			R = sensor.getDistance() // self._histogrid.getCellSize()
+			dst_indexes = (R - self._histogrid.getEpsilon() <= self._histogrid.getDistances()) &\
+			              (self._histogrid.getDistances() <= R + self._histogrid.getEpsilon())
+
+			Theta = self._histogrid.getAngles() - np.deg2rad(droneHeading) - np.deg2rad(sensor.getAngle())
+			Theta[Theta >= np.pi] -= np.pi * 2
+			idx = np.unravel_index(np.argmin(np.abs(Theta) + np.logical_not(dst_indexes) * 999), Theta.shape)
+
+			ocp_window[idx] += 1
+
+		return ocp_window
+
+	def computeObstacleMagnitude(self, droneHeading: int, a: int = 5) -> np.ndarray:
+		"""
+		Computes the effect that each obstacle is creating against the robot.
+		This magnitude is proportional to the distance, the closer the bigger. Also the value obtained from the readings,
+		is squared, so recurring readings at the same point will increase the certainty and lower ones will be treated
+		as noise.
+
+		The values *a* and *b* are positive constants that define the influence of an obstacle, determining *a* the
+		strength of that force and *b* the distance it'll begin to cause a disturbance.
+
+		:param droneHeading: the heading of the drone.
+		:type droneHeading: int
+		:param a: force strength of the obstacles.
+		:type a: int
+		:return: A magnitude grid.
+		"""
+
+		b = a/self._histogrid.getWindowSize()
+		obstacle_magnitude = self.computeOccupancy(droneHeading) ** 2 \
+		       * \
+		       (a - b * self._histogrid.getDistances())
+
+		return obstacle_magnitude
+
+	def computeObstacleDensity(self, droneHeading: int, alpha: int = 5) -> np.ndarray:
+		"""
+		Computes the Obstacle Density on every sector. Knowing that the Polar Histogram has an arbitrary angular
+		resolution *α*, such that n = 360//α, each sector k corresponds to a discrete angle.
+		The density of obstacles on that sector is the summation of every ObstacleMagnitude of that sector.
+
+		:param droneHeading: the heading of the drone.
+		:type droneHeading: int
+		:param alpha: angular resolution.
+		:type alpha: int
+		:return: The obstacle density.
+		"""
+
+		n = 360//alpha
+		sector = self._histogrid.computeAngles()
+		sector[sector<0] += np.pi * 2
+		sector //= np.deg2rad(alpha)
+		mij = self.computeObstacleMagnitude(droneHeading)
+		polar_obstacle_density = np.array([
+			mij[sector == s].sum() for s in range(n)
+		])
+
+		return polar_obstacle_density
+
+	def computePODsmoothing(self, POD: np.ndarray) -> np.ndarray:
+		#TODO
+		pass
+
 
 if __name__ == '__main__':
-	from Sensors import Sensors
+	from test.Sensors import Sensors
 	np.core.arrayprint._line_width = 150
 	sensor = Sensors()
-	histog = HistogramGrid([sensor], 375, 5, 10, np.arange(11**2).reshape(11,11), cellSize=5, windowSize=7)
-	# print(histog.computeOccupancy(12))
-	# print(histog.computeEmptiness(12))
-	print(histog.computeMap(-180, np.array([3,2])))
+	histog = HistogramGrid([sensor], 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15,15), cellSize=5, windowSize=7)
+	# print(histog.computeOccupancy(-22))
+	# print(histog.computeEmptiness(-22))
+	#print(histog.computeMap(-12, np.array([4,4])))
+	polarHistog = PolarHistogram(histog)
+	print(polarHistog.computeObstacleDensity(-40))
 	print("Done...")
