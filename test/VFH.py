@@ -295,8 +295,9 @@ class HistogramGrid:
 		return self._fullMap
 
 class PolarHistogram:
-	def __init__(self, histogrid: HistogramGrid):
+	def __init__(self, histogrid: HistogramGrid, alpha: int = 5):
 		self._histogrid = histogrid
+		self._alpha = alpha
 
 	def computeOccupancy(self, droneHeading:int) -> np.ndarray:
 		"""
@@ -343,7 +344,7 @@ class PolarHistogram:
 
 		return obstacle_magnitude
 
-	def computeObstacleDensity(self, droneHeading: int, alpha: int = 5) -> np.ndarray:
+	def computeObstacleDensity(self, droneHeading: int) -> np.ndarray:
 		"""
 		Computes the Obstacle Density on every sector. Knowing that the Polar Histogram has an arbitrary angular
 		resolution *α*, such that n = 360//α, each sector k corresponds to a discrete angle.
@@ -351,15 +352,14 @@ class PolarHistogram:
 
 		:param droneHeading: the heading of the drone.
 		:type droneHeading: int
-		:param alpha: angular resolution.
 		:type alpha: int
 		:return: The obstacle density.
 		"""
 
-		n = 360//alpha
+		n = 360//self._alpha
 		sector = self._histogrid.computeAngles()
 		sector[sector<0] += np.pi * 2
-		sector //= np.deg2rad(alpha)
+		sector //= np.deg2rad(self._alpha)
 		mij = self.computeObstacleMagnitude(droneHeading)
 		polar_obstacle_density = np.array([
 			mij[sector == s].sum() for s in range(n)
@@ -367,10 +367,58 @@ class PolarHistogram:
 
 		return polar_obstacle_density
 
+	def getAlpha(self) -> int:
+		"""
+		Returns angular resolution value 𝛂
+
+		:return: angular resolution.
+		"""
+		return self._alpha
+
 	def computePODsmoothing(self, POD: np.ndarray) -> np.ndarray:
 		#TODO
 		pass
 
+
+
+class HeadingControl:
+	def __init__(self, threshold: int, polarHistog: PolarHistogram, target: np.ndarray, wideValleyThreshold: int = 15):
+		self._threshold = threshold
+		self._polarHistog = polarHistog
+		self._goal = target
+		self._wideValleyThreshold = wideValleyThreshold
+
+	def computeAdaptativeThresold(self):
+		"""
+		#TODO Would be great to have an adaptative threshold:
+		During normal travel the threshold is low, so the agent can freely travel. Once a cluttered path is set,
+		the threshold should be raised and speed lowered to avoid collision
+		"""
+		pass
+
+	def computeCandidateValleys(self, sPOD: np.ndarray) -> np.ndarray:
+		"""
+		Computes candidate Valleys under the given threshold. The function will return the beginning and the end of the
+		valleys.
+
+		:param sPOD: a Smoothed Polar Obstacle Density
+		:return:
+		"""
+		valleys = np.concatenate(([0.], np.less_equal(sPOD, self._threshold), [0.]))
+		valleys = np.where(np.abs(np.diff(valleys)) == 1)[0].reshape(-1, 2)
+
+		return valleys
+
+	def computeHeading(self, droneHeading: int, target: np.ndarray) -> int:
+		target_sector = np.rad2deg(np.arctan(target[0]/target[1]))//self._polarHistog.getAlpha()
+		valleys = self.computeCandidateValleys(self._polarHistog.computePODsmoothing(
+			self._polarHistog.computeObstacleDensity(droneHeading))
+		)
+		kn = np.argmin(np.abs(valleys - target_sector))
+		closest_valley = valleys[kn//2]
+		valley_width = closest_valley[1] - closest_valley[0]
+		kf = kn + self._wideValleyThreshold if valley_width > self._wideValleyThreshold else
+		#TODO
 
 if __name__ == '__main__':
 	from test.Sensors import Sensors
