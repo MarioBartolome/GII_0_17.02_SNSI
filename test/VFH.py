@@ -73,7 +73,7 @@ class HistogramGrid:
 		self._emptiness = self.resetWindow()
 		self._occupiness = self.resetWindow()
 
-	def resetWindow(self)  -> np.ndarray:
+	def resetWindow(self) -> np.ndarray:
 		return np.zeros((self._windowSize, self._windowSize))
 
 	def computeDistances(self) -> np.ndarray:
@@ -299,7 +299,7 @@ class PolarHistogram:
 		self._histogrid = histogrid
 		self._alpha = alpha
 
-	def computeOccupancy(self, droneHeading:int) -> np.ndarray:
+	def computeOccupancy(self, droneHeading: int) -> np.ndarray:
 		"""
 		Computes the VFH simpler occupancy of an active Window. Everytime a reading comes from a sensor, only the cell
 		laying at the beam's bisector and at the given distance increases its value.
@@ -352,13 +352,12 @@ class PolarHistogram:
 
 		:param droneHeading: the heading of the drone.
 		:type droneHeading: int
-		:type alpha: int
 		:return: The obstacle density.
 		"""
 
 		n = 360//self._alpha
 		sector = self._histogrid.computeAngles()
-		sector[sector<0] += np.pi * 2
+		sector[sector < 0] += np.pi * 2
 		sector //= np.deg2rad(self._alpha)
 		mij = self.computeObstacleMagnitude(droneHeading)
 		polar_obstacle_density = np.array([
@@ -375,17 +374,16 @@ class PolarHistogram:
 		"""
 		return self._alpha
 
-	def computePODsmoothing(self, POD: np.ndarray) -> np.ndarray:
+	def computePODsmoothing(self, POD: np.ndarray, l:int = 5) -> np.ndarray:
 		#TODO
 		pass
 
 
 
 class HeadingControl:
-	def __init__(self, threshold: int, polarHistog: PolarHistogram, target: np.ndarray, wideValleyThreshold: int = 15):
+	def __init__(self, threshold: int, polarHistog: PolarHistogram, wideValleyThreshold: int = 15):
 		self._threshold = threshold
 		self._polarHistog = polarHistog
-		self._goal = target
 		self._wideValleyThreshold = wideValleyThreshold
 
 	def computeAdaptativeThresold(self):
@@ -409,16 +407,43 @@ class HeadingControl:
 
 		return valleys
 
-	def computeHeading(self, droneHeading: int, target: np.ndarray) -> int:
-		target_sector = np.rad2deg(np.arctan(target[0]/target[1]))//self._polarHistog.getAlpha()
+	def computeHeading(self, droneHeading: int, target: np.ndarray, location: np.ndarray) -> float:
+		"""
+		Computes the new heading the robot should take to avoid collision.
+
+		:param droneHeading: the heading of the drone.
+		:type droneHeading: int
+		:param target: the position of the target on the full map.
+		:type target: np.ndarray
+		:param location: the position of the drone on the full map.
+		:return: The new heading.
+		"""
+		direction = target - location
+		target_sector = np.rad2deg(np.arctan(direction[0]/direction[1]))
+
+		if target_sector < 0:
+			target_sector += 360
+
+		target_sector /= self._polarHistog.getAlpha()
 		valleys = self.computeCandidateValleys(self._polarHistog.computePODsmoothing(
 			self._polarHistog.computeObstacleDensity(droneHeading))
 		)
-		kn = np.argmin(np.abs(valleys - target_sector))
-		closest_valley = valleys[kn//2]
-		valley_width = closest_valley[1] - closest_valley[0]
-		kf = kn + self._wideValleyThreshold if valley_width > self._wideValleyThreshold else
-		#TODO
+
+		target_on_fov = np.where((valleys[:, 0] <= target_sector) & (valleys[:, 1] >= target_sector))[0]
+		if target_on_fov.size != 0:
+			theta = np.round(target_sector * self._polarHistog.getAlpha())
+		else:
+			idx = np.argmin(np.abs(valleys - target_sector))
+			kn = valleys.reshape(-1)[idx]
+			closest_valley = valleys[idx // 2]
+			valley_width = closest_valley[1] - closest_valley[0]
+			kf = kn + self._wideValleyThreshold if valley_width > self._wideValleyThreshold else closest_valley[1]
+			theta = ((kn + kf) // 2) * self._polarHistog.getAlpha()
+
+		theta -= 360 if target_sector > 180 / self._polarHistog.getAlpha() else 0
+
+		return theta - droneHeading
+
 
 if __name__ == '__main__':
 	from test.Sensors import Sensors
@@ -429,5 +454,9 @@ if __name__ == '__main__':
 	# print(histog.computeEmptiness(-22))
 	#print(histog.computeMap(-12, np.array([4,4])))
 	polarHistog = PolarHistogram(histog)
-	print(polarHistog.computeObstacleDensity(-40))
+	# print(polarHistog.computeObstacleDensity(-40))
+	headingController = HeadingControl(2, polarHistog)
+	drone_global_location = np.array([45, 12])
+	goal = np.array([40, 20])
+	print(headingController.computeHeading(0, goal, drone_global_location))
 	print("Done...")
