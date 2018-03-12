@@ -24,7 +24,7 @@ data representation are created:
 
 
 import numpy as np
-
+from scipy import signal
 
 class HistogramGrid:
 	"""
@@ -375,8 +375,20 @@ class PolarHistogram:
 		return self._alpha
 
 	def computePODsmoothing(self, POD: np.ndarray, l:int = 5) -> np.ndarray:
-		#TODO
-		pass
+		"""
+		Smooths the POD readings.
+
+		:param POD: the POD to smooth.
+		:type POD: np.ndarray
+		:param l: the number of points in the smoothing function. Increasing it lowers the resolution, but reduces noise.
+		:type l: int
+		:return: the smoothed Polar Obstacle Density sectors.
+		"""
+
+		smoother = signal.hann(l, sym=True)
+		sPOD = signal.convolve(POD, smoother, mode='same') / np.sum(smoother)
+
+		return sPOD
 
 
 
@@ -437,12 +449,13 @@ class HeadingControl:
 			kn = valleys.reshape(-1)[idx]
 			closest_valley = valleys[idx // 2]
 			valley_width = closest_valley[1] - closest_valley[0]
-			kf = kn + self._wideValleyThreshold if valley_width > self._wideValleyThreshold else closest_valley[1]
+			kf = min(360 / self._polarHistog.getAlpha() - 1, kn + self._wideValleyThreshold) \
+				if valley_width > self._wideValleyThreshold else closest_valley[1]
 			theta = ((kn + kf) // 2) * self._polarHistog.getAlpha()
 
-		theta -= 360 if target_sector > 180 / self._polarHistog.getAlpha() else 0
-
-		return theta - droneHeading
+		theta -= droneHeading
+		theta += 360 if theta < -180 else -360 if theta > 180 else 0
+		return theta
 
 
 if __name__ == '__main__':
