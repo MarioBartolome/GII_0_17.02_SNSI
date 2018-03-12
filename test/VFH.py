@@ -265,7 +265,7 @@ class HistogramGrid:
 
 		# Begin and End points on the fullMap to convolve the window
 		tmp_begin_map = location - self._windowSize // 2
-		begin_map = np.max([[0,0], tmp_begin_map], axis=0)
+		begin_map = np.max([[0, 0], tmp_begin_map], axis=0)
 		tmp_end_map = location + self._windowSize // 2 + 1
 		end_map = np.min([self._fullMap.shape, tmp_end_map], axis=0)
 
@@ -293,6 +293,7 @@ class HistogramGrid:
 			-tmp_empt[begin_window[0]:end_window[0], begin_window[1]:end_window[1]][np.logical_not(ocp_idx)]
 
 		return self._fullMap
+
 
 class PolarHistogram:
 	def __init__(self, histogrid: HistogramGrid, alpha: int = 5):
@@ -374,7 +375,7 @@ class PolarHistogram:
 		"""
 		return self._alpha
 
-	def computePODsmoothing(self, POD: np.ndarray, l:int = 5) -> np.ndarray:
+	def computePODsmoothing(self, POD: np.ndarray, l: int = 5) -> np.ndarray:
 		"""
 		Smooths the POD readings.
 
@@ -389,7 +390,6 @@ class PolarHistogram:
 		sPOD = signal.convolve(POD, smoother, mode='same') / np.sum(smoother)
 
 		return sPOD
-
 
 
 class HeadingControl:
@@ -460,14 +460,11 @@ class HeadingControl:
 
 if __name__ == '__main__':
 	from test.Sensors import Sensors
-	np.core.arrayprint._line_width = 150
-	sensor = Sensors()
-	histog = HistogramGrid([sensor], 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15,15), cellSize=5, windowSize=7)
-	# print(histog.computeOccupancy(-22))
-	# print(histog.computeEmptiness(-22))
-	#print(histog.computeMap(-12, np.array([4,4])))
+	sensor_pin = 10
+	sensor_angle = 15
+	sensor = Sensors(sensor_pin, sensor_angle)
+	histog = HistogramGrid([sensor], 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15, 15), cellSize=5, windowSize=7)
 	polarHistog = PolarHistogram(histog)
-	# print(polarHistog.computeObstacleDensity(-40))
 	headingController = HeadingControl(2, polarHistog)
 	drone_global_location = np.array([45, 12])
 	goal = np.array([40, 20])
