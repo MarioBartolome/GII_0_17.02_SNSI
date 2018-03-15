@@ -339,3 +339,5 @@ TSWLatexianTemp*
 *.gz
 
 \.idea/
+
+*.pyc

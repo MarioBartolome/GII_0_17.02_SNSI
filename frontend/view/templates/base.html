@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Universidad de Burgos - Drone Control System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div>
+        Navigation:
+        <a href={{ url_for('index') }}>Home</a>
+        {% if current_user.is_anonymous %}
+            <a href={{ url_for('login') }}>LogIn</a>
+        {% else %}
+            <a href={{ url_for('logout') }}>LogOut</a>
+        {% endif %}
+    </div>
+    <hr>
+    {% with messages = get_flashed_messages(category_filter=['message']) %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade in">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+    {% with errors = get_flashed_messages(category_filter=['error']) %}
+        {% if errors %}
+        <ul>
+             {% for error in errors %}
+            <div class="alert alert-danger alert-dismissible fade in">
+                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ error }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+    {% with warnings = get_flashed_messages(category_filter=['warning']) %}
+        {% if warnings %}
+        <ul>
+             {% for warning in warnings %}
+            <div class="alert alert-warning alert-dismissible fade in">
+                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ warning }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+
+
+    <div class="container">
+        {% block content %}{% endblock%}
+    </div>
+</body>
+</html>
