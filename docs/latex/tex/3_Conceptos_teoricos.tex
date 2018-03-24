@@ -12,21 +12,90 @@ Los Filtros de Partículas son modelos utilizados para tratar de estimar el esta
 \\Fue definido como \textit{bootstrap filter} en 1993 por N. Gordon, D. Salmond y A. Smith.  Se trata de un método que pretende implementar filtros bayesianos recursivos, haciendo uso del método de Montecarlo, es decir, realiza repetidas medidas del estado para estimar la posición del sistema.
 \\ 
 
-\subsubsection{Subsubsecciones}
-
-Y subsecciones. 
-
 \subsection{Campos Potenciales}
 
 A la hora de lograr una navegación segura en un entorno determinado, es necesario implementar un sistema de evasión de obstáculos. 
-\\El algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.
+\\Introducido por Oussama Khatib en 1986, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. La posición que debe alcanzar, su meta o destino, se presenta como una fuerza de atracción, y los obstáculos como fuerzas repulsivas. 
+Los diferentes vectores fuerza, determinan la dirección y magnitud de la fuerza atrayente o repulsora.\\Sea $q$ la posición actual del agente, considerada como una partícula moviendose en un espacio n-dimensional $R^n$. Por simplicidad, se considera la posición como una tupla, esto es, bidimensional, tal que $q = (x,y)$. El campo potencial en el que se encuentra el agente se una función escalar $ U(q):R^2\rightarrow R $, generado por la superposición de los campos atrayentes $U_{att}$ y repulsores $U_{rep}$:
+$$U(q) = U_{att}(q) + U_{rep}(q)$$
+
+Por supuesto, la suma de todos lo campos repulsores $U_{rep}$ generan un vector repulsor, que sumado al de atracción puede determinar la necesidad de acercarse o alejarse de una determinada zona:
+$$U(q) = U_{att}(q) + \sum_i{U_{rep_i}(q)}$$
+
+Donde $U_{rep_i}$ representa el campo potencial generado por un obstáculo $i$.
+
+Suponiendo que $U(q)$ es diferenciable, en cada punto $q$, el campo potencial $\nabla(q)$ es un vector que apunta en la dirección que, \textbf{localmente}, incrementa $U(q)$. \\De esta forma, si el potencial de atracción en la meta se considera 0 y a medida que el agente se distancia de ella, se incrementa, se puede establecer, teniendo en cuenta el potencial de repulsión producido por los diferentes obstáculos, un vector $F(q)$ cuya dirección apunta hacia donde se reduce el potencial $U$, y su magnitud establece la velocidad con que este se reduce:
+$$ F(q) = F_{att}(q) + F_{rep}(q) = -\nabla U_{att}(q) - \nabla U_{rep}(q) $$
+
+
+
+\textbf{El potencial de atracción} $U_{att}(q)$ se establece como una función cuadrática proporcional a la distancia a la meta. De esta forma crece exponencialmente a medida que el agente se aleja de su destino, y se reduce considerablemente en su cercanía. Así puede ser utilizado como fuente de información para establecer la velocidad de aproximación al objetivo, de forma que el agente no sobreactue:
+$$U_{att}(q) = \epsilon * \delta_{meta}(q)^2$$
+Donde $\delta$ es la distancia euclidiana desde la posición del agente $q$ a la meta $meta$, y $\epsilon$ es un factor de escalado positivo, que puede utilizarse para ajustar la influencia de la distancia en la velocidad del agente. Y su gradiente negativo: 
+$$ -\nabla U_{att}(q) = -\epsilon * (q - q_{meta}) $$
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{UattrGradient}
+	\caption{Gradiente de Potencial de Atracción.}\label{fig:uattrgrad}
+\end{figure}
+
+En la figura \ref{fig:uattrgrad} se ha establecido el agente en el punto $(10,12)$ y la meta en $(0,0)$. Puede verse el efecto del gradiente aplicado.
+
+\textbf{El potencial de repulsión} $U_{rep}(q)$ lo establecen los obstáculos detectados por los sensores del agente. Si se establece una función proporcional a la distancia del agente a los obstáculos, el potencial repulsor crece en la cercanía a estos, y decrece con la distancia. De esta forma un obstáculo lejano al agente no debería presentar niguna fuerza sobre él:
+$$U_{rep}(q) = U = \begin{cases}
+0 & \text{ si } \delta > \rho \\ 
+\eta * (\frac{1}{\delta_{obs}(q)}-\frac{1}{\rho})^2 & \text{ si } \delta \leq \rho; \delta \neq 0 
+\end{cases}$$
+
+Donde $\eta$ es un factor de escalado positivo, que permite establecer como de fuerte se ve afectado el agente por el campo repulsor, $\delta$ es la distancia euclidiana desde la posición del agente $q$ al obstáculo $obs$, y $\rho$ es un factor de escalado positivo, que permite establecer la distancia de influencia de forma proporcional. Y su gradiente
+$$-\nabla U_{rep}(q) = \begin{cases} 0 & \text{ si } \delta > \rho \\
+\eta * (\frac{1}{\delta_{obs}(q)}-\frac{1}{\rho}) * \frac{1}{\delta_{obs}(q)^2}\frac{q-q_{obs}}{\delta_{obs}(q)} & \text{ si }  \delta \leq \rho; \delta \neq 0  
+\end{cases}$$
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{UrepGradient}
+	\caption{Gradiente de Potencial de Repulsión.}\label{fig:urepgrad}
+\end{figure}
+
+ En la figura \ref{fig:urepgrad} se ha creado una serie de obstáculos artificialmente para ilustrar el comportamiento del algoritmo. 
+
+ \newpage
+\subsubsection{Desventajas}
+El algoritmo de campos potenciales se puede llevar a cabo con una implemntación simple y eficiente haciendo uso de Numpy, dado que se puede crear una representación matricial del plano en que se desplaza el agente, que contenga los diferentes potenciales en cada posición. 
+Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embargo, tiene ciertas desventajas que lo han hecho, cuanto menos, inútil para las necesidades de este proyecto:
+\begin{itemize}
+\item Es un algoritmo basado en descenso de gradiente, y como tal puede quedar \textit{atascado} en mínimos locales. Estos mínimos pueden encontrarse en zonas que contengan obstáculos en forma cóncava o de caja abierta, tal como se ilustra en la figura \ref{fig:localmin}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{localmin}
+	\caption{Mínimo local en zonas convexas.}\label{fig:localmin}
+\end{figure}
+\item De encontrarse en un espacio con forma de corredor o pasillo, cualquier acercamiento hacia las paredes ocasionará una corrección en el sentido opuesto al campo repulsor, lo cual puede ocasionar un movimiento oscilatorio si dicha corrección supone aproximar el agente a la pared opuesta, tal y como se ilustra en la figura \ref{fig:corridoroverc}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{corridoroverc}
+	\caption{Movimiento oscilatorio en corredores estrechos.}\label{fig:corridoroverc}
+\end{figure}
+\item Alta complejidad computacional pese a poder modelarse como calculo vectorizado, requiere de muchas más operaciones que otros métodos más avanzados.
+\item No funciona correctamente con agentes que se desplazan a alta velocidad. 
+\item Al realizar la adición de todos los campos potenciales, tanto repulsores como atrayente, se produce una gran pérdida de información sobre la distribución local de los obstáculos.
+\end{itemize} 
+
+Por estos motivos, se ha desechado el algoritmo de Campos Potenciales como sistema de evasión de obstáculos, y se ha pasado a un modelo más avanzado basado en un plano cartesiano, conocido como \textit{Vector Field Histogram} y detallado en el apartado \nameref{subsec:VFH}. 
+ 
+\subsection{Vector Field Histogram}
+\label{subsec:VFH}
+El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo real.
+
 
 \section{Dispositivos Físicos}
 
 \subsection{Raspberry Pi}
 
 
-\begin{table}
+\begin{table}[H]
 	\begin{center}
 		\rowcolors {2}{gray!35}{}
 		\begin{tabular}{l | c}\hline
