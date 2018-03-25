@@ -13,27 +13,41 @@ Los Filtros de Partículas son modelos utilizados para tratar de estimar el esta
 \\ 
 
 \subsection{Campos Potenciales}
-
+\label{subsec:PF}
+\setcounter{equation}{0}
 A la hora de lograr una navegación segura en un entorno determinado, es necesario implementar un sistema de evasión de obstáculos. 
 \\Introducido por Oussama Khatib en 1986, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. La posición que debe alcanzar, su meta o destino, se presenta como una fuerza de atracción, y los obstáculos como fuerzas repulsivas. 
 Los diferentes vectores fuerza, determinan la dirección y magnitud de la fuerza atrayente o repulsora.\\Sea $q$ la posición actual del agente, considerada como una partícula moviendose en un espacio n-dimensional $R^n$. Por simplicidad, se considera la posición como una tupla, esto es, bidimensional, tal que $q = (x,y)$. El campo potencial en el que se encuentra el agente se una función escalar $ U(q):R^2\rightarrow R $, generado por la superposición de los campos atrayentes $U_{att}$ y repulsores $U_{rep}$:
-$$U(q) = U_{att}(q) + U_{rep}(q)$$
+\begin{equation}
+U(q) = U_{att}(q) + U_{rep}(q)
+\label{equation:Uq}
+\end{equation}
 
 Por supuesto, la suma de todos lo campos repulsores $U_{rep}$ generan un vector repulsor, que sumado al de atracción puede determinar la necesidad de acercarse o alejarse de una determinada zona:
-$$U(q) = U_{att}(q) + \sum_i{U_{rep_i}(q)}$$
+\begin{equation}
+U(q) = U_{att}(q) + \sum_i{U_{rep_i}(q)}
+\label{equation:UqTotal}
+\end{equation}
 
 Donde $U_{rep_i}$ representa el campo potencial generado por un obstáculo $i$.
 
 Suponiendo que $U(q)$ es diferenciable, en cada punto $q$, el campo potencial $\nabla(q)$ es un vector que apunta en la dirección que, \textbf{localmente}, incrementa $U(q)$. \\De esta forma, si el potencial de atracción en la meta se considera 0 y a medida que el agente se distancia de ella, se incrementa, se puede establecer, teniendo en cuenta el potencial de repulsión producido por los diferentes obstáculos, un vector $F(q)$ cuya dirección apunta hacia donde se reduce el potencial $U$, y su magnitud establece la velocidad con que este se reduce:
-$$ F(q) = F_{att}(q) + F_{rep}(q) = -\nabla U_{att}(q) - \nabla U_{rep}(q) $$
-
+\begin{equation}
+F(q) = F_{att}(q) + F_{rep}(q) = -\nabla U_{att}(q) - \nabla U_{rep}(q)
+\label{equation:Fq}
+\end{equation}
 
 
 \textbf{El potencial de atracción} $U_{att}(q)$ se establece como una función cuadrática proporcional a la distancia a la meta. De esta forma crece exponencialmente a medida que el agente se aleja de su destino, y se reduce considerablemente en su cercanía. Así puede ser utilizado como fuente de información para establecer la velocidad de aproximación al objetivo, de forma que el agente no sobreactue:
-$$U_{att}(q) = \epsilon * \delta_{meta}(q)^2$$
+\begin{equation}
+U_{att}(q) = \epsilon * \delta_{meta}(q)^2
+\label{equation:Uatt}
+\end{equation}
 Donde $\delta$ es la distancia euclidiana desde la posición del agente $q$ a la meta $meta$, y $\epsilon$ es un factor de escalado positivo, que puede utilizarse para ajustar la influencia de la distancia en la velocidad del agente. Y su gradiente negativo: 
-$$ -\nabla U_{att}(q) = -\epsilon * (q - q_{meta}) $$
-
+\begin{equation}
+-\nabla U_{att}(q) = -\epsilon * (q - q_{meta})
+\label{equation:dUatt}
+\end{equation}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{UattrGradient}
@@ -43,16 +57,20 @@ $$ -\nabla U_{att}(q) = -\epsilon * (q - q_{meta}) $$
 En la figura \ref{fig:uattrgrad} se ha establecido el agente en el punto $(10,12)$ y la meta en $(0,0)$. Puede verse el efecto del gradiente aplicado.
 
 \textbf{El potencial de repulsión} $U_{rep}(q)$ lo establecen los obstáculos detectados por los sensores del agente. Si se establece una función proporcional a la distancia del agente a los obstáculos, el potencial repulsor crece en la cercanía a estos, y decrece con la distancia. De esta forma un obstáculo lejano al agente no debería presentar niguna fuerza sobre él:
-$$U_{rep}(q) = U = \begin{cases}
+\begin{equation}
+U_{rep}(q) = U = \begin{cases}
 0 & \text{ si } \delta > \rho \\ 
 \eta * (\frac{1}{\delta_{obs}(q)}-\frac{1}{\rho})^2 & \text{ si } \delta \leq \rho; \delta \neq 0 
-\end{cases}$$
-
+\end{cases}
+\label{equation:Urepq}
+\end{equation}
 Donde $\eta$ es un factor de escalado positivo, que permite establecer como de fuerte se ve afectado el agente por el campo repulsor, $\delta$ es la distancia euclidiana desde la posición del agente $q$ al obstáculo $obs$, y $\rho$ es un factor de escalado positivo, que permite establecer la distancia de influencia de forma proporcional. Y su gradiente
-$$-\nabla U_{rep}(q) = \begin{cases} 0 & \text{ si } \delta > \rho \\
+\begin{equation}
+-\nabla U_{rep}(q) = \begin{cases} 0 & \text{ si } \delta > \rho \\
 \eta * (\frac{1}{\delta_{obs}(q)}-\frac{1}{\rho}) * \frac{1}{\delta_{obs}(q)^2}\frac{q-q_{obs}}{\delta_{obs}(q)} & \text{ si }  \delta \leq \rho; \delta \neq 0  
-\end{cases}$$
-
+\end{cases}
+\label{equation:dUrepq}
+\end{equation}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{UrepGradient}
@@ -84,10 +102,31 @@ Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embar
 \end{itemize} 
 
 Por estos motivos, se ha desechado el algoritmo de Campos Potenciales como sistema de evasión de obstáculos, y se ha pasado a un modelo más avanzado basado en un plano cartesiano, conocido como \textit{Vector Field Histogram} y detallado en el apartado \nameref{subsec:VFH}. 
- 
+
+\newpage
 \subsection{Vector Field Histogram}
 \label{subsec:VFH}
-El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo real.
+El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo 
+real.
+
+Para ello realiza una representación del entorno del agente en forma de histograma. Se trata un algoritmo de búsqueda local, sin embargo se ha mostrado que suele producir rutas cercanas al óptimo, aunque en el caso de este proyecto no es relevante, dado que la intención es que se exploren todas las zonas del entorno.
+
+Se trata de un algoritmo más robusto, dado que presenta cierta insensibilidad a lecturas erróneas, y eficiente que el algoritmo de Campos Potenciales, explicado en \ref{subsec:PF}. 
+
+Se compone de tres partes: 
+\begin{enumerate}
+\item Red Cartesiana de Histogramas: Se construye un plano cartesiano representando el entorno cercano del agente. Por \textit{cercano}, se entiende una distancia que los sensores de distancia puedan abarcar, dado que no tendría sentido tratar de computar zonas inalcanzables en un momento determinado. Dicho plano será representado como un histograma, y de ahí su nombre habitual \textit{Cartesian Histogram Grid}.
+\item Histograma Polar: Una representación unidimensional, obtenida a partir de una reducción de la Red Cartesiana definida en el punto anterior. Se compone de $n$ sectores angulares, de anchura $\alpha$, de forma que $n * \alpha = 360; n \in \mathbb{Z}$. Dichos sectores $k$ contienen un valor $h_k$ que representa la densidad de obstáculos, \textit{Polar Obstacle Density} o \textit{POD} de aquí en adelante, contenida en él.
+\item Capa de salida: Representa el resultado del algoritmo. A partir del POD, se obtienen los posibles \textit{valles}\footnote{Así denominados por su representación en forma de histograma} candidatos existentes entre obstáculos, y se elige el que más se aproxime a la dirección de la meta establecida. Finalmente, entrega los valores de cambio de dirección necesario en cada momento.
+\end{enumerate}
+
+\subsubsection{Cartesian Histogram Grid}
+Se modela el espacio cercano al drone en forma de malla. En cada celda $(i,j)$ de esa malla se encuentra un valor $c_{i,j} \in \mathbb{Z}$ que establece la certeza de la existencia de un obstáculo. La cantidad de celdas existentes en la malla se establece en función de los límites del sensor, y teniendo en cuenta que es necesario establecer una precisión $c$, i.e: Si se dispone de un sensor con un rango de medidas de hasta 400cm se puede crear una malla de 80x80, suponiendo que cada celda tenga un tamaño de $c=5$, $5x5cm$. De esta forma se consigue una precisión de $\pm5\text{cm}$
+
+
+Dicho valor se obtiene de la lectura proporcionada por el sensor de distancia, en este caso un sonar, y se establece en el centro del ángulo de barrido del sonar, ver \ref{subsec:hcsr04}. 
+La eficiencia superior de este algoritmo se basa precisamente en incrementar el valor $c_{i,j}$ de únicamente una celda con cada medida. Dicha celda $(i,j)$ se encuentra a una distancia de $R = \frac{\delta_{obs}q}{c}$ celdas y en la bisectriz del ángulo barrido por el sonar.
+
 
 
 \section{Dispositivos Físicos}
