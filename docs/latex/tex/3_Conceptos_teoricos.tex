@@ -38,7 +38,7 @@ F(q) = F_{att}(q) + F_{rep}(q) = -\nabla U_{att}(q) - \nabla U_{rep}(q)
 \end{equation}
 
 
-\textbf{El potencial de atracción} $U_{att}(q)$ se establece como una función cuadrática proporcional a la distancia a la meta. De esta forma crece exponencialmente a medida que el agente se aleja de su destino, y se reduce considerablemente en su cercanía. Así puede ser utilizado como fuente de información para establecer la velocidad de aproximación al objetivo, de forma que el agente no sobreactue:
+\textbf{El potencial de atracción} $U_{att}(q)$ se establece como una función cuadrática proporcional a la distancia a la meta. De esta forma crece exponencialmente a medida que el agente se aleja de su destino, y se reduce considerablemente en su cercanía. Así puede ser utilizado como fuente de información para establecer la velocidad de aproximación al objetivo, de forma que el agente no sobreactúe:
 \begin{equation}
 U_{att}(q) = \epsilon * \delta_{meta}(q)^2
 \label{equation:Uatt}
@@ -56,7 +56,7 @@ Donde $\delta$ es la distancia euclidiana desde la posición del agente $q$ a la
 
 En la figura \ref{fig:uattrgrad} se ha establecido el agente en el punto $(10,12)$ y la meta en $(0,0)$. Puede verse el efecto del gradiente aplicado.
 
-\textbf{El potencial de repulsión} $U_{rep}(q)$ lo establecen los obstáculos detectados por los sensores del agente. Si se establece una función proporcional a la distancia del agente a los obstáculos, el potencial repulsor crece en la cercanía a estos, y decrece con la distancia. De esta forma un obstáculo lejano al agente no debería presentar niguna fuerza sobre él:
+\textbf{El potencial de repulsión} $U_{rep}(q)$ lo establecen los obstáculos detectados por los sensores del agente. Si se establece una función proporcional a la distancia del agente a los obstáculos, el potencial repulsor crece en la cercanía a estos, y decrece con la distancia. De esta forma un obstáculo lejano al agente no debería presentar ninguna fuerza sobre él:
 \begin{equation}
 U_{rep}(q) = U = \begin{cases}
 0 & \text{ si } \delta > \rho \\ 
@@ -81,7 +81,7 @@ Donde $\eta$ es un factor de escalado positivo, que permite establecer como de f
 
  \newpage
 \subsubsection{Desventajas}
-El algoritmo de campos potenciales se puede llevar a cabo con una implemntación simple y eficiente haciendo uso de Numpy, dado que se puede crear una representación matricial del plano en que se desplaza el agente, que contenga los diferentes potenciales en cada posición. 
+El algoritmo de campos potenciales se puede llevar a cabo con una implantación simple y eficiente haciendo uso de Numpy, dado que se puede crear una representación matricial del plano en que se desplaza el agente, que contenga los diferentes potenciales en cada posición. 
 Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embargo, tiene ciertas desventajas que lo han hecho, cuanto menos, inútil para las necesidades de este proyecto:
 \begin{itemize}
 \item Es un algoritmo basado en descenso de gradiente, y como tal puede quedar \textit{atascado} en mínimos locales. Estos mínimos pueden encontrarse en zonas que contengan obstáculos en forma cóncava o de caja abierta, tal como se ilustra en la figura \ref{fig:localmin}.
@@ -109,9 +109,9 @@ Por estos motivos, se ha desechado el algoritmo de Campos Potenciales como siste
 El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo 
 real.
 
-Para ello realiza una representación del entorno del agente en forma de histograma. Se trata un algoritmo de búsqueda local, sin embargo se ha mostrado que suele producir rutas cercanas al óptimo, aunque en el caso de este proyecto no es relevante, dado que la intención es que se exploren todas las zonas del entorno.
+Para ello realiza una representación del entorno del agente en forma de histograma. Dicho entorno, llamado \textit{Región Activa $C*$} se representa como una \textit{ventana} que se desplaza con el agente en el centro. Se trata un algoritmo de búsqueda local, sin embargo se ha mostrado que suele producir rutas cercanas al óptimo, aunque en el caso de este proyecto no es relevante, dado que la intención es que se exploren todas las zonas del entorno.
 
-Se trata de un algoritmo más robusto, dado que presenta cierta insensibilidad a lecturas erróneas, y eficiente que el algoritmo de Campos Potenciales, explicado en \ref{subsec:PF}. 
+Es un algoritmo más robusto, dado que presenta cierta insensibilidad a lecturas erróneas, y eficiente que el algoritmo de Campos Potenciales explicado en \ref{subsec:PF}. 
 
 Se compone de tres partes: 
 \begin{enumerate}
@@ -123,9 +123,30 @@ Se compone de tres partes:
 \subsubsection{Cartesian Histogram Grid}
 Se modela el espacio cercano al drone en forma de malla. En cada celda $(i,j)$ de esa malla se encuentra un valor $c_{i,j} \in \mathbb{Z}$ que establece la certeza de la existencia de un obstáculo. La cantidad de celdas existentes en la malla se establece en función de los límites del sensor, y teniendo en cuenta que es necesario establecer una precisión $c$, i.e: Si se dispone de un sensor con un rango de medidas de hasta 400cm se puede crear una malla de 80x80, suponiendo que cada celda tenga un tamaño de $c=5$, $5x5cm$. De esta forma se consigue una precisión de $\pm5\text{cm}$
 
-
 Dicho valor se obtiene de la lectura proporcionada por el sensor de distancia, en este caso un sonar, y se establece en el centro del ángulo de barrido del sonar, ver \ref{subsec:hcsr04}. 
 La eficiencia superior de este algoritmo se basa precisamente en incrementar el valor $c_{i,j}$ de únicamente una celda con cada medida. Dicha celda $(i,j)$ se encuentra a una distancia de $R = \frac{\delta_{obs}q}{c}$ celdas y en la bisectriz del ángulo barrido por el sonar.
+Si bien está solución puede parecer una simplificación del problema, se llega a generar una distribución probabilística tomando múltiples medidas de forma continua mientras el agente se desplaza por el entorno. Por tanto, la misma celda, cercana a un obstáculo, y sus vecinas serán incrementadas repetidas veces, tal y como se muestra en la figura \ref{fig:histog1}
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{HistoG1}
+	\caption{Distribución Histográmica de Probabilidades}\label{fig:histog1}
+\end{figure}
+
+\subsubsection{Polar Histogram}
+A partir de las medidas obtenidas en el Histogram Grid, se realiza la primera reducción de información para construir un Histograma Polar. Para ello, los contenidos de la región activa $C*$ son tratados como un \textit{vector de obstáculos} cuya dirección está definida por la dirección $\beta$ de la celda en cuestión al centro del agente \textit{VCP}\footnote{El VCP o \textit{Vehicle Center Point} se define como el centro geométrico del vehículo. En nuestro caso, al tratarse de un drone, se considera el centro del mismo como VCP}, y que viene definida por la función:
+\begin{equation}
+\label{equation:ObsAgAng}
+\beta_{i,j}= tan^{-1} \frac{y_i - y_0}{x_i - x_0}
+\end{equation}
+
+La ecuación \ref{equation:ObsAgAng} devuelve un valor $\beta \in [-\frac{\pi}{2}, \frac{\pi}{2}]rad$. Al hacer uso de Numpy, es sencillo calcular los ángulos en los que se encuentra cada celda de la región activa $C*$ con respecto al agente que se encuentra en su centro, de forma vectorizada. Tal y como puede verse en la figura \ref{fig:histog2}
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{HistoG2}
+	\caption{Angulos relativos a la central del drone}\label{fig:histog2}
+\end{figure}
+
+Nótese que para llevar a cabo la obtención de estos ángulos \textbf{no} se ha hecho uso de la función \textit{arctan} disponible en Numpy, dado que esta devuelve valores, en radiantes, pertenecientes al 1º y 4º cuadrante únicamente. En su lugar, se ha utilizado la función \textit{arctan2}, que tiene en cuenta el signo de las compontentes del vector dirección $ [y_i - y_0 , x_i - x_0]$ resultante.  De forma que devuelve el ángulo de giro, sea en sentido horario (valores positivos) o antihorario (valores negativos), más corto posible.\footnote{Obviamente es lo deseable, no sería eficiente realizar un giro de 225º en el sentido de las agujas del reloj, cuando uno de 135º en el sentido contrario a las agujas del reloj bastaría.} 
 
 
 
