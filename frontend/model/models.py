@@ -22,6 +22,8 @@ class User(UserMixin, db.Model):
 	surname = db.Column(db.String(20), index=True)
 	email = db.Column(db.String(64), index=True, unique=True)
 	passwd_hash = db.Column(db.String(128))
+	actions = db.relationship('ActionLogs', backref='author', lazy='dynamic')
+	drones = db.relationship('Drones', backref='pilot', lazy='dynamic')
 
 	def setPasswd(self, password):
 		self.passwd_hash = generate_password_hash(password)
@@ -56,6 +58,7 @@ class IntrusionAttempt(db.Model):
 	def __repr__(self):
 		return '<Intrusion-{0}> User {1} @ {2}'.format(self.id, self.provided_user, self.timestamp)
 
+
 class Action(db.Model):
 	"""
 	Database Model for Action descriptors.
@@ -72,6 +75,28 @@ class ActionLogs(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 	action_id = db.Column(db.Integer, db.ForeignKey('action.id'), index=True)
+
+	def __repr__(self):
+		return '<ActionLog-{0}> User {1} @ {2}. Performed action: {3}'.format(
+			self.id, self.user_id, self.timestamp, self.action.description
+		)
+
+
+class Drones(db.Model):
+	"""
+	Database Model for Drones.
+	"""
+	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	name = db.Column(db.String(25), unique=True, nullable=False, index=True)
+	location = db.Column(db.String(128))
+	url = db.Column(db.String(100), unique=True, nullable=False, index=True)
+	controller = db.Column(db.String(64), db.ForeignKey('user.id'), index=True, nullable=False)
+
+	def __repr__(self):
+		return '<Drone-{0}> {1}, @ {2}, Controlled by: {3}'.format(
+			self.id, self.name, self.location, self.controller
+		)
+
 
 @login_manager.user_loader
 def load_user(id):
