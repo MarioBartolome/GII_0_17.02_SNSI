@@ -16,8 +16,11 @@ Los Filtros de Partículas son modelos utilizados para tratar de estimar el esta
 \label{subsec:PF}
 \setcounter{equation}{0}
 A la hora de lograr una navegación segura en un entorno determinado, es necesario implementar un sistema de evasión de obstáculos. 
-\\Introducido por Oussama Khatib en 1986, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. La posición que debe alcanzar, su meta o destino, se presenta como una fuerza de atracción, y los obstáculos como fuerzas repulsivas. 
-Los diferentes vectores fuerza, determinan la dirección y magnitud de la fuerza atrayente o repulsora.\\Sea $q$ la posición actual del agente, considerada como una partícula moviendose en un espacio n-dimensional $R^n$. Por simplicidad, se considera la posición como una tupla, esto es, bidimensional, tal que $q = (x,y)$. El campo potencial en el que se encuentra el agente se una función escalar $ U(q):R^2\rightarrow R $, generado por la superposición de los campos atrayentes $U_{att}$ y repulsores $U_{rep}$:
+\\Introducido por Oussama Khatib en 1986, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. 
+La posición que debe alcanzar, su meta o destino, se presenta como una fuerza de atracción, y los obstáculos como fuerzas repulsivas. 
+Los diferentes vectores fuerza, determinan la dirección y magnitud de la fuerza atrayente o repulsora.
+
+Sea $q$ la posición actual del agente, considerada como una partícula moviendose en un espacio n-dimensional $R^n$. Por simplicidad, se considera la posición como una tupla, esto es, bidimensional, tal que $q = (x,y)$. El campo potencial en el que se encuentra el agente es una función escalar $ U(q):R^2\rightarrow R $, generado por la superposición de los campos atrayentes $U_{att}$ y repulsores $U_{rep}$:
 \begin{equation}
 U(q) = U_{att}(q) + U_{rep}(q)
 \label{equation:Uq}
@@ -93,7 +96,7 @@ Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embar
 \item De encontrarse en un espacio con forma de corredor o pasillo, cualquier acercamiento hacia las paredes ocasionará una corrección en el sentido opuesto al campo repulsor, lo cual puede ocasionar un movimiento oscilatorio si dicha corrección supone aproximar el agente a la pared opuesta, tal y como se ilustra en la figura \ref{fig:corridoroverc}.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth]{corridoroverc}
+	\includegraphics[width=0.9\textwidth]{corridoroverc}
 	\caption{Movimiento oscilatorio en corredores estrechos.}\label{fig:corridoroverc}
 \end{figure}
 \item Alta complejidad computacional pese a poder modelarse como calculo vectorizado, requiere de muchas más operaciones que otros métodos más avanzados.
@@ -103,7 +106,6 @@ Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embar
 
 Por estos motivos, se ha desechado el algoritmo de Campos Potenciales como sistema de evasión de obstáculos, y se ha pasado a un modelo más avanzado basado en un plano cartesiano, conocido como \textit{Vector Field Histogram} y detallado en el apartado \nameref{subsec:VFH}. 
 
-\newpage
 \subsection{Vector Field Histogram}
 \label{subsec:VFH}
 El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo 
