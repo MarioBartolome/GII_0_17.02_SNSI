@@ -10,12 +10,13 @@ import socket, sys
 import picamera
 import threading
 
+
 class VideoServer(threading.Thread):
 
 	def __init__(
 			self,
-			addr:str = '0.0.0.0',
-			port:int = 12345):
+			addr: str = '0.0.0.0',
+			port: int = 12345):
 		"""
 		Constructor for VideoServer class.
 		:param addr: Address to bind the server.
@@ -28,7 +29,7 @@ class VideoServer(threading.Thread):
 		self._port = port
 		print("Video server ready to start")
 
-	def startVideoServer(self, resolution:tuple = (1280,720), fps:int = 30, format:str = 'h264'):
+	def startVideoServer(self, resolution: tuple = (1280, 720), fps: int = 30, format: str = 'h264'):
 		"""
 		Starts the VideoServer stream.
 
@@ -108,7 +109,7 @@ class VideoStreamer:
 		"""
 
 		self._stream = self._stream.makefile('wb')
-		self._camera.start_recording(self._stream, format=format)
+		self._camera.start_recording(self._stream, format=format)#, intra_period=1)
 
 	def stop(self):
 		"""
@@ -134,4 +135,4 @@ if __name__ == '__main__':
 	server = VideoServer()
 	server.startVideoServer(resolution=resolution, fps=fps, format=format)
 	# server = VideoServer()
-	# server.startVideoServer()
+	# server.startVideoServer(resolution=(640,480), fps=20)

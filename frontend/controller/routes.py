@@ -25,10 +25,12 @@ def index():
 	"""
 	if current_user.is_authenticated:
 		user = {'username': current_user.name}
+		video_urn = video_feed()
 	else:
 		user = {'username': 'unknown user'}
+		video_urn = ''
 
-	return render_template('index.html', user=user)
+	return render_template('index.html', user=user, video_url=video_urn)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -79,3 +81,7 @@ def logout():
 	else:
 		flash('Humm... that is weird... You were not logged in', category='warning')
 		return redirect(url_for('login'))
+
+def video_feed():
+	drone_url = current_user.drones.first().url
+	return drone_url
