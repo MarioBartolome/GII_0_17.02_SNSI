@@ -8,7 +8,7 @@ Flask app Controller
 
 from frontend.controller import app, db
 from flask import render_template, flash, redirect, url_for, request
-from frontend.view.login import  LoginForm
+from frontend.view.login import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
 from frontend.model.models import User, LoginLogs, IntrusionAttempt
 from datetime import timedelta
@@ -81,6 +81,7 @@ def logout():
 	else:
 		flash('Humm... that is weird... You were not logged in', category='warning')
 		return redirect(url_for('login'))
+
 
 def video_feed():
 	drone_url = current_user.drones.first().url

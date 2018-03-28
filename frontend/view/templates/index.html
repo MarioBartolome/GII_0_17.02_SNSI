@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1> Hello {{user.username}}</h1>
-    <iframe src="{{ video_url }}" frameborder="0" width="1280" height="900"></iframe>
+<head>
+    <script type="text/javascript" src="{{ url_for('static', filename='gamepad.js') }}"></script>
+    <style>
+        .axes {
+            padding: 1em;
+        }
+    </style>
+</head>
+<h1> Hello {{user.username}}</h1>
+<iframe src="{{ video_url }}" frameborder="0" width="1280" height="900"></iframe>
 {% endblock %}

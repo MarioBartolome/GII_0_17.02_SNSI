@@ -14,8 +14,8 @@ from flask_migrate import Migrate
 
 
 template_path = '../view/templates'
-
-app = Flask(__name__, template_folder=template_path)
+static_path = '../view/static'
+app = Flask(__name__, template_folder=template_path, static_folder=static_path)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
