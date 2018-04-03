@@ -11,7 +11,7 @@ from frontend.model.config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-
+from flask_socketio import SocketIO
 
 template_path = '../view/templates'
 static_path = '../view/static'
@@ -21,5 +21,5 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
+socketio = SocketIO(app)
 from frontend.controller import routes

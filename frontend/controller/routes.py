@@ -6,15 +6,18 @@ Date: Jan 12, 2018
 Flask app Controller
 '''
 
-from frontend.controller import app, db
+from frontend.controller import app, db, socketio
 from flask import render_template, flash, redirect, url_for, request
 from frontend.view.login import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
-from frontend.model.models import User, LoginLogs, IntrusionAttempt
+from frontend.model.models import User, LoginLogs, IntrusionAttempt, ActionLogs
 from datetime import timedelta
 from werkzeug.urls import url_parse
+import socket, json, sys
 
 
+rControlSocket = None
+remoteEnabled = False
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -23,7 +26,7 @@ def index():
 	Index site for logged users.
 
 	"""
-	if current_user.is_authenticated:
+	if userIsAuthenticated():
 		user = {'username': current_user.name}
 		video_urn = video_feed()
 	else:
@@ -40,7 +43,7 @@ def login():
 
 	:return: If successful redirects to index, else to login page.
 	"""
-	if current_user.is_authenticated:
+	if userIsAuthenticated():
 		flash('Already logged in! Welcome', category='message')
 		return redirect(url_for('index'))
 	form = LoginForm()
@@ -74,7 +77,7 @@ def logout():
 
 	:return: If successful redirects to login.
 	"""
-	if current_user.is_authenticated:
+	if userIsAuthenticated():
 		logout_user()
 		flash('User logged out. Bye!', category='message')
 		return redirect(url_for('login'))
@@ -83,6 +86,64 @@ def logout():
 		return redirect(url_for('login'))
 
 
+def userIsAuthenticated():
+	return current_user.is_authenticated
+
+@socketio.on('connect')
+@login_required
+def connection():
+	if userIsAuthenticated():
+		drone = current_user.drones.first()
+		url = drone.url
+		port = drone.control_port
+
+		print('Attempting to connect to drone Remote Control System on ' + url)
+		db.session.add(ActionLogs(user_id=current_user.id, action_id=1))
+		db.session.commit()
+		global rControlSocket
+		rControlSocket = socket.socket()
+		try:
+			rControlSocket.connect((url, port))
+			global remoteEnabled
+			remoteEnabled = True
+		except ConnectionError as e:
+			print("Error connecting to socket!", e, file=sys.stderr)
+			raise e
+	else:
+		flash('You should not try to enable manual control without authenticating first', category='error')
+		return redirect(url_for('login'))
+
+
+@socketio.on('disconnect')
+def disconnection():
+	db.session.add(ActionLogs(user_id=current_user.id, action_id=2))
+	db.session.commit()
+	global rControlSocket, remoteEnabled
+	try:
+		remoteEnabled = False
+		rControlSocket.close()
+	except ConnectionError as e:
+		print("Error while closing socket!", e, file=sys.stderr)
+
+
+@socketio.on('axisInput')
+@login_required
+def control_info_recv(info):
+	global rControlSocket, remoteEnabled
+	if remoteEnabled:
+		try:
+			rControlSocket.send(bytes(json.dumps(info), encoding='UTF-8'))
+		except ConnectionError as e:
+			print("Error connecting to socket!", e, file=sys.stderr)
+			emitConnectionError()
+			disconnection()
+
+def emitConnectionError():
+	socketio.emit('connect_error')
+
 def video_feed():
-	drone_url = current_user.drones.first().url
-	return drone_url
+	drone = current_user.drones.first()
+	url = drone.url
+	port = drone.video_port
+	video_url = 'https://' + url + ':' + str(port)
+	return video_url
