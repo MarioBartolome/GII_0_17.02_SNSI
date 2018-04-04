@@ -91,6 +91,8 @@ class Drones(db.Model):
 	location = db.Column(db.String(128))
 	url = db.Column(db.String(100), unique=True, nullable=False, index=True)
 	controller = db.Column(db.String(64), db.ForeignKey('user.id'), index=True, nullable=False)
+	video_port = db.Column(db.Integer, default=8888)
+	control_port = db.Column(db.Integer, default=12345)
 
 	def __repr__(self):
 		return '<Drone-{0}> {1}, @ {2}, Controlled by: {3}'.format(
