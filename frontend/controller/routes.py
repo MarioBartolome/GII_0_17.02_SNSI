@@ -13,7 +13,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from frontend.model.models import User, LoginLogs, IntrusionAttempt, ActionLogs
 from datetime import timedelta
 from werkzeug.urls import url_parse
-import socket, json, sys
+import socket, json, sys, struct
 
 
 rControlSocket = None
@@ -132,7 +132,9 @@ def control_info_recv(info):
 	global rControlSocket, remoteEnabled
 	if remoteEnabled:
 		try:
-			rControlSocket.send(bytes(json.dumps(info), encoding='UTF-8'))
+			msg = bytes(json.dumps(info), encoding='UTF-8')
+			msg_length = len(msg)
+			rControlSocket.send(struct.pack('<H', msg_length) + msg)
 		except ConnectionError as e:
 			print("Error connecting to socket!", e, file=sys.stderr)
 			emitConnectionError()

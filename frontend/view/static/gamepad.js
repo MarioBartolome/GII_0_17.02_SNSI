@@ -84,7 +84,7 @@ function addgamepad(gamepad) {
 
 function updateStatus(){
     scangamepads();
-    var axisValues = [{}];
+    var axisValues = {};
     for (j in controllers) {
         var controller = controllers[j];
         var d = document.getElementById("controller" + j);
@@ -95,15 +95,14 @@ function updateStatus(){
             a.innerHTML = i + ": " + controller.axes[i].toFixed(4);
             var axisValue = controller.axes[i] + 1;
             a.setAttribute("value", axisValue);
-            axisValues[0]["Ax"+i] = map(axisValue);
+            axisValues["Ax"+i] = map(axisValue);
 
         }
-        // console.log(JSON.stringify(axisValues));
+
         if(manual){
-            // connection.send(JSON.stringify())
-            // console.warn('Trying to send through WS!!' + axisValues)
             connection.emit(sendingAxisEvent, axisValues);
         }
+
     }
     rAF(updateStatus);
 }
