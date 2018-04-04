@@ -59,8 +59,8 @@ class RemoteServer:
 					print("Awaiting clients..")
 					conn, client_address = stream.accept()
 					print("Hello! New client from {0}".format(client_address[0]))
-				# print(self._remoteInput)
-				print(self.getChannels())
+				'''	self.synchronized(self.retrieveInput, conn, blocking=False)
+				print(self.getChannels()) ''' # Uncomment both lines to get output.
 			except ConnectionResetError as err:
 				print("<RemoteServer> Connection abruptly closed from client", err)
 				self.disconnection()
@@ -72,10 +72,13 @@ class RemoteServer:
 
 		:param conn: The connection.
 		"""
-		msg_length = struct.unpack('<H', conn.recv(2))[0]
-		self._remoteInput = conn.recv(msg_length)
-		self._manualEnabled = True
-
+		msg_length_b = conn.recv(2)
+		if len(msg_length_b) == 2:
+			msg_length = struct.unpack('<H', msg_length_b)[0]
+			self._remoteInput = conn.recv(msg_length)
+			self._manualEnabled = True
+		else:
+			self._remoteInput = b''
 
 	def disconnection(self):
 		"""
