@@ -62,7 +62,7 @@ class MSPio:
 	Checksum:   XOR(<size>, <command>, *<data>)
 	"""
 
-	def __init__(self, serial_port : str ='/dev/tty.SLAB_USBtoUART', baud_rate : int =115200):
+	def __init__(self, serial_port : str ='/dev/ttyUSB0', baud_rate : int =115200):
 		"""
 		Constructor method for MSPio class.
 
@@ -270,7 +270,7 @@ class MSPio:
 		:type channels: list
 		"""
 		if channels is None:
-			channels = [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000]
+			channels = [1000, 1500, 1500, 1500, 1000, 1000, 1000, 1000]
 
 		command = self.MSP_SET_RAW_RC
 		if len(channels) <= 8:
@@ -302,7 +302,7 @@ if __name__ == '__main__':
 		while time.time() - start < 2:
 			print("Readings: {0} // Voltage: {1}".format(ser.readAttitude(), ser.readStatus()['vbat']))
 			time.sleep(0.5)
-			ser.setRawRC([1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000])
+			ser.setRawRC([1000, 1500, 1500, 1500, 1000, 1000, 1000, 1000])
 
 		# Getting about 25Hz refresh rate.
 		print("Arming")
@@ -311,10 +311,10 @@ if __name__ == '__main__':
 			print("Readings: {0} // Voltage: {1}".format(ser.readAttitude(), ser.readStatus()['vbat']))
 			ser.sendCMD(ser.MSP_MOTOR)
 			print("Motors running at: {0}".format(ser.readResponse(ser.MSP_MOTOR, ser.MOTOR_PARSE)))
-			ser.setRawRC([1500, 1500, 1000, 1500, 2000, 1000, 1000, 1000])
+			ser.setRawRC([1000, 1500, 1500, 1500, 2000, 1000, 1000, 1000])
 			# time.sleep(0.05)
 
 		print("Disarming")
 		while True:
-			ser.setRawRC([1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000])
+			ser.setRawRC([1000, 1500, 1500, 1500, 1000, 1000, 1000, 1000])
 
