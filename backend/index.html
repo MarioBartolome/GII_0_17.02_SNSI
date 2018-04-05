@@ -121,8 +121,7 @@
                     document.getElementById("stop").disabled = false;
                     document.getElementById("start").disabled = true;
                     document.documentElement.style.cursor = 'wait';
-                    // var server = "dronecontrol:8080"//document.getElementById("signalling_server").value.toLowerCase();
-                    var server = window.location.hostname + ":8080";
+                    var server = window.location.hostname + ":12346";
                     var protocol = location.protocol === "https:" ? "wss:" : "ws:";
                     ws = new WebSocket(protocol + '//' + server + '/stream/webrtc');
 
