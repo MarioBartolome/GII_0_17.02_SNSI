@@ -14,6 +14,8 @@ from frontend.model.models import User, LoginLogs, IntrusionAttempt, ActionLogs
 from datetime import timedelta
 from werkzeug.urls import url_parse
 import socket, json, sys, struct
+# Uncomment to use CertBot to get SSL certs to HTTP*S*
+# import send_from_directory
 
 
 rControlSocket = None
@@ -147,5 +149,10 @@ def video_feed():
 	drone = current_user.drones.first()
 	url = drone.url
 	port = drone.video_port
-	video_url = 'https://' + url + ':' + str(port)
+	video_url = url + ':' + str(port) + '/webrtc'
 	return video_url
+
+# Uncomment to use CertBot to get SSL certs to HTTP*S*
+# @app.route('/.well-known/<path:path>')
+# def send_js(path):
+# 	return send_from_directory('.well-known', path)
