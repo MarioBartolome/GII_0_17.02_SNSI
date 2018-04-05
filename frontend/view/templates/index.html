@@ -9,7 +9,17 @@
             padding: 1em;
         }
     </style>
+
+    <script src="{{ url_for('static', filename='signalling.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
 </head>
 <h1> Hello {{user.username}}</h1>
-<iframe src="{{ video_url }}" frameborder="0" width="1280" height="900"></iframe>
+
+<video id='v' width="1280" height="720" poster="{{ url_for('static', filename='droneLogo.png') }}"></video>
+<label id="address" hidden="true"/>{{ video_url }}</label>
+<button id='start'>Start Streaming</button>
+<button id='stop'>Stop Streaming</button>
+
+
 {% endblock %}
