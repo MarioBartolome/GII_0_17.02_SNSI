@@ -370,7 +370,13 @@ La controladora de vuelo Flip32 en su versión más completa, dispone de los sig
 \item Magnetómetro HMC5883L: Se trata de un pequeño magnetómetro digital capaz de medir el campo magnético terrestre (en Gauss). Se debe tener en cuenta que según la posición en el planeta, el campo magnético varía entre \si{\gauss{0.25}} - \si{\gauss{0.65}}, así como la declinación magnética de la zona en la que se realiza la medición.\footnote{Disponible en: http://magnetic-declination.com/}
 \item Barómetro M55611: Se trata de un altímetro de alta precisión, con resoluciones de hasta 10cm, que funciona midiendo la presión atmosférica (en milibar). Hay que tener en cuenta que los cambios de presión, como los generados por las hélices del drone, hacen variar la medida del sensor. Por ello, en el caso de usarlo, se cubre con un pequeño filtro de un material absorbente, lo suficientemente denso como para evitar el contacto directo entre una corriente de aire y el sensor.
 \end{itemize}
+
 \newpage
+
+
+
+
+
 \section{Protocolos}
 
 \subsection{Pulse Width Modulation}
@@ -384,7 +390,7 @@ Estas son capaces de entender señales de entre 1000 y 2000\si{\us}. Cualquier v
 En el caso de este proyecto, se ha determinado que no se hará uso de este protocolo para la comunicación entre la Raspberry Pi y la controladora de vuelo, véase \ref{5-sec:MSP_implementation} y \ref{subsec:MSP}, y por lo tanto el uso de estos pines queda descartado.
 
 Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tipo de señal, por ello se ha considerado relevante explicar, brevemente, su funcionamiento.
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{PWM}
 	\caption{Modulación en Ancho de Pulso. Arriba 100\% del ciclo usado. Centro 25\% del ciclo usado. Abajo 50\% del ciclo usado}\label{fig:PWM}
@@ -399,9 +405,9 @@ MultiWii es un software de control de multirotores y está basado en componentes
 A los primeros creadores del sistema de control MultiWii se les ocurrió la posiblidad de hacer uso de estos sensores para crear un sistema de control de drones. Uniendo estos sensores a un controlador, en principio se trató de un Arduino Mini, y programándolo para tal efecto, se logra crear una FC algo rudimentaria, pero que da muy buenos resultados.
 
 Para crear un entorno amigable para el usuario común, se desarrolló una aplicación de escritorio capaz de configurar los parámetros de esta controladora de vuelo poco convencional. De alguna forma debía lograrse una comunicación entre la FC y la aplicación, y así se implementó MultiWii Serial Protocol.\\Conocido como \textit{MSP}, se trata de un protocolo que se ha mantenido en diferentes implementaciones de sistemas de control de vuelo. No solo aquellos basados en sensores de la Nintendo Wii controlados por Arduino, sino en otros más modernos y potentes que han ido surgiendo los últimos años. Como el utilizado en nuestro proyecto.
-
+\newpage
 Es un protocolo eficiente y sencillo, que permite una comunicación rápida y completa. Su composición puede verse en la imagen \ref{fig:MSPlayout}
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{MSPlayout}
 	\caption{Composición de un mensaje MSP}\label{fig:MSPlayout}
@@ -425,14 +431,14 @@ En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para 
 \begin{table}
 	\begin{center}	
 		\rowcolors {2}{gray!35}{}
-		\begin{tabular}{m{5cm} | c | m{2cm} | c | m{5cm}}\hline
+		\begin{tabular}{m{4.6cm} | c | m{2cm} | c | m{5cm}}\hline
 			\toprule
 			Mensaje & Código & Estructura & Parse & Descripción\\
 			\otoprule
 			MSP\_MOTOR & 104 & 8x UINT16 & <8H & Devuelve la señal PWM que los ESC envían a los motores.\\
 			MSP\_RC & 105 & 18x UINT16 & <18H & Devuelve la señal PWM disponible en cada canal.\\
 			MSP\_ATTITUDE & 108  & 3x INT16 & <3h & Devuelve las inclinaciones de los ejes X e Y, así como la orientación.\\
-			MSP\_ANALOG & 110 & 1x UINT8, 3x UINT16 & <B3H & Devuelve el estado de los sensores incluidos en la FC: voltaje de la batería, RSSI, corriente instantánea y consumo\\
+			MSP\_ANALOG & 110 & 1x UINT8 3x UINT16 & <B3H & Devuelve el estado de los sensores incluidos en la FC: voltaje de la batería, RSSI, corriente instantánea y consumo\\
 			MSP\_SET\_RAW\_RC & 200 & Nx UINT16 & N/A & Establece el valor de los canales de radio-control.\\
 			MSP\_SET\_RAW\_MOTOR & 214 & Nx UINT16 & N/A & Establece la señal PWM a enviar a los motores.\\
 			\bottomrule
@@ -442,7 +448,7 @@ En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para 
 	\end{center}
 \end{table} 
 
-La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta cohesión con la tabla disponible en la descripción del protocolo MultiWii,\cite{MSP Definition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
+La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta coherencia con la tabla disponible en la descripción del protocolo MultiWii,\cite{MSP Definition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
 \\La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, descrita en la tabla \ref{tb:PY35STRUCT}
 
 \begin{table}
@@ -484,69 +490,3 @@ Secure SHell o \textit{SSH} de aquí en adelante, es un protocolo de red cifrado
 De esta forma se logra dotar de acceso seguro a un cliente autorizado. Al tratar de conectar al sistema de control del drone, se muestra un banner en el que se advierte a usarios malintencionados de la existencia de un log de conexiones recibidas. 
 Para tratra de mitigar los intentos más comunes de intrusión en el sistema, algo tan simple como cambiar el puerto en el que responde el servidor SSH, se ha mostrado tremnedamente efectivo contra los ataques automatizados más simples y comunes.
 
-
-
-\section{Referencias}
-
-Las referencias se incluyen en el texto usando cite \cite{wiki:latex}. Para citar webs, artículos o libros \cite{koza92}.
-
-
-\section{Imágenes}
-
-Se pueden incluir imágenes con los comandos standard de \LaTeX, pero esta plantilla dispone de comandos propios como por ejemplo el siguiente:
-
-\imagen{escudoInfor}{Autómata para una expresión vacía}
-
-
-
-\section{Listas de items}
-
-Existen tres posibilidades:
-
-\begin{itemize}
-	\item primer item.
-	\item segundo item.
-\end{itemize}
-
-\begin{enumerate}
-	\item primer item.
-	\item segundo item.
-\end{enumerate}
-
-\begin{description}
-	\item[Primer item] más información sobre el primer item.
-	\item[Segundo item] más información sobre el segundo item.
-\end{description}
-	
-\begin{itemize}
-\item 
-\end{itemize}
-
-\section{Tablas}
-
-Igualmente se pueden usar los comandos específicos de \LaTeX o bien usar alguno de los comandos de la plantilla.
-
-\tablaSmall{Herramientas y tecnologías utilizadas en cada parte del proyecto}{l c c c c}{herramientasportipodeuso}
-{ \multicolumn{1}{l}{Herramientas} & App AngularJS & API REST & BD & Memoria \\}{ 
-HTML5 & X & & &\\
-CSS3 & X & & &\\
-BOOTSTRAP & X & & &\\
-JavaScript & X & & &\\
-AngularJS & X & & &\\
-Bower & X & & &\\
-PHP & & X & &\\
-Karma + Jasmine & X & & &\\
-Slim framework & & X & &\\
-Idiorm & & X & &\\
-Composer & & X & &\\
-JSON & X & X & &\\
-PhpStorm & X & X & &\\
-MySQL & & & X &\\
-PhpMyAdmin & & & X &\\
-Git + BitBucket & X & X & X & X\\
-Mik\TeX{} & & & & X\\
-\TeX{}Maker & & & & X\\
-Astah & & & & X\\
-Balsamiq Mockups & X & & &\\
-VersionOne & X & X & X & X\\
-} 

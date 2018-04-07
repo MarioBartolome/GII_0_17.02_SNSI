@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt,twoside]{memoir}
+\documentclass[a4paper,11pt,oneside]{memoir}
 
 % Castellano
 \usepackage[spanish,es-tabla]{babel}
@@ -11,8 +11,6 @@
 
 \usepackage{float}
 \usepackage{footnote}
-\usepackage{siunitx}
-\DeclareSIUnit\gauss{G}
 \usepackage{xr}
 \usepackage{array}
 
@@ -28,6 +26,8 @@
 }
 
 % Ecuaciones
+\usepackage{siunitx}
+\DeclareSIUnit\gauss{G}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -487,6 +487,7 @@ drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, vide
 \clearpage
 
 % Indices
+\setcounter{tocdepth}{2}
 \tableofcontents
 
 \clearpage
