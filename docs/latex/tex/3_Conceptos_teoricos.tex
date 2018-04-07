@@ -117,12 +117,13 @@ Es un algoritmo más robusto, dado que presenta cierta insensibilidad a lecturas
 
 Se compone de tres partes: 
 \begin{enumerate}
-\item Red Cartesiana de Histogramas: Se construye un plano cartesiano representando el entorno cercano del agente. Por \textit{cercano}, se entiende una distancia que los sensores de distancia puedan abarcar, dado que no tendría sentido tratar de computar zonas inalcanzables en un momento determinado. Dicho plano será representado como un histograma, y de ahí su nombre habitual \textit{Cartesian Histogram Grid}.
-\item Histograma Polar: Una representación unidimensional, obtenida a partir de una reducción de la Red Cartesiana definida en el punto anterior. Se compone de $n$ sectores angulares, de anchura $\alpha$, de forma que $n * \alpha = 360; n \in \mathbb{Z}$. Dichos sectores $k$ contienen un valor $h_k$ que representa la densidad de obstáculos, \textit{Polar Obstacle Density} o \textit{POD} de aquí en adelante, contenida en él.
-\item Capa de salida: Representa el resultado del algoritmo. A partir del POD, se obtienen los posibles \textit{valles}\footnote{Así denominados por su representación en forma de histograma} candidatos existentes entre obstáculos, y se elige el que más se aproxime a la dirección de la meta establecida. Finalmente, entrega los valores de cambio de dirección necesario en cada momento.
+\item Red Cartesiana de Histogramas: Se construye un plano cartesiano representando el entorno cercano del agente. Por \textit{cercano}, se entiende una distancia que los sensores de distancia puedan abarcar, dado que no tendría sentido tratar de computar zonas inalcanzables en un momento determinado. Dicho plano será representado como un histograma, y de ahí su nombre habitual \textit{Cartesian Histogram Grid}. En \ref{subsubsec:CHG}.
+\item Histograma Polar: Una representación unidimensional, obtenida a partir de una reducción de la Red Cartesiana definida en el punto anterior. Se compone de $n$ sectores angulares $k$, de anchura $\alpha$, de forma que $n * \alpha = 360; n \in \mathbb{Z}$. Dichos sectores $k$ contienen un valor $h_k$ que representa la densidad de obstáculos, \textit{Polar Obstacle Density} o \textit{POD} de aquí en adelante, contenida en él. En \ref{subsubsec:PH}.
+\item Capa de salida: Representa el resultado del algoritmo. A partir del POD, se obtienen los posibles \textit{valles}\footnote{Así denominados por su representación en forma de histograma} candidatos existentes entre obstáculos, y se elige el que más se aproxime a la dirección de la meta establecida. Finalmente, entrega los valores de cambio de dirección necesario en cada momento. En \ref{subsubsec:OL}.
 \end{enumerate}
 
 \subsubsection{Cartesian Histogram Grid}
+\label{subsubsec:CHG}
 Se modela el espacio cercano al drone en forma de malla. En cada celda $(i,j)$ de esa malla se encuentra un valor $c_{i,j} \in \mathbb{Z}$ que establece la certeza de la existencia de un obstáculo. La cantidad de celdas existentes en la malla se establece en función de los límites del sensor, y teniendo en cuenta que es necesario establecer una precisión $c$, i.e: Si se dispone de un sensor con un rango de medidas de hasta 400cm se puede crear una malla de 80x80, suponiendo que cada celda tenga un tamaño de $c=5$, $5x5cm$. De esta forma se consigue una precisión de $\pm5\text{cm}$
 
 Dicho valor se obtiene de la lectura proporcionada por el sensor de distancia, en este caso un sonar, y se establece en el centro del ángulo de barrido del sonar, ver \ref{subsec:hcsr04}. 
@@ -135,6 +136,7 @@ Si bien está solución puede parecer una simplificación del problema, se llega
 \end{figure}
 
 \subsubsection{Polar Histogram}
+\label{subsubsec:PH}
 A partir de las medidas obtenidas en el Histogram Grid, se realiza la primera reducción de información para construir un Histograma Polar. Para ello, los contenidos de la región activa $C*$ son tratados como un \textit{vector de obstáculos} cuya dirección está definida por la dirección $\beta$ de la celda en cuestión al centro del agente \textit{VCP}\footnote{El VCP o \textit{Vehicle Center Point} se define como el centro geométrico del vehículo. En nuestro caso, al tratarse de un drone, se considera el centro del mismo como VCP}, y que viene definida por la función:
 \begin{equation}
 \label{equation:ObsAgAng}
@@ -145,17 +147,128 @@ La ecuación \ref{equation:ObsAgAng} devuelve un valor $\beta \in [-\frac{\pi}{2
  \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{HistoG2}
-	\caption{Angulos relativos a la central del drone}\label{fig:histog2}
+	\caption{Angulos relativos al VCP del drone}\label{fig:histog2}
 \end{figure}
 
 Nótese que para llevar a cabo la obtención de estos ángulos \textbf{no} se ha hecho uso de la función \textit{arctan} disponible en Numpy, dado que esta devuelve valores, en radiantes, pertenecientes al 1º y 4º cuadrante únicamente. En su lugar, se ha utilizado la función \textit{arctan2}, que tiene en cuenta el signo de las compontentes del vector dirección $ [y_i - y_0 , x_i - x_0]$ resultante.  De forma que devuelve el ángulo de giro, sea en sentido horario (valores positivos) o antihorario (valores negativos), más corto posible.\footnote{Obviamente es lo deseable, no sería eficiente realizar un giro de 225º en el sentido de las agujas del reloj, cuando uno de 135º en el sentido contrario a las agujas del reloj bastaría.} 
 
 
+La magnitud de cada zona es entonces calculada de la siguiente forma:
+
+\begin{equation}
+\label{equation:mij}
+m_{i,j} = c*_{i,j}^2 * (a-bd_{i,j})
+\end{equation}
+Donde: 
+\begin{align*}
+m_{i,j}  &= \text{Magnitud de obstáculos en la celda $(i,j)$}\\
+c*_{i,j} &= \text{Certidumbre de obstáculo en la celda, en la región activa, $(i,j)$}\\
+\text{y:} \\
+a &= \text{Representa la fuerza con que un obstáculo afecta al drone}\\
+b &= \text{Representa la distancia desde la que un obstáculo afecta al drone}\\
+\text{son positivos}
+\end{align*}
+
+El plano es convertido en una secuencia de sectores que cubren los 360º. Se definen, por tanto, $n \in \mathbb{Z}$ sectores $k$ de amplitud $\alpha$, por ejemplo $n=72; \alpha=5$. Y se distribuyen las medidas tomadas anteriormente en los diferentes ángulos relativos al VCP del drone, en los sectores $k_i$ correspondientes, véase \ref{equation:betatok} 
+\begin{equation}
+\label{equation:betatok}
+k =\frac{\beta_{i,j}}{\alpha}
+\end{equation}
+
+con un valor $h_k$, véase \ref{equation:sumcij}, de densidad de obstáculos en ellos:
+\begin{equation}
+\label{equation:sumcij}
+h_k = \sum m_{i,j}
+\end{equation}
+
+Dada la discretización de los datos obtenidos del Polar Histogram el resultado, al realizar esta conversión y al obtener el sumatorio $h_k$ de todos los valores pertenecientes a un sector $k$, puede parecer que el histograma varía de forma muy repentina entre dos sectores. Por ello se aplica una función de suavizado. 
+Según J. Borenstein y Y. Koren la función de suavizado utilizada se corresponde con: 
+\begin{equation}
+\label{equation:PODsWRONG}
+h'_k = \frac{h_{k-l} +2h_{k-l+1} + ... + lh_k + ... + 2h_{k+l-1} + h_{k+l}}{2l+1}
+\end{equation}
+Donde $l$  es una constante positiva a la que se le ha dado un valor de $5$. 
+
+Sin embargo, existe una errata en el paper publicado, y la ecuación \ref{equation:PODsWRONG} no es consistente, i.e:
+La función de suavizado parece poder expresarse de forma general tal que:
+\begin{equation}
+\label{equation:PODsWRONGgen}
+h'_k =\frac{1}{2l+1} \sum_{n=-l}^{l} (l-  |n| +1)*h_{k+n}
+\end{equation}
+ej: $l = 5$ $ h'_k = \frac{1h_{k-5} +2h_{k-4} + 3h_{k-3} + 4h_{k-2} + 5h_{k-1} + \textbf{6}h_k + ... + 2h_{k+l-1} + h_{k+l}}{2l+1} $
+
+Como puede verse, el valor central $ 6h_k $ correspondiente a $n=0$, no coincide con la posición dada para ese valor de $n$ en la función de suavizado propuesta por J. Borenstein y Y.Koren, donde el coeficiente que multiplica a $h_k$ es igual a $l$ en lugar de $l+1$.
+
+Por ello, se ha hecho uso de una función de suavizado preexistente en SciPy, en concreto en el módulo \textit{signal}. Se ha elegido la función de Hann, llamada así por el meteorólogo asutriaco Julius van Hann. Se conoce a esta función por el nombre de Campana de Coseno, y se define por la ecuación \ref{equation:hannWindow}.
+\begin{equation}
+\label{equation:hannWindow}
+w(n)=0.5 - 0.5 cos\frac{2 \pi n}{M-1}\\
+0 \leq n \leq M-1
+\end{equation}
+Donde $M$ es el número de puntos en la ventana de salida. En este caso tomará el valor de $l$.
+
+De esta forma, de obtener un histograma de $n$ sectores con valores $h_k$ posiblemente dispares sectores $k$ contiguos, se pasa a obtener un histograma suavizado, que será de mayor utilidad para el sistema de evasión de obstáculos. Véase la figura \ref{fig:PODandsPOD}
+
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{PODandsPOD}
+	\caption{En azul Polar Obstacle Density(POD). En naranja el suavizado de este (sPOD).}\label{fig:PODandsPOD}
+\end{figure}
+
+\subsubsection{Output Layer}
+\label{subsubsec:OL}
+En el último estadio del algoritmo VFH, se computa el ángulo de giro $\theta$ que se debe aplicar al drone para dirigirlo, por una ruta segura, hacia el destino establecido.
+Una vez obtenido el \textit{Polar Obstacle Density}, y aplicado el suavizado correspondiente, se puede determinar en que sectores $k$ existe un \textit{valle}. Se define un \textit{valle candidato} como una zona, compuesta de varios sectores por los que es seguro navegar, es decir, están libres de obstáculos o su densidad de obstáculos esta por debajo de cierto umbral. 
+
+Por lo general se crean dos o más valles candidatos al analizar el entorno, de forma que es necesario elegir aquel que dirigirá al drone en dirección al destino $k_{targ}$. Una vez escogido el valle, se deberá seleccionar el sector $k$ idóneo. Para ello se mide el tamaño del valle, es decir el número de sectores consecutivos por debajo del umbral que lo componen, de esta forma se distinguen dos tipos de valles, amplios y estrechos. 
+Los valles amplios son el resultado de espacios grandes entre obstáculos, o de situaciones en las que únicamente existe un obstáculo lo suficientemente cerca del drone. Por \textit{grande} se define una constante $s_{max}$ que determina el número de sectores $k$ que componen un valle amplio.
+
+El sector más cercano a $k_{targ}$ y por debajo del umbral se denomina $k_n$, y representa el \textit{borde cercano} del valle. El más lejano $k_f$ que en el caso de los valles amplios coincide con el valor de $s_{max} + k_n$.  Véase la imagen \ref{fig:wvalley1}.
+
+El sector que debe seguir el drone para dirigirse hacia $k_{targ}$ sin peligro, se denomina $\theta_{yaw}$, y su valor es la media de las medidas de $k_n$ y $k_f$, como puede verse en la ecuación \ref{equation:thetaYaw}.
+
+\begin{equation}
+\theta_{yaw} = \frac{k_n + k_f}{2}
+\label{equation:thetaYaw}
+\end{equation}
+
+
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{wideValley1}
+	\caption{Valle ancho encontrado entre el obstáculo, a la derecha, y un espacio abierto, a la izquierda.}\label{fig:wvalley1}
+\end{figure}
+
+
+Sin embargo, la ecuación \ref{equation:thetaYaw} presenta un comportamiento errático cuando el destino se encuentra dentro de un valle, dado que se establece $\theta_{yaw}$ como la media entre los sectores cercano y lejano, al encontrarse la meta en un sector dentro del valle, el drone no se aproxima a ella sino que realiza círculos cada vez más cerrados hasta llegar al destino, como puede verse en la imagen \ref{fig:nToWFOV}
+
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{narrowToWideVfov}
+	\caption{Movimiento circular al encontrarse $k_{targ}$ en un sector seguro por ecuación \ref{equation:thetaYaw}}\label{fig:nToWFOV}
+\end{figure}
+
+La intención tras la ecuación \ref{equation:thetaYaw} es la navegación segura en entornos con obstáculos cercanos, ya que aporta la cualidad de escoger la zona central entre dos obstáculos para usarla como zona de navegación segura\footnote{Una cualidad de la que el algoritmo de campos potenciales adolecía, generando movimientos oscilatorios en espacios cerrados.}. Además en el momento en que la posición del drone sea intermedia entre dos obstáculos, la ecuación \ref{equation:thetaYaw} dará como resultado el mismo sector, con lo que se consigue un movimiento rectilíneo. 
+
+Sin embargo en el momento en el que el destino $k_{targ}$ se encuentra en un sector $k$ por el que es seguro navegar, no existe la necesidad escoger la zona intermedia del valle, sino que es deseable dirigirse hacia él directamente. 
+
+\newpage
+En el caso de \textit{valles estrechos}, la mecánica es prácticamente la misma. Para este caso el valor del último sector con un POD por debajo del umbral escogido será $k_f < s_{max}$. De nuevo se utiliza la ecuación \ref{equation:thetaYaw} para obtener el valor de $\theta_{yaw}$, siempre centrado entre los dos obstáculos, ilustrado en la imagen \ref{fig:nvalley1}.
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{narrowValley1}
+	\caption{Valle estrecho encontrado entre dos obstáculos. La ecuación \ref{equation:thetaYaw} proporciona un sector seguro ubicado en la zona central del valle.}\label{fig:nvalley1}
+\end{figure}
+
+Se ha referenciado numerosas veces el \textit{umbral} que parece definir un valle como candidato. Su definición se ha dejado para el final debido a que, el VFH presenta una gran robustez ante configuraciones probablemente erróneas. Aumentar o reducir el umbral, únicamente, afecta a la anchura de los valles candidatos cuando estos son estrechos. En el caso de los valles anchos sencillamente se aumenta o reduce la distancia existente entre el obstáculo y el drone.
+
+Por ejemplo, establecer un umbral muy alto hace que el drone no sea consciente de la existencia de obstáculos y que se aproxime a ellos. Sin embargo las repetidas medidas de un obstáculo en ese sector, harán que el valor de certidumbre del Polar Histogram se eleve hasta superar el umbral, produciendo que el drone trate de variar su curso. De esta forma el drone se acercará mucho a los obstáculos y es posible que llegue a colisionar si la velocidad de aproximación es demasiado rápida. 
+Por el contrario, si el umbral es muy bajo, hará que los valles candidatos se vean reducidos, haciendo que el drone no pueda pasar por espacios estrechos.
+
 
 \section{Dispositivos Físicos}
 
 \subsection{Raspberry Pi}
-
 
 \begin{table}[H]
 	\begin{center}
