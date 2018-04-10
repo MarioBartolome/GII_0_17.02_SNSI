@@ -342,3 +342,5 @@ TSWLatexianTemp*
 
 *.pyc
 deletions/
+
+private/
