@@ -149,7 +149,7 @@ def video_feed():
 	drone = current_user.drones.first()
 	url = drone.url
 	port = drone.video_port
-	video_url = url + ':' + str(port) + '/webrtc'
+	video_url = url + ':' + str(port) + '/stream/webrtc'
 	return video_url
 
 # Uncomment to use CertBot to get SSL certs to HTTP*S*
