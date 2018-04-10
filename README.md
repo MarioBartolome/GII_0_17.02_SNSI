@@ -11,7 +11,7 @@ This project comprises two distributed systems:
 - A backend system. Usually a RaspberryPi-like computer. Small, not so power hungry and most importantly, lightweight.
 - A frontend system. Giving the user a  WebUI to access the backend system.
 
-![Drone Image](https://github.com/mbm0089/GII_0_17.02_SNSI/blob/5e03572352750919cc015e59bdead2220eca5f19/frontend/view/static/droneLogo.png)
+![Drone Image](https://github.com/mbm0089/GII_0_17.02_SNSI/blob/5e03572352750919cc015e59bdead2220eca5f19/frontend/view/static/droneLogo.png "I know... it's beautiful. It's the stallion of the pictures")
 
 ## BackEnd
 
