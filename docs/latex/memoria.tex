@@ -25,6 +25,9 @@
 	allcolors = {red}
 }
 
+% Bibliography management
+\usepackage[numbers,sort]{natbib}
+
 % Ecuaciones
 \usepackage{siunitx}
 \DeclareSIUnit\gauss{G}
@@ -385,11 +388,11 @@
 \def\tutor{Dr. Alejandro Merino Gómez}
 \def\cotutorOne{Dr. César Ignacio García Osorio}
 \def\cotutorTwo{Dr. José Francisco Díez Pastor}
-%\newpage\null\thispagestyle{empty}\newpage
+\newpage\null\thispagestyle{empty}\newpage
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\thispagestyle{empty}
+\thispagestyle{empty}
 
 
 \noindent\includegraphics[width=\textwidth]{cabecera}\vspace{1cm}
@@ -400,7 +403,7 @@
 
 \noindent Que el alumno D. \nombre, con DNI 71298657Z, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado <<\titulo>>. 
 
-\noindent Y que dicho trabajo ha sido realizado por el alumno bajo la dirección del que suscribe, en virtud de lo cual se autoriza su presentación y defensa.
+\noindent Y que dicho trabajo ha sido realizado por el alumno bajo la dirección del que suscribe, en virtud de lo cual se autoriza su presentación y defensa. 
 
 \begin{center} %\large
 En Burgos, {\large \today}
@@ -453,7 +456,7 @@ D. \cotutorTwo
 %D. nombre tutor
 
 
-%\newpage\null\thispagestyle{empty}\newpage
+\newpage\null\thispagestyle{empty}\newpage
 
 
 
@@ -487,6 +490,7 @@ drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, vide
 \clearpage
 
 % Indices
+\hypersetup{colorlinks=true, linkcolor=[rgb]{0.0, 0.3266, 0.7061}}
 \setcounter{tocdepth}{2}
 \tableofcontents
 
@@ -508,8 +512,7 @@ drone, UAV, semi-autonomous, semi-automatic, vigilance, navigation, indoor, vide
 \include{./tex/6_Trabajos_relacionados}
 \include{./tex/7_Conclusiones_Lineas_de_trabajo_futuras}
 
-
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{bibliografia}
 
 \end{document}
