@@ -1,28 +1,317 @@
-@book{koza92,
-		author    = "Koza, John R.",
-		title     = "Genetic Programming: On the Programming of Computers by Means of Natural Selection",
+
+% PROTOCOLOS
+
+@misc{wiki:MultiWiiHistory, 
+       author = "Trollcop, Fiendie, et al.",
+       title = "MultiWii",
+       year = "2012",
+       url = "http://www.multiwii.com",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:MSPDefinition,
+       author = "MultiWii",
+       title = "MultiWii Serial Protocol",
+       year = "2015",
+       url = "http://www.multiwii.com/wiki/index.php?title=Multiwii_Serial_Protocol",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:WebSocketWiki, 
+       author = "Wikipedia",
+       title = "WebSocket",
+       year = "2017",
+       url = "https://es.wikipedia.org/wiki/WebSocket",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:WebSocket6455, 
+       author = "I. Fette, A. Melnikov",
+       title = "WebSocket",
+       year = "2011",
+       url = "https://tools.ietf.org/html/rfc6455",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:WebRTCorg, 
+  author = "Google, Firefox et al.",
+       title = "WebRTC",
+       year = "2012",
+       url = "https://webrtc.org",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:WebRTCmdn, 
+       author = "Google, Firefox et al.",
+       title = "WebRTC",
+       year = "2012",
+       url = "https://developer.mozilla.org/es/docs/WebRTC",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:WebRTCFullDesc, 
+       author = "Sam Dutton",
+       title = "Getting Started with WebRTC",
+       year = "2014",
+       url = "https://www.html5rocks.com/en/tutorials/webrtc/basics/",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:ICE,
+       author = "J. Rosenberg",
+       title = "Interactive Connectivity Establishment",
+       year = "2010",
+       url = "https://tools.ietf.org/html/rfc5245",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:STUN,
+       author = "J. Rosenberg, Cisco, et al.",
+       title = "STUN",
+       year = "2008",
+       url = "https://tools.ietf.org/html/rfc5389",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:TURN,
+       author = "R. Mahy, P. Matthews, et al.",
+       title = "TURN",
+       year = "2008",
+       url = "https://tools.ietf.org/html/rfc5766",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{wiki:SSH,
+       author = "T. Ylonen, Cisco, et al.",
+       title = "The Secure Shell Transport Layer Protocol",
+       year = "2006",
+       url = "https://tools.ietf.org/html/rfc4253",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:PWM,
+       author = "Wikipedia",
+       title = "Pulse Width Modulation",
+       year = "2018",
+       url = "https://en.wikipedia.org/wiki/Pulse-width_modulation",
+       note = "[Internet; descargado 9-abril-2018]"
+}
+
+
+
+% ALGORITMIA
+@book{book:introMobileRobots,
+		author    = "Roland SiegWart, Illah R. Nourbakhsh",
+		title     = "Introduction to Autonomous Mobile Robots",
 		publisher = "MIT Press",
-		year      = "1992"
+		year      = "2004"
+}
+
+@article{art:Khatib,
+		author    = "Oussama Khatib",
+		title     = "Real Time Obstacle Avoidance for Manipulators and Mobile Robots",
+		publisher = "MIT Press",
+		year      = "1986",
+		url = "https://cs.stanford.edu/group/manips/publications/pdfs/Khatib_1986_IJRR.pdf"
+}
+
+@article{art:BorensteinLims,
+		author    = "J. Borenstein, Y. Koren",
+		title     = "Potential Field Methods and Their Inherent Limitations for Mobile Robot Navigation",
+		publisher = "IEEE",
+		year      = "1991",
+		url = "https://pdfs.semanticscholar.org/738a/a7b9fda536e7d603e9d84725f38f96b50150.pdf?_ga=2.22475512.2130287822.1523287256-1927681115.1523287256",
+		isbn="0-8186-2163-X"
+}
+
+@article{art:BorensteinKorenVFH,
+		author    = "J. Borenstein, Y. Koren",
+		title     = "The Vector Field Histogram - Fast Obstacle Avoidance for Mobile Robots",
+		publisher = "IEEE",
+		year      = "1991",
+		url = "http://www-personal.umich.edu/~johannb/Papers/paper16.pdf"
+}
+
+@article{art:BorensteinKorenFMCE,
+		author    = "J. Borenstein, Y. Koren",
+		title     = "Real-time Obstacle Avoidance for Fast Mobile Robots in Cluttered Environments",
+		publisher = "IEEE",
+		year      = "1990",
+		url = "http://www-personal.umich.edu/~johannb/Papers/paper17.pdf"
+}
+
+@article{art:GSSPF,
+		author    = "N. Gordon, J. Salmond, Smith",
+		title     =  "Novel approach to nonlinear/non-Gaussian Bayesian state estimation",
+		publisher = "IEEE",
+		year      = "1993",
+		url = "http://ieeexplore.ieee.org/document/210672/"
+}
+
+@conference{conf:CertainityGrid,
+author = {Hans Moravec and A. E. Elfes},
+title = {High Resolution Maps from Wide Angle Sonar},
+booktitle = {Proceedings of the 1985 IEEE International Conference on Robotics and Automation},
+year = {1985},
+month = {March},
+pages = {116 - 121},
+url = "https://www.ri.cmu.edu/pub_files/pub4/moravec_hans_1985_1/moravec_hans_1985_1.pdf"
+}
+
+
+% RasPi
+
+@misc{wiki:OCSD,
+	author = "Jeff Geerling",
+	title = "How to overclock the microSD card reader on a Raspberry Pi 3",
+	year = "2016",
+	url = "https://www.jeffgeerling.com/blog/2016/how-overclock-microsd-card-reader-on-raspberry-pi-3",
+	note = "[Internet; descargado 9-abril-2018]"
+	}
+
+
+@misc{wiki:PowerSaving,
+	author = "Jeff Geerling",
+	title = "Raspberry Pi Zero - Conserve power and reduce draw to 80mA",
+	year = "2015",
+	url = "https://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy",
+	note = "[Internet; descargado 9-abril-2018]"
+	}
+
+@misc{wiki:OCSDWifiFix,
+	author = "PhilE",
+	title = "Pi3 WiFi stopped working",
+	year = "2016",
+	url = "https://www.raspberrypi.org/forums/viewtopic.php?p=928516#p921981",
+	note = "[Internet; descargado 9-abril-2018]"
+	}
+
+
+
+% Python
+
+@misc{wiki:PythonStruct,
+	author = "Python Software Foundation",
+	title = "Python Struct module",
+	year = "2018",
+	url = "https://docs.python.org/3/library/struct.html",
+	note = "[Internet; descargado 9-abril-2018]"
+	}
+
+
+
+% Tecnicas y herramientas
+
+@misc{wiki:SCRUM,
+	author = "Wikipedia",
+	title = "Scrum (desarrollo de software)",
+	year = "2018",
+	url = "https://es.wikipedia.org/wiki/Scrum_(desarrollo_de_software)",
+	note = "[Internet; descargado 9-abril-2018]"
+	}
+	
+	
+@misc{ wiki:Kanban,
+    author = "Wikipedia",
+	title = "Kanban (desarrollo)",
+    year = "2018",
+	url = "https://es.wikipedia.org/wiki/Kanban_(desarrollo)",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:gitflow,
+    author = "Vincent Driessen",
+	title = "Gitflow - A successful {Git} branching model",
+    year = "2010",
+	url = "http://nvie.com/posts/a-successful-git-branching-model/",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+
+@misc{ wiki:GitHub,
+    author = "GitHub",
+	title = "How devlopers work",
+    year = "2018",
+	url = "https://github.com/features#documentation",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+
+@misc{ wiki:ZenHub,
+    author = "ZenHub",
+	title = "Prioritize your projects and release better software",
+    year = "2018",
+	url = "https://www.zenhub.com/product",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:GitKraken,
+    author = "GitKraken",
+	title = "The legendary Git GUI client for Windows, Mac and Linux",
+    year = "2018",
+	url = "https://www.gitkraken.com",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+
+@misc{ wiki:PyCharm,
+    author = "JetBrains",
+	title = "The smartest JavaScript IDE",
+    year = "2018",
+	url = "https://www.jetbrains.com/webstorm/",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:WebStorm,
+    author = "JetBrains",
+	title = "Python IDE for Professional Developers",
+    year = "2018",
+	url = "https://www.jetbrains.com/pycharm/",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:PyPa,
+    author = "Python Software Foundation",
+	title = "The PyPa recommended tool for installing Python Packages",
+    year = "2018",
+	url = "https://pypi.python.org/pypi/pip",
+    note = "[Internet; descargado 9-abril-2018]"
 }
 
 
 @misc{ wiki:latex,
-       author = "Wikipedia",
-       title = "LaTeX --- Wikipedia{,} La enciclopedia libre",
-       year = "2015",
-       url = "https://es.wikipedia.org/w/index.php?title=LaTeX&oldid=84209252",
-       note = "[Internet; descargado 30-septiembre-2015]"
+    author = "Wikipedia",
+	title = "LaTeX",
+    year = "2018",
+	url = "https://es.wikipedia.org/wiki/LaTeX",
+    note = "[Internet; descargado 9-abril-2018]"
+}
+
+@misc{ wiki:TexMaker,
+    author = "TexMaker",
+	title = "TEXMAKER. Free cross-platform LaTeX editor since 2003",
+    year = "2003",
+	url = "http://www.xm1math.net/texmaker/",
+    note = "[Internet; descargado 9-abril-2018]"
 }
 
 
-@article{bortolot2005,
-  title={Estimating forest biomass using small footprint LiDAR data: An individual tree-based approach that incorporates training data},
-  author={Bortolot, Zachary J and Wynne, Randolph H},
-  journal={ISPRS Journal of Photogrammetry and Remote Sensing},
-  volume={59},
-  number={6},
-  pages={342--360},
-  year={2005},
-  publisher={Elsevier}
+@misc{ wiki:TexLive,
+    author = "Tex user groups",
+	title = "Tex Live",
+    year = "1996",
+	url = "https://www.tug.org/texlive/",
+    note = "[Internet; descargado 9-abril-2018]"
 }
+
+
+
+
+
+
+
+
+
+
+
 
