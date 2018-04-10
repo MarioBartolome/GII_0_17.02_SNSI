@@ -1,7 +1,7 @@
 \capitulo{3}{Conceptos teóricos}
 
 
-Esta sección auna los diferentes conocimientos teóricos necesarios para la realización del proyecto. A continuación, y en este orden, se explicarán los algoritmos utilizados, protocolos de comunicación y sistemas físicos empleados.
+Esta sección auna los diferentes conocimientos teóricos necesarios para la realización del proyecto. A continuación, y en este orden, se explicarán los algoritmos utilizados, sistemas físicos empleados y  protocolos de comunicación.
 
 \section{Algoritmia}
 
@@ -9,14 +9,13 @@ Esta sección auna los diferentes conocimientos teóricos necesarios para la rea
 \subsection{Filtros de Partículas}
 
 Los Filtros de Partículas son modelos utilizados para tratar de estimar el estado de un sistema que cambia con el tiempo. 
-\\Fue definido como \textit{bootstrap filter} en 1993 por N. Gordon, D. Salmond y A. Smith.  Se trata de un método que pretende implementar filtros bayesianos recursivos, haciendo uso del método de Montecarlo, es decir, realiza repetidas medidas del estado para estimar la posición del sistema.
+\\Fue definido como \textit{bootstrap filter} en 1993 por N. Gordon, D. Salmond y A. Smith \citep{art:GSSPF}.  Se trata de un método que pretende implementar filtros bayesianos recursivos, haciendo uso del método de Montecarlo, es decir, realiza repetidas medidas del estado para estimar la posición del sistema.
 \\ 
 
 \subsection{Campos Potenciales}
 \label{subsec:PF}
 \setcounter{equation}{0}
-A la hora de lograr una navegación segura en un entorno determinado, es necesario implementar un sistema de evasión de obstáculos. 
-\\Introducido por Oussama Khatib en 1986, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. 
+A la hora de lograr una navegación segura en un entorno determinado, es necesario implementar un sistema de evasión de obstáculos. \\Introducido por Oussama Khatib en 1986 \citep{art:Khatib}, el algoritmo de Campos Potenciales aporta una manera de evitar colisionar con los diferentes obstáculos existentes.\\ Se basa en la idea de que el agente se mueve en un campo de fuerzas. 
 La posición que debe alcanzar, su meta o destino, se presenta como una fuerza de atracción, y los obstáculos como fuerzas repulsivas. 
 Los diferentes vectores fuerza, determinan la dirección y magnitud de la fuerza atrayente o repulsora.
 
@@ -85,7 +84,7 @@ Donde $\eta$ es un factor de escalado positivo, que permite establecer como de f
  \newpage
 \subsubsection{Desventajas}
 El algoritmo de campos potenciales se puede llevar a cabo con una implantación simple y eficiente haciendo uso de Numpy, dado que se puede crear una representación matricial del plano en que se desplaza el agente, que contenga los diferentes potenciales en cada posición. 
-Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embargo, tiene ciertas desventajas que lo han hecho, cuanto menos, inútil para las necesidades de este proyecto:
+Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embargo, tiene ciertas desventajas, tal y como publicaron Borenstein y Koren, \citep{art:BorensteinLims} que lo han hecho, cuanto menos, inútil para las necesidades de este proyecto:
 \begin{itemize}
 \item Es un algoritmo basado en descenso de gradiente, y como tal puede quedar \textit{atascado} en mínimos locales. Estos mínimos pueden encontrarse en zonas que contengan obstáculos en forma cóncava o de caja abierta, tal como se ilustra en la figura \ref{fig:localmin}.
 \begin{figure}[H]
@@ -93,7 +92,7 @@ Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embar
 	\includegraphics[width=0.5\textwidth]{localmin}
 	\caption{Mínimo local en zonas convexas.}\label{fig:localmin}
 \end{figure}
-\item De encontrarse en un espacio con forma de corredor o pasillo, cualquier acercamiento hacia las paredes ocasionará una corrección en el sentido opuesto al campo repulsor, lo cual puede ocasionar un movimiento oscilatorio si dicha corrección supone aproximar el agente a la pared opuesta, tal y como se ilustra en la figura \ref{fig:corridoroverc}.
+\item \label{subsec:PFlims} De encontrarse en un espacio con forma de corredor o pasillo, cualquier acercamiento hacia las paredes ocasionará una corrección en el sentido opuesto al campo repulsor, lo cual puede ocasionar un movimiento oscilatorio si dicha corrección supone aproximar el agente a la pared opuesta, tal y como se ilustra en la figura \ref{fig:corridoroverc} extraída de \citep{art:BorensteinLims}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{corridoroverc}
@@ -108,7 +107,7 @@ Por estos motivos, se ha desechado el algoritmo de Campos Potenciales como siste
 
 \subsection{Vector Field Histogram}
 \label{subsec:VFH}
-El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Korem en el año 1991. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo 
+El Vector Field Histogram, o Histograma de Campos Vectoriales, \textit{VFH} de aquí en adelante, fue introducido por Borenstein y Koren en el año 1991, \citep{art:BorensteinKorenVFH} y \citep{art:BorensteinKorenFMCE}. Permite la detección de obstáculos y su evasión mediante el control de la dirección y velocidad del agente en tiempo 
 real.
 
 Para ello realiza una representación del entorno del agente en forma de histograma. Dicho entorno, llamado \textit{Región Activa $C*$} se representa como una \textit{ventana} que se desplaza con el agente en el centro. Se trata un algoritmo de búsqueda local, sin embargo se ha mostrado que suele producir rutas cercanas al óptimo, aunque en el caso de este proyecto no es relevante, dado que la intención es que se exploren todas las zonas del entorno.
@@ -117,18 +116,18 @@ Es un algoritmo más robusto, dado que presenta cierta insensibilidad a lecturas
 
 Se compone de tres partes: 
 \begin{enumerate}
-\item Red Cartesiana de Histogramas: Se construye un plano cartesiano representando el entorno cercano del agente. Por \textit{cercano}, se entiende una distancia que los sensores de distancia puedan abarcar, dado que no tendría sentido tratar de computar zonas inalcanzables en un momento determinado. Dicho plano será representado como un histograma, y de ahí su nombre habitual \textit{Cartesian Histogram Grid}. En \ref{subsubsec:CHG}.
-\item Histograma Polar: Una representación unidimensional, obtenida a partir de una reducción de la Red Cartesiana definida en el punto anterior. Se compone de $n$ sectores angulares $k$, de anchura $\alpha$, de forma que $n * \alpha = 360; n \in \mathbb{Z}$. Dichos sectores $k$ contienen un valor $h_k$ que representa la densidad de obstáculos, \textit{Polar Obstacle Density} o \textit{POD} de aquí en adelante, contenida en él. En \ref{subsubsec:PH}.
-\item Capa de salida: Representa el resultado del algoritmo. A partir del POD, se obtienen los posibles \textit{valles}\footnote{Así denominados por su representación en forma de histograma} candidatos existentes entre obstáculos, y se elige el que más se aproxime a la dirección de la meta establecida. Finalmente, entrega los valores de cambio de dirección necesario en cada momento. En \ref{subsubsec:OL}.
+\item Red Cartesiana de Histogramas: Derivado del concepto de \textit{malla de certidumbre} propuesto por Moravec y Elfes en 1985 \citep{conf:CertainityGrid}  en la universidad de Carnegie Mellon. Se construye un plano cartesiano representando el entorno cercano del agente. Por \textit{cercano}, se entiende una distancia que los sensores de distancia puedan abarcar, dado que no tendría sentido tratar de computar zonas inalcanzables en un momento determinado. Dicho plano será representado como un histograma, y de ahí su nombre habitual \textit{Cartesian Histogram Grid}. Ver \ref{subsubsec:CHG}.
+\item Histograma Polar: Una representación unidimensional, obtenida a partir de una reducción de la Red Cartesiana definida en el punto anterior. Se compone de $n$ sectores angulares $k$, de anchura $\alpha$, de forma que $n * \alpha = 360; n \in \mathbb{Z}$. Dichos sectores $k$ contienen un valor $h_k$ que representa la densidad de obstáculos, \textit{Polar Obstacle Density} o \textit{POD} de aquí en adelante, contenida en él. Ver \ref{subsubsec:PH}.
+\item Capa de salida: Representa el resultado del algoritmo. A partir del POD, se obtienen los posibles \textit{valles}\footnote{Así denominados por su representación en forma de histograma} candidatos existentes entre obstáculos, y se elige el que más se aproxime a la dirección de la meta establecida. Finalmente, entrega los valores de cambio de dirección necesario en cada momento. Ver \ref{subsubsec:OL}.
 \end{enumerate}
 
 \subsubsection{Cartesian Histogram Grid}
 \label{subsubsec:CHG}
-Se modela el espacio cercano al drone en forma de malla. En cada celda $(i,j)$ de esa malla se encuentra un valor $c_{i,j} \in \mathbb{Z}$ que establece la certeza de la existencia de un obstáculo. La cantidad de celdas existentes en la malla se establece en función de los límites del sensor, y teniendo en cuenta que es necesario establecer una precisión $c$, i.e: Si se dispone de un sensor con un rango de medidas de hasta 400cm se puede crear una malla de 80x80, suponiendo que cada celda tenga un tamaño de $c=5$, $5x5cm$. De esta forma se consigue una precisión de $\pm5\text{cm}$
+Se modela el espacio cercano al drone en forma de malla. En cada celda $(i,j)$ de esa malla se encuentra un valor $c_{i,j} \in \mathbb{Z}$ que establece la certeza de la existencia de un obstáculo. La cantidad de celdas existentes en la malla se establece en función de los límites del sensor, y teniendo en cuenta que es necesario establecer una precisión $c$, i.e: Si se dispone de un sensor con un rango de medidas de hasta 400cm se puede crear una malla de 81x81, suponiendo que cada celda tenga un tamaño de $c=5$, $5x5cm$, en cuyo centro se encuentra el drone, dejando 40 filas y columnas a cada lado. Y estableciendo así, un perímetro de medidas de 200cm en cada dirección desde el drone. De esta forma se consigue una precisión de $\pm5\text{cm}$
 
 Dicho valor se obtiene de la lectura proporcionada por el sensor de distancia, en este caso un sonar, y se establece en el centro del ángulo de barrido del sonar, ver \ref{subsec:hcsr04}. 
 La eficiencia superior de este algoritmo se basa precisamente en incrementar el valor $c_{i,j}$ de únicamente una celda con cada medida. Dicha celda $(i,j)$ se encuentra a una distancia de $R = \frac{\delta_{obs}q}{c}$ celdas y en la bisectriz del ángulo barrido por el sonar.
-Si bien está solución puede parecer una simplificación del problema, se llega a generar una distribución probabilística tomando múltiples medidas de forma continua mientras el agente se desplaza por el entorno. Por tanto, la misma celda, cercana a un obstáculo, y sus vecinas serán incrementadas repetidas veces, tal y como se muestra en la figura \ref{fig:histog1}
+Si bien está solución puede parecer una simplificación del problema, se llega a generar una distribución probabilística tomando múltiples medidas de forma continua mientras el agente se desplaza por el entorno. Por tanto, la misma celda, cercana a un obstáculo, y sus vecinas serán incrementadas repetidas veces, tal y como se muestra en la figura \ref{fig:histog1}, extraída de \citep{art:BorensteinKorenVFH}
  \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{HistoG1}
@@ -182,14 +181,14 @@ h_k = \sum m_{i,j}
 \end{equation}
 
 Dada la discretización de los datos obtenidos del Polar Histogram el resultado, al realizar esta conversión y al obtener el sumatorio $h_k$ de todos los valores pertenecientes a un sector $k$, puede parecer que el histograma varía de forma muy repentina entre dos sectores. Por ello se aplica una función de suavizado. 
-Según J. Borenstein y Y. Koren la función de suavizado utilizada se corresponde con: 
+Según J. Borenstein y Y. Koren, en \citep{art:BorensteinKorenVFH} la función de suavizado utilizada se corresponde con: 
 \begin{equation}
 \label{equation:PODsWRONG}
 h'_k = \frac{h_{k-l} +2h_{k-l+1} + ... + lh_k + ... + 2h_{k+l-1} + h_{k+l}}{2l+1}
 \end{equation}
 Donde $l$  es una constante positiva a la que se le ha dado un valor de $5$. 
 
-Sin embargo, existe una errata en el paper publicado, y la ecuación \ref{equation:PODsWRONG} no es consistente, i.e:
+Sin embargo, existe una errata en el artículo publicado, y la ecuación \ref{equation:PODsWRONG} no es consistente, i.e:
 La función de suavizado parece poder expresarse de forma general tal que:
 \begin{equation}
 \label{equation:PODsWRONGgen}
@@ -225,7 +224,7 @@ Los valles amplios son el resultado de espacios grandes entre obstáculos, o de 
 
 El sector más cercano a $k_{targ}$ y por debajo del umbral se denomina $k_n$, y representa el \textit{borde cercano} del valle. El más lejano $k_f$ que en el caso de los valles amplios coincide con el valor de $s_{max} + k_n$.  Véase la imagen \ref{fig:wvalley1}.
 
-El sector que debe seguir el drone para dirigirse hacia $k_{targ}$ sin peligro, se denomina $\theta_{yaw}$, y su valor es la media de las medidas de $k_n$ y $k_f$, como puede verse en la ecuación \ref{equation:thetaYaw}.
+El sector que debe seguir el drone para dirigirse hacia $k_{targ}$ sin peligro, se denomina $\theta_{yaw}$, y su valor es la media de los valores de $k_n$ y $k_f$, como puede verse en la ecuación \ref{equation:thetaYaw}.
 
 \begin{equation}
 \theta_{yaw} = \frac{k_n + k_f}{2}
@@ -248,11 +247,10 @@ Sin embargo, la ecuación \ref{equation:thetaYaw} presenta un comportamiento err
 	\caption{Movimiento circular al encontrarse $k_{targ}$ en un sector seguro por ecuación \ref{equation:thetaYaw}}\label{fig:nToWFOV}
 \end{figure}
 
-La intención tras la ecuación \ref{equation:thetaYaw} es la navegación segura en entornos con obstáculos cercanos, ya que aporta la cualidad de escoger la zona central entre dos obstáculos para usarla como zona de navegación segura\footnote{Una cualidad de la que el algoritmo de campos potenciales adolecía, generando movimientos oscilatorios en espacios cerrados.}. Además en el momento en que la posición del drone sea intermedia entre dos obstáculos, la ecuación \ref{equation:thetaYaw} dará como resultado el mismo sector, con lo que se consigue un movimiento rectilíneo. 
+La intención tras la ecuación \ref{equation:thetaYaw} es la navegación segura en entornos con obstáculos cercanos, ya que aporta la cualidad de escoger la zona central entre dos obstáculos para usarla como zona de navegación segura\footnote{Una cualidad de la que el algoritmo de campos potenciales adolecía, generando movimientos oscilatorios en espacios cerrados, como ya se vió en \ref{subsec:PFlims}.}. Además en el momento en que la posición del drone sea intermedia entre dos obstáculos, la ecuación \ref{equation:thetaYaw} dará como resultado el mismo sector, con lo que se consigue un movimiento rectilíneo. 
 
 Sin embargo en el momento en el que el destino $k_{targ}$ se encuentra en un sector $k$ por el que es seguro navegar, no existe la necesidad escoger la zona intermedia del valle, sino que es deseable dirigirse hacia él directamente. 
 
-\newpage
 En el caso de \textit{valles estrechos}, la mecánica es prácticamente la misma. Para este caso el valor del último sector con un POD por debajo del umbral escogido será $k_f < s_{max}$. De nuevo se utiliza la ecuación \ref{equation:thetaYaw} para obtener el valor de $\theta_{yaw}$, siempre centrado entre los dos obstáculos, ilustrado en la imagen \ref{fig:nvalley1}.
  \begin{figure}[H]
 	\centering
@@ -260,11 +258,22 @@ En el caso de \textit{valles estrechos}, la mecánica es prácticamente la misma
 	\caption{Valle estrecho encontrado entre dos obstáculos. La ecuación \ref{equation:thetaYaw} proporciona un sector seguro ubicado en la zona central del valle.}\label{fig:nvalley1}
 \end{figure}
 
+\subparagraph{Umbral}
 Se ha referenciado numerosas veces el \textit{umbral} que parece definir un valle como candidato. Su definición se ha dejado para el final debido a que, el VFH presenta una gran robustez ante configuraciones probablemente erróneas. Aumentar o reducir el umbral, únicamente, afecta a la anchura de los valles candidatos cuando estos son estrechos. En el caso de los valles anchos sencillamente se aumenta o reduce la distancia existente entre el obstáculo y el drone.
 
-Por ejemplo, establecer un umbral muy alto hace que el drone no sea consciente de la existencia de obstáculos y que se aproxime a ellos. Sin embargo las repetidas medidas de un obstáculo en ese sector, harán que el valor de certidumbre del Polar Histogram se eleve hasta superar el umbral, produciendo que el drone trate de variar su curso. De esta forma el drone se acercará mucho a los obstáculos y es posible que llegue a colisionar si la velocidad de aproximación es demasiado rápida. 
-Por el contrario, si el umbral es muy bajo, hará que los valles candidatos se vean reducidos, haciendo que el drone no pueda pasar por espacios estrechos.
+Por ejemplo, establecer un umbral muy alto, ver imagen \ref{fig:highThreshold}, hace que el drone no sea consciente de la existencia de obstáculos y que se aproxime a ellos. Sin embargo las repetidas medidas de un obstáculo en ese sector, harán que el valor de certidumbre del Polar Histogram se eleve hasta superar el umbral, produciendo que el drone trate de variar su curso. De esta forma el drone se acercará mucho a los obstáculos y es posible que llegue a colisionar si la velocidad de aproximación es demasiado rápida. 
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{highThreshold}
+	\caption{Con un umbral muy elevado, puede darse el caso de que todo sean valles hasta estar demasiado cerca del obstáculo.}\label{fig:highThreshold}
+\end{figure}
 
+Por el contrario, si el umbral es muy bajo, ver imagen \ref{fig:lowThreshold}, hará que los valles candidatos se vean reducidos, haciendo que el drone no pueda pasar por espacios estrechos.
+ \begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{lowThreshold}
+	\caption{Con un umbral muy bajo, puede darse el caso de que los valles sean muy estrechos, o incluso inexistentes}\label{fig:lowThreshold}
+\end{figure}
 
 \section{Dispositivos Físicos}
 
@@ -314,14 +323,14 @@ Una vez descargado el sistema, este ha sido instalado en una micro SD mediante e
 
 Una vez realizados estos pasos, se puede insertar la microSD en la Raspberry Pi. Para encenderla basta con utilizar el puerto micro-usb de que dispone.\\La Raspberry Pi 3 requiere de una fuente de alimentación capaz de proporcionar 2,5A\footnote{Véase https://www.raspberrypi.org/help/faqs/\#power} para funcionar al máximo nivel de estrés para el procesador y alimentar dispositivos USB.
 
-Sin embargo, este no es estrictamente nuestro caso, véase el apartado \hyperref[subsec:Modificaciones]{Modificaciones}. Se requiere un dispositivo cuyo consumo sea lo más reducido posible, pero que sea rápido en la ejecución, y que muestre poca latencia en operaciones de \code{IO}, que es donde se encuentra el cuello de botella.
+Sin embargo, este no es estrictamente nuestro caso, véase \ref{subsubsec:Modificaciones}. Se requiere un dispositivo cuyo consumo sea lo más reducido posible, pero que sea rápido en la ejecución, y que muestre poca latencia en operaciones de \code{IO}, que es donde se encuentra el cuello de botella.
 
 Una vez encendida, se accede a ella con el usuario por defecto \code{pi} y la contraseña por defecto \code{raspberry}. Obviamente ambas \textbf{han sido cambiadas} por motivos de seguridad.
 
 
 
 \subsubsection{Modificaciones}
-\label{subsec:Modificaciones}
+\label{subsubsec:Modificaciones}
 
 \begin{figure}
 	\centering
@@ -330,8 +339,8 @@ Una vez encendida, se accede a ella con el usuario por defecto \code{pi} y la co
 \end{figure}
 
 \begin{itemize}
-\item Se ha desactivado el puerto HDMI para reducir el consumo en \textasciitilde{}30mA: \\Para ello se ha incluido en \code{/etc/rc.local} la línea \code{/usr/bin/tvservice -o}.
-\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los resultados mostrados en la imagen \ref{fig:sdbenchmark}
+\item Se ha desactivado el puerto HDMI para reducir el consumo en \textasciitilde{}30mA: \\Para ello se ha incluido en \code{/etc/rc.local} la línea \code{/usr/bin/tvservice -o}. Descrito en \citep{wiki:PowerSaving}.
+\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los resultados mostrados en la imagen \ref{fig:sdbenchmark}. Descrito en  Descrito en \citep{wiki:OCSD} y \citep{wiki:OCSDWifiFix}.
 \item Se han incluido una serie de disipadores para evitar sobrecalentamiento de la placa. Así como un pequeño ventilador de bajo consumo.
 \end{itemize} 
 
@@ -360,7 +369,7 @@ Dichos canales de entrada, por defecto, reciben una señal modulada en ancho de 
 
 \subsubsection{Salidas}
 En el lado izquierdo de la imagen \ref{fig:fc}, pueden verse otros pines que actúan como salida de señal hacia los controladores de velocidad de los motores del drone (ESC o \textit{Electronic Speed Controller}).
-Estos pines de salida, emiten una señal que será interpretada por los ESC del drone, para determinar la frecuencia dada al voltaje que alimenta los motores. En el caso de nuestro proyecto, los ESC disponibles reciben una señal PWM, al igual que la FC desde un receptor de radio.
+Estos pines de salida, emiten una señal que será interpretada por los ESC del drone, para determinar la frecuencia dada al voltaje que alimenta los motores. En el caso de nuestro proyecto, los ESC disponibles reciben una señal PWM.
 
 \newpage
 \subsubsection{Sensores}
@@ -384,10 +393,10 @@ La controladora de vuelo Flip32 en su versión más completa, dispone de los sig
 
 \externaldocument[5-]{./tex/5_Aspectos_relevantes_del_desarrollo_del_proyecto}
 
-La modulación por ancho de pulso, se basa en medir el transcurso de tiempo entre el flanco de subida de una señal, y el flanco de bajada, tal y como puede verse en la imágen \ref{fig:PWM}.
+La modulación por ancho de pulso \citep{wiki:PWM}, se basa en medir el transcurso de tiempo entre el flanco de subida de una señal, y el flanco de bajada, tal y como puede verse en la imágen \ref{fig:PWM}.
 En este contexto, un receptor de radio recibe una señal de la emisora,  y genera una señal PWM acorde que será transmitida a la FC.
 Estas son capaces de entender señales de entre 1000 y 2000\si{\us}. Cualquier valor por debajo, o por encima, haría entrar la controladora en FailSafe\footnote{Al recibir una señal inválida por parte del receptor, la controladora de vuelo puede ser configurada para desactivar el drone, mantener la última medida buena conocida, intentar aterrizar... etc. Este modo es conocido como FailSafe}
-En el caso de este proyecto, se ha determinado que no se hará uso de este protocolo para la comunicación entre la Raspberry Pi y la controladora de vuelo, véase \ref{5-sec:MSP_implementation} y \ref{subsec:MSP}, y por lo tanto el uso de estos pines queda descartado.
+En el caso de este proyecto, se ha determinado que no se hará uso de este protocolo para la comunicación entre la Raspberry Pi y la controladora de vuelo, véase \ref{subsec:MSP}, y por lo tanto el uso de estos pines queda descartado.
 
 Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tipo de señal, por ello se ha considerado relevante explicar, brevemente, su funcionamiento.
 \begin{figure}[H]
@@ -402,9 +411,9 @@ Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tip
 
 MultiWii es un software de control de multirotores y está basado en componentes de la Nintendo Wii. Concretamente, los mandos de control de la consola de Nintendo poseen tres acelerómetros para determinar la posición angular y medir aceleraciones laterales. El problema es que los acelerómetros no son precisos para variaciones pequeñas, de forma que Nintendo creó un complemento que se podía conectar al propio mando, el Wii Motion Plus, que dispone de tres giroscopios, de forma que unidos a los tres acelerómetros iniciales, proporcionan una medición mucho más precisa de la posición del mando.
 
-A los primeros creadores del sistema de control MultiWii se les ocurrió la posiblidad de hacer uso de estos sensores para crear un sistema de control de drones. Uniendo estos sensores a un controlador, en principio se trató de un Arduino Mini, y programándolo para tal efecto, se logra crear una FC algo rudimentaria, pero que da muy buenos resultados.
+A los primeros creadores del sistema de control MultiWii se les ocurrió la posiblidad de hacer uso de estos sensores para crear un sistema de control de drones, \citep{wiki:MultiWiiHistory}. Uniendo estos sensores a un controlador, en principio se trató de un Arduino Mini, y programándolo para tal efecto, se logra crear una FC algo rudimentaria, pero que da muy buenos resultados.
 
-Para crear un entorno amigable para el usuario común, se desarrolló una aplicación de escritorio capaz de configurar los parámetros de esta controladora de vuelo poco convencional. De alguna forma debía lograrse una comunicación entre la FC y la aplicación, y así se implementó MultiWii Serial Protocol.\\Conocido como \textit{MSP}, se trata de un protocolo que se ha mantenido en diferentes implementaciones de sistemas de control de vuelo. No solo aquellos basados en sensores de la Nintendo Wii controlados por Arduino, sino en otros más modernos y potentes que han ido surgiendo los últimos años. Como el utilizado en nuestro proyecto.
+Para crear un entorno amigable para el usuario común, se desarrolló una aplicación de escritorio capaz de configurar los parámetros de esta controladora de vuelo poco convencional. De alguna forma debía lograrse una comunicación entre la FC y la aplicación, y así se implementó MultiWii Serial Protocol, \citep{wiki:MSPDefinition}.\\Conocido como \textit{MSP}, se trata de un protocolo que se ha mantenido en diferentes implementaciones de sistemas de control de vuelo. No solo aquellos basados en sensores de la Nintendo Wii controlados por Arduino, sino en otros más modernos y potentes que han ido surgiendo los últimos años. Como el utilizado en nuestro proyecto.
 \newpage
 Es un protocolo eficiente y sencillo, que permite una comunicación rápida y completa. Su composición puede verse en la imagen \ref{fig:MSPlayout}
 \begin{figure}[H]
@@ -417,7 +426,7 @@ Es un protocolo eficiente y sencillo, que permite una comunicación rápida y co
 \item Preámbulo: Se trata de dos caracteres ASCII que determinan el comienzo de un nuevo mensaje. Se compone de un símbolo '\$' y una letra 'M'.
 \item Dirección: Se trata de un caracter ASCII que determina la dirección del mensaje, \textbf{hacia} la controladora '<' o \textbf{desde} la controladora '>'.
 \item Tamaño: Se trata de un byte que determina el tamaño, en bytes, de los datos enviados o recibidos.
-\item Comando: Se trata de un byte que determina el comando a ejecutar. Véase \ref{5-sec:MSP_implementation} para una relación de los comandos implementados.
+\item Comando: Se trata de un byte que determina el comando a ejecutar. Véase \ref{tb:MSP_MESSAGES} para una relación de los comandos implementados.
 \item Datos: Se trata de una serie de bytes, de longitud definida por el byte <\textit{tamaño}>, que establecen el resto de parámetros a pasar con la función definida por el byte <\textit{comando}>.
 \item Checksum: Se trata de un byte de control. Se define su valor mediante la función XOR entre <\textit{tamaño}>, <\textit{comando}> y cada byte contenido en <\textit{datos}>
 
@@ -448,8 +457,8 @@ En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para 
 	\end{center}
 \end{table} 
 
-La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta coherencia con la tabla disponible en la descripción del protocolo MultiWii,\cite{MSP Definition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
-\\La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, descrita en la tabla \ref{tb:PY35STRUCT}
+La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta coherencia con la tabla disponible en la descripción del protocolo MultiWii, \citep{wiki:MSPDefinition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
+\\La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, \citep{wiki:PythonStruct} y  descrita en la tabla \ref{tb:PY35STRUCT}
 
 \begin{table}
 	\begin{center}	
@@ -475,7 +484,7 @@ Los enteros sin signo representados en la tabla \ref{tb:PY35STRUCT}, tienen su e
 
 \subsection{Secure SHell}
 \label{subsec:ssh}
-Secure SHell o \textit{SSH} de aquí en adelante, es un protocolo de red cifrado el cual se basa en el uso de claves públicas compartidas para crear un canal de comunicación seguro en una red no segura. Al aceptar una conexión, el servicio SSH presenta una shell sobre la que el cliente puede realizar las operaciones necesarias y propias de su nivel de privilegio. Además proporciona la posibilidad de redirigir el sistema de ventanas remoto al cliente, aunque en este caso se está haciendo uso de una versión reducida del SO, y por lo tanto no presenta entorno de escritorio. El acceso a la Raspberry Pi que controla el drone, se lleva a cabo mediante el uso de este protocolo, siguiendo los siguientes pasos para su configuración:
+Secure SHell o \textit{SSH} \citep{wiki:SSH} de aquí en adelante, es un protocolo de red cifrado el cual se basa en el uso de claves públicas compartidas para crear un canal de comunicación seguro en una red no segura. Al aceptar una conexión, el servicio SSH presenta una shell sobre la que el cliente puede realizar las operaciones necesarias y propias de su nivel de privilegio. Además proporciona la posibilidad de redirigir el sistema de ventanas remoto al cliente, aunque en este caso se está haciendo uso de una versión reducida del SO, y por lo tanto no presenta entorno de escritorio. El acceso a la Raspberry Pi que controla el drone, se lleva a cabo mediante el uso de este protocolo, siguiendo los siguientes pasos para su configuración:
 \begin{itemize}
 \item Generar el par de claves pública-privada en el cliente mediante el comando \code{ssh-keygen}
 \item Copiar la clave pública del cliente en el archivo \code{.ssh/authorized\_keys} de la carpeta \code{home} del usuario a utilizar en el sistema remoto.
@@ -488,5 +497,59 @@ Secure SHell o \textit{SSH} de aquí en adelante, es un protocolo de red cifrado
 \end{itemize} 
 
 De esta forma se logra dotar de acceso seguro a un cliente autorizado. Al tratar de conectar al sistema de control del drone, se muestra un banner en el que se advierte a usarios malintencionados de la existencia de un log de conexiones recibidas. 
-Para tratra de mitigar los intentos más comunes de intrusión en el sistema, algo tan simple como cambiar el puerto en el que responde el servidor SSH, se ha mostrado tremnedamente efectivo contra los ataques automatizados más simples y comunes.
+Para tratra de mitigar ciertos intentos de intrusión en el sistema, algo tan simple como cambiar el puerto en el que responde el servidor SSH, se ha mostrado tremnedamente efectivo contra los ataques automatizados más simples y comunes.
+
+\subsection{WebSocket}
+\label{subsec:WebSocket}
+Se trata de un protocolo de comunicaciones full-duplex sobre una conexión TCP. Fueron estandarizados por el IETF como RFC 6455, \citep{wiki:WebSocket6455} y \citep{wiki:WebSocketWiki}, en el año 2011.  
+
+La comunicación se realiza a través del puerto 80 identificando el recurso como \textit{ws}, o del 443 si se utiliza una conexión cifrada  identificando el recurso como \textit{ws\textbf{s}}, y es actualmente implementado por la mayoría de los navegadores. 
+
+En el caso de este proyecto se utilizarán WebSockets para realizar el proceso de \textit{signaling} hacia el servidor WebRTC, ver sección \ref{subsec:WebRTC} que se estará ejecutando en la RaspberryPi, para que este inicie la transmisión de vídeo en tiempo real y así poder visualizarlo. Dicha conexión será cifrada mediante SSL/TLS haciendo uso del certificado generado y firmado por una CA\footnote{Certificate Authority. Una entidad que proporciona certificados digitales.} de confianza.
+
+Mediante WebSockets se establecerá el mecanismo para coordinar la comunicación y enviar mensajes de control al servidor de vídeo en tiempo real. Este proceso, denominado \textit{signaling}, comporta tres tipos de información:
+\begin{itemize}
+\item Session Control Messages: Mensajes de Control de Sesión. Utilizados para iniciar o finalizar la comunicación, así como para reportar errores.
+\item Network Configuration: Configuración de Red. Utilizados para enviar la dirección IP y puerto de comunicación desde el cliente hacia el servidor.
+\item Media Capabilities: Capacidades de los dispositivos de Medios. Utilizados para establecer el tipo de codec, resolución, bitrate... etc.
+\end{itemize}
+
+Este intercambio de información deberá completarse de forma correcta antes de comenzar la transmisión entre el cliente y el servidor. 
+
+
+\subsection{WebRTC}
+\label{subsec:WebRTC}
+Se trata de un proyecto de código abierto que proporciona comunicación en tiempo real mediante una API, para facilitar el intercambio de información entre pares, idealmente, aunque puede darse el caso de requerir el paso de esta información por un tercer servidor. Esta iniciativa involucra a Google, Mozilla y Opera entre otros, \citep{wiki:WebRTCorg}, \citep{wiki:WebRTCmdn}.
+
+Se apoya en ICE o Interactive Connectivity Establishment, \citep{wiki:ICE} un framework utilizado para lograr que dos clientes se comuniquen entre si, sin necesidad de un servidor intermedio que haga de negociador y de esta forma conseguir que la comunicación sea lo más ágil y rápida posible. Para lograrlo, pese al enmascaramiento de los clientes tras múltiples NAT\footnote{Network Address Translation. Con la masificación de internet se ha llegado a un punto en el que el protocolo IPv4 no dispone de más espacio de direccionamiento, es decir, no quedan direcciones IPv4. En lugar de migrar los diferentes elementos de una arquitectura de red (como switches, routers, servidores y demás) al protocolo de internet IPv6, que proporciona un espacio de direccionamiento \emph{mucho} mayor ($2^{128}$ direcciones), los proveedores de servicios de internet, crean redes de redes usando como \textit{recepcionista} el NAT. Lo cual dificulta \emph{terriblemente} el encaminamiento de información entre pares. Sobre todo cuando crean NATs de dispositivos que usan NATs}, hace uso de:
+\begin{itemize}
+ \item Servidores STUN (Session Traversal Utilities for NAT), que se encuentran en el lado público de esta. Permiten detectar el uso de NAT, y encuentran el mapeo de IP y puerto realizado para la aplicación del cliente. De esta forma un cliente tras una NAT es capaz de conocer su IP pública y el puerto que utiliza para \textit{salir} a internet, \citep{wiki:STUN}.
+ \item Servidores TURN (Traversal Using Relays around NAT), como último recurso. En el caso de que no se pueda realizar la comunicación P2P, el sistema pasa a utilizar un servidor que hace de repetidor, lo cual obviamente añade cierto retardo y supone una gran carga para estos. El protocolo TURN se encarga de proporcionar IP y puerto para obtener una conexión con estos servidores \textit{repetidores}, \citep{wiki:TURN}.
+\end{itemize}
+
+
+El funcionamiento general de una comunicación entre pares (Alice y Bob, por supuesto) haciendo uso de la API WebRTC es como sigue: 
+\begin{itemize}
+\item[1] Alice y Bob establecen comunicación haciendo uso del ICE, el cual trata de comunicarlos por un canal directo, con la menor latencia posible haciendo uso del protocolo UDP. Para ello es necesario utilizar servidores STUN. Google provee de un par de servidores STUN de uso libre. Si la comunicación por UDP falla, ICE trata de establecerla bajo TCP (primero HTTP y despues HTTPS). Si la comunicación directa falla (generalmente debido a NAT transversales o firewalls), ICE hará uso de servidores TURN que harán de repetidores de los mensajes del cliente.
+\item[2] Signaling. La aplicación negocia el tipo de comunicación que espera, es decir, el codec de video, la resolución, el codec de audio, bitrate... etc. Y establece los orígenes de vídeo/audio para ambos peers. En la documentación de WebRTC no se define la forma en que se debe transmitir la información, de manera que en este proyecto se ha escogido hacerlo a través de WebSockets, ver \ref{subsec:WebSocket}. La información a transmitir sigue el Session Description Protocol (SDP).
+
+\begin{itemize}
+\item Alice ejecuta su lado constituyendo un \textit{RTCPeerConnection}, con un manejador para el evento de llegada de un candidato a conexión.
+\item Bob ejecuta su lado constituyendo un \textit{RTCPeerConnection}, con un manejador para el evento de llegada de un candidato a conexión. La diferencia con Alice, es que es Bob quien trata de realizar la conexión mediante un protocolo arbitrario, WebSockets en este caso. 
+\item Cuando Alice recibe la conexión de Bob, esta añade a Bob como ICECandidate en su descripción de peer remoto. De igual manera actúa Bob en el momento en que establece comunicación con Alice. De esta forma, ambos establecen la descripción de la sesión.
+\end{itemize}
+\item[3] Una vez que conocen la forma de comunicarse, Alice crea una oferta de vídeo que Bob recibe en un manejador, onTrack encargado de establecer la fuente de vídeo de la página que el visualiza al stream remoto que Alice ha ofrecido.
+\item[4] Bob inicia la \textit{llamada} diciéndole a Alice que resolución quiere del vídeo.
+\end{itemize}
+
+\noindent El proceso completo viene detallado en el artículo \citep{wiki:WebRTCFullDesc}. En el caso de este proyecto, aquí termina el intercambio de streams. Alice es el servidor de vídeo y Bob es el cliente. La comunicación se establece como si fuesen pares, solo que Bob no llega a ofrecer nunca un stream de vídeo/audio, de forma que Alice nunca llega a establecer su fuente de vídeo local al stream remoto de Bob. 
+
+
+
+
+
+
+
+
+
 
