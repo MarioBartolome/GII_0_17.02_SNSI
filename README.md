@@ -101,5 +101,6 @@ To remote-control the drone, you need to connect a joystick or radio with, at le
 - Channel 4: Rudder (Yaw/Heading)
 - Channel 5: Arm/Disarm
 
-#### <span style="color:red">**Make sure all your readings are correct prior to enabling manual control.**</span>
-
+```diff
+- Make sure all your readings are correct prior to enabling manual control
+```
