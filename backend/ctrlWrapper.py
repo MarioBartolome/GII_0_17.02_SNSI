@@ -10,6 +10,7 @@ Wrapper for agent controller systems
 from backend.MultiWiiProtocol import MSPio
 from backend.RemoteControl import RemoteServer
 import numpy as np
+import sys
 
 class CtrlWrapper:
 
@@ -163,10 +164,14 @@ class CtrlWrapper:
 		Initializes the ctrlWrapper.
 
 		"""
-		while True:
-			mspio = self._mspio
-			mspio.setRawRC(self.computeChannels())
+		mspio = self._mspio
+		if mspio.isOpen():
+			while True:
+				mspio.setRawRC(self.computeChannels())
 			# print(mspio.readAttitude())
+		else:
+			print('Can not stabilise communication with the agent', file=sys.stderr)
+			sys.exit(1)
 
 if __name__ == '__main__':
 	import time
