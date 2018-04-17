@@ -8,6 +8,12 @@
 #
 #############
 
+printUsage()
+{
+    echo "[!] USAGE: $0 VirtualEnvName [Optional]SetupName.py" >&2
+    exit 1
+}
+
 createEnv()
 {
     echo "[+] Creating environment on ../$1..."
@@ -27,9 +33,19 @@ sigKillDetected()
 
 trap 'sigKillDetected $1' INT
 
-if [ $# -ne 1 ]; then
-    echo "[!] USAGE: $0 VirtualEnvName" >&2
-    exit 1
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    printUsage
+fi
+
+if [ $# -eq 1 ]; then
+    if [ -f ./setup.py ]; then
+        setupFile=setup.py
+    else
+        echo "[!] I can't find the default 'setup.py' file to install" >&2
+        printUsage
+    fi
+else
+    setupFile=$2
 fi
 
 echo "[+] Prior to attempt to install Python dependencies, make sure your system has the following packages installed:"
@@ -45,10 +61,10 @@ read
 isEnv=0
 
 if [ -d "../$1" ]; then
-    echo "[!] Uh oh, it seems $1 already exists on the parent directory"
+    echo "[!] Uh oh, it seems $1 already exists on the parent directory" >&2
     if [ -f "../$1/pyvenv.cfg" ]; then
         isEnv=1
-        echo "[!] It also seems to be an existing Python Environment with the following packages on it: "
+        echo "[!] It also seems to be an existing Python Environment with the following packages on it: " >&2
         ../$1/bin/pip list --format=columns
     fi
     echo "[!] Do you want to overwrite it(yes/no)?"
@@ -68,7 +84,7 @@ if [ $isEnv -eq 1 ]; then
     source ../$1/bin/activate
     echo "[*] Python environment successfully activated"
     echo "[+] Installing dependencies, this may take a while..."
-    python3 setupWebUI.py install
+    python3 $setupFile install
     echo "[*] Done! Use "
     echo -e "\tsource ../$1/bin/activate"
     echo "to enable the Virtual Environment"
