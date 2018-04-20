@@ -13,6 +13,8 @@ from threading import Lock, Thread
 
 class RemoteServer(Thread):
 
+	RC_HEADER = b'RC$'
+
 	def __init__(
 			self,
 			addr: str = '0.0.0.0',
@@ -31,6 +33,7 @@ class RemoteServer(Thread):
 		self._remoteInput = None
 		self._rILock = Lock()
 		self._channel_names = ['Ax0', 'Ax1', 'Ax2', 'Ax3', 'Ax4']
+		self._lastRaw_RC = [1000, 1500, 1500, 1500, 1000]
 		print("RemoteControl server ready to start")
 
 	def run(self):
@@ -58,7 +61,7 @@ class RemoteServer(Thread):
 				if not chck:
 					print("<RemoteServer> Client disconnected. Closing resources...")
 					self.synchronized(self.disconnection)
-					print("Awaiting clients..")
+					print("Awaiting clients...")
 					conn, client_address = stream.accept()
 					print("Hello! New client from {0}".format(client_address[0]))
 					'''self.synchronized(self.retrieveInput, conn, blocking=False)
@@ -75,13 +78,15 @@ class RemoteServer(Thread):
 		:param conn: The connection.
 		:return: True or False depending if it was able to read the socket
 		"""
-		msg_length_b = conn.recv(2)
-		if len(msg_length_b) == 2:
-			msg_length = struct.unpack('<H', msg_length_b)[0]
-			self._remoteInput = conn.recv(msg_length)
-			self._manualEnabled = True
+		msg = conn.recv(5)
+		if len(msg) == 5:
+			header, msg_length = struct.unpack('<3sH', msg)
+			if header == self.RC_HEADER:
+				self._remoteInput = conn.recv(msg_length)
+				self._manualEnabled = True
 			return True
 		else:
+			#print('>>D-bug: ' + str(msg))
 			return False
 
 	def disconnection(self):
@@ -114,8 +119,15 @@ class RemoteServer(Thread):
 		Decodes socket input.
 		:return: raw channel values
 		"""
-		input_decoded = json.JSONDecoder().decode(self._remoteInput.decode('utf-8'))
-		raw_channels = [round(float(input_decoded[key])) for key in self._channel_names]
+		raw_channels = self._lastRaw_RC
+		try:
+			input_decoded = json.JSONDecoder().decode(self._remoteInput.decode('utf-8'))
+			raw_channels = [round(float(input_decoded[key])) for key in self._channel_names]
+			self._lastRaw_RC = raw_channels
+		except json.JSONDecodeError as e:
+			#print('>>D-bug: ' + e.__class__.__name__ + '. Probably due to weak signal. Last packet: ' + e.msg)
+			pass
+
 		return raw_channels
 
 	def synchronized(self, method, args=None, blocking=True):

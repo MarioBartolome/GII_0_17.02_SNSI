@@ -20,6 +20,8 @@ import socket, json, sys, struct
 
 rControlSocket = None
 remoteEnabled = False
+RC_HEADER = b'RC$'
+
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -136,7 +138,8 @@ def control_info_recv(info):
 		try:
 			msg = bytes(json.dumps(info), encoding='UTF-8')
 			msg_length = len(msg)
-			rControlSocket.send(struct.pack('<H', msg_length) + msg)
+			total_msg = struct.pack('<3sH', *[RC_HEADER, msg_length]) + msg
+			rControlSocket.send(total_msg)
 		except ConnectionError as e:
 			print("Error connecting to socket!", e, file=sys.stderr)
 			emitConnectionError()
