@@ -6,11 +6,144 @@ Esta sección auna los diferentes conocimientos teóricos necesarios para la rea
 \section{Algoritmia}
 
 
-\subsection{Filtros de Partículas}
+\subsection{Particle Filter localization}
 
 Los Filtros de Partículas son modelos utilizados para tratar de estimar el estado de un sistema que cambia con el tiempo. 
-\\Fue definido como \textit{bootstrap filter} en 1993 por N. Gordon, D. Salmond y A. Smith \citep{art:GSSPF}.  Se trata de un método que pretende implementar filtros bayesianos recursivos, haciendo uso del método de Montecarlo, es decir, realiza repetidas medidas del estado para estimar la posición del sistema.
-\\ 
+\\Fue definido como \textit{bootstrap filter} en 1993 por N. Gordon, D. Salmond y A. Smith \citep{art:GSSPF}.  Se trata de un método que pretende implementar filtros bayesianos recursivos, haciendo uso del método de Montecarlo, es decir, realiza repetidas medidas del estado para estimar la variable de interés, en el caso de este proyecto la \emph{localización} del sistema.
+\\
+
+
+Conocer la localización del agente dentro del mapa es fundamental. No es posible realizar un planeamiento de ruta hacia un destino, como el que realiza el sistema de evasión de obstáculos definiendo unas metas, sin que el agente conozca su posición.
+Dada la naturaleza del proyecto, el uso de un GPS para lograr la localización del agente queda descartado. Se requiere de un sistema de localización lo más preciso posible en un interior, por ello se hace uso de un algoritmo basado en probabilidades. 
+
+El Filtro de Partículas para localización, o Localización Monte Carlo, es un algoritmo que estima la posición y orientación de un agente en un entorno, haciendo uso de múltiples hipótesis ponderadas. 
+
+Dicha ponderación, peso o probabilidad, se basa en la similitud de la hipótesis, o partícula, con la instancia que representa el agente. 
+
+Para lograr obtener información del entorno, y poder dar una serie de atributos que determinen la afinidad del agente con las partículas, se dispone de los sensores detallados en \ref{subsec:hcsr04}, que proporcionan la distancia del agente al obstáculo hacia el que se dirige el sensor. 
+Haciendo uso de múltiples sensores de distancia, con diferentes orientaciones, se obtienen múltiples distancias a obstáculos, de forma que es posible incrementar el número de variables que se deben tener en cuenta para definir como de parecidas son $N$ partículas y el agente.  
+
+
+Habitualmente, se comienza con una distribución de partículas aleatoriamente dispersas por el mapa, obviamente no se establecen partículas dentro de zonas ocupadas por obstáculos, con una orientación definida. Esto, representa el total desconocimiento de la posición del agente, es decir, todas las hipótesis son equiprobables y por lo tanto la posición del agente es, equiprobablemente, cualquier posición del mapa.
+
+A medida que el agente comienza  moverse las partículas se mueven en la dirección y orientación que determina el agente, i.e: Si el agente ha rotado 10º y se ha desplazado hacia delante 10cm, todas las partículas deberán rotar 10º y desplazarse hacia delante 10cm. 
+A continuación el agente y las partículas toman medidas de su entorno haciendo uso de los sensores de distancia, en el caso del agente. Cómo calculan las partículas dichas distancias será explicado más adelante.
+
+Una vez realizado el movimiento, la distribución de partículas es remuestreada en base a estimación Bayesiana recursiva, esto es, cuanto se parecen las distancias medidas por el agente a las distancias medidas por cada partícula. O como de parecidas son las hipótesis al estado real del sistema.
+El remuestreo, o \textit{resample}, conlleva reducir la población de partículas descartando las menos parecidas, o menos probables. De esta manera al cabo de cierto número de iteraciones la distribución converge hacia la posición real del agente. 
+
+Conviene tener en cuenta que ni los movimientos (tanto de rotación como de traslación), ni las medidas del agente son perfectos, así que se puede añadir cierto \textit{ruido}, distribuido de forma Gaussiana por ejemplo, al movimiento y medidas del agente.
+Esto aporta incertidumbre sobre el estado real del agente, lo cual hará que el filtro pueda tardar más iteraciones en converger, pero proporciona un \textit{cubrimiento} más adecuado del estado real del agente.
+
+\subsubsection{Representación del estado}
+El \textit{estado} del agente en el caso de este proyecto estará compuesto de las coordenadas del agente en el plano, y su orientación. Se puede representar mediante una n-tupla, donde $n=3$ en este caso, tal que: $[x, y, \theta]$ siendo $x$ e $y$ las coordenadas y $\theta$ la orientación. 
+
+El \textit{peso} de las partículas, o estimación de la probabilidad de que la partícula sea la ubicación real del agente, es una función de densidad de probabilidad distribuida sobre el espacio de estados. 
+En el \emph{Filtro de Partículas} la variable de interés, la posición del agente, es representada por un set de $M$ partículas en el instante $t = k$, tal que $S^k=[x_j^k,w_j^k]:j=1..M$. Cada partícula tiene asignado un peso, $w_j^k$ que define la contribución de esa particula a la estimación de la posición.
+
+Aquellas regiones del espacio de estados con una gran cantidad de partículas, se corresponden con zonas en las que hay una alta probabilidad de que el agente se encuentre en ellas. Aquellas zonas con una densidad de partículas baja, representan zonas en las que es improbable que el agente se encuentre.
+
+Claramente es un método que puede ser utilizado como estimador del estado de cualquier sistema.
+
+El algoritmo asume la \textit{propiedad de Markov}\footnote{En un proceso estocástico que cumple la propiedad de Markov, el estado futuro depende únicamente del estado presente, y no de los estados pasados.}, de manera que solo funciona correctamente si el entorno es estático. Por lo general, el agente no tiene información de su localización, así que las partículas se distribuyen de forma uniforme.
+
+\subsubsection{Actualización de movimiento}
+Durante la actualización de movimiento, el agente predice su nueva localización basándose en el movimiento, supuestamente, realizado. Tal y como se ha descrito con anterioridad, si el agente rota 10º en el sentido de las agujas del reloj, todas las partículas rotan en ese mismo sentido el mismo número de grados. 
+Sin embargo la capacidad del agente de rotar o trasladarse no es perfecta. Si el sistema de evasión de obstáculos indica al agente que debe rotar $nº$ para dirgirse hacia la meta por un camino seguro, el agente \emph{tratará} de rotar $nº$ pero es muy probable que infra/sobrecorrija.
+Si el agente trata de desplazarse en línea recta inevitablemente escorará en una dirección u otra, pese a los sistemas de control embebidos en la controladora de vuelo. 
+
+El movimiento \emph{perfecto} se define de la siguiente manera para el instante de tiempo $t=k$:
+\begin{equation}
+\label{eq:PFpmovement}
+\begin{bmatrix}
+x'\\ 
+y'\\ 
+\hat{\theta'}
+\end{bmatrix} = 
+\begin{bmatrix}
+x + \rho cos(\hat{\theta_k})\\
+y + \rho sin(\hat{\theta_k})\\
+\hat{\theta_k}
+\end{bmatrix}
+\end{equation}
+Donde:
+\begin{align*}
+[x,y,\hat{\theta}]^T &= \text{Posición inicial del agente}\\
+\hat{ \theta } &= arctan(\frac{\delta y}{\delta x})\\
+[x',y',\hat{\theta'}]^T &= \text{Posición final del agente}\\
+\rho &= \sqrt{\Delta x^2 + \Delta y^2}\text{; la distancia a recorrer}
+\end{align*}
+
+Aunque para el cálculo de $\hat{\theta}$ el agente dispone de magnetómetro; ver \ref{subsubsec:sensors}
+Sin embargo se debe compensar el \emph{ruido} existente en los sensores y sistemas de movimiento, quedando \ref{eq:PFpmovement}:
+\begin{equation}
+\label{eq:PFnmovement}
+\begin{bmatrix}
+x'\\ 
+y'\\ 
+\hat{\theta'}
+\end{bmatrix} = 
+\begin{bmatrix}
+x + \rho cos(\hat{\theta_k})\\
+y + \rho sin(\hat{\theta_k})\\
+\hat{\theta_k} + f(rand | \mu, \sigma^2)
+\end{bmatrix}
+\end{equation}
+Donde:
+
+\begin{minipage}{\columnwidth}
+\begin{center}
+\begin{description}
+\item $[x,y,\hat{\theta}]^T$ = Posición inicial del agente
+\item $\hat{ \theta }$ = $arctan(\frac{\delta y}{\delta x})$
+\item $[x',y',\hat{\theta'}]^T$ = Posición final del agente
+\item $\rho$ = $\sqrt{\Delta x^2 + \Delta y^2} * f(rand | \mu, \sigma^2)$; la distancia a recorrer \textbf{añadiendo ruido} dado por una distribución normal
+\item $\mu$ = $0.0$; se desea un valor aleatorio dentro de una gaussiana con centro en 0.0
+\item $\sigma$ = Errores de los sensores o sistemas de movimiento
+\end{description}
+\end{center}
+\end{minipage}
+
+
+\noindent El ruido, como puede verse en \ref{eq:PFnmovement}, se genera mediante una función de distribución normal, como la detallada en \ref{eq:gaussian}, con centro en $0.0$ de manera que se pueda infra/sobrecorrejir el movimiento.
+
+
+De forma inevitable, las partículas que componen el filtro divergirán como consecuencia de la actualización de movimiento aplicando \ref{eq:PFnmovement}. Por ello es necesario tomar medidas del entorno.
+
+\subsubsection{Actualización de sensores}
+Cuando el agente toma medidas a través de sus sensores, actualiza la distribución de partículas quedándose únicamente con aquellas que más afinidad presentan en sus mediciones. Es decir, se mantienen aquellas que representan de forma más precisa la ubicación real del agente.
+
+Para ello, se calcula para cada partícula la probabilidad, $x_j^{k}$ de ser la posición real del agente basándose en el estado que esta representa, y haciendo uso de una función de distribución normal, o Gaussiana:
+
+\begin{equation}
+\label{eq:gaussian}
+x_j^{k+1} = f(x|\mu, \sigma^2)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+\end{equation}
+
+Donde:
+\begin{align*}
+\mu &= \text{Distancias de la partícula a los diferentes obstáculos.}\\
+\sigma &= \text{Ruido del sistema de sensores.}\\
+x &= \text{Distancias reales obtenidas por los sensores del agente.}
+\end{align*}
+
+Cabe destacar, que la probabilidad $x_j^{k+1}$ tiene en su superíndice $k+1$, determinando este el instante de tiempo siguiente, es decir la probabilidad de la partícula $j$ \textbf{después} de haber realizado el movimiento.
+
+Se le asignará a cada partícula un peso, proporcional a la probabilidad de tratarse de la ubicación del agente:
+\begin{equation}
+w_j^{k+1}=w_j^{k}*x_j^{k+1}
+\end{equation}
+
+Dicho peso será normalizado de la forma habitual mediante: 
+
+\begin{equation}
+w_j^{k+1}=\frac{\tilde{w}_j^k}\sum_{j}^M \tilde{w}_j^k}
+\end{equation}
+
+Donde $\tilde{w}_j^k$ es la medida de peso de una partícula $j$ en el instante de tiempo $k$, antes de ser normalizado.
+
+
+\subsubsection{Remuestreo}
 
 \subsection{Campos Potenciales}
 \label{subsec:PF}
@@ -275,6 +408,8 @@ Por el contrario, si el umbral es muy bajo, ver imagen \ref{fig:lowThreshold}, h
 	\caption{Con un umbral muy bajo, puede darse el caso de que los valles sean muy estrechos, o incluso inexistentes}\label{fig:lowThreshold}
 \end{figure}
 
+
+
 \section{Dispositivos Físicos}
 
 \subsection{Raspberry Pi}
@@ -340,7 +475,7 @@ Una vez encendida, se accede a ella con el usuario por defecto \code{pi} y la co
 
 \begin{itemize}
 \item Se ha desactivado el puerto HDMI para reducir el consumo en \textasciitilde{}30mA: \\Para ello se ha incluido en \code{/etc/rc.local} la línea \code{/usr/bin/tvservice -o}. Descrito en \citep{wiki:PowerSaving}.
-\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los resultados mostrados en la imagen \ref{fig:sdbenchmark}. Descrito en  Descrito en \citep{wiki:OCSD} y \citep{wiki:OCSDWifiFix}.
+\item Se ha overclockeado el lector de microSD a 100MHz, en lugar de los 50MHz por defecto: \\Para ello se ha incluido en \code{/boot/config.txt} la línea \code{dtparam=sd\_overclock=100}.\\Y que arroja los resultados mostrados en la imagen \ref{fig:sdbenchmark}. Descrito en \citep{wiki:OCSD} y \citep{wiki:OCSDWifiFix}.
 \item Se han incluido una serie de disipadores para evitar sobrecalentamiento de la placa. Así como un pequeño ventilador de bajo consumo.
 \end{itemize} 
 
@@ -373,6 +508,7 @@ Estos pines de salida, emiten una señal que será interpretada por los ESC del 
 
 \newpage
 \subsubsection{Sensores}
+\label{subsubsec:sensors}
 La controladora de vuelo Flip32 en su versión más completa, dispone de los siguientes sensores:
 \begin{itemize}
 \item IMU\footnote{Unidad de Medición Inercial.} MPU-6050: Se trata de un circuito integrado compuesto de un acelerómetro de tres (3) ejes y un giroscopio de tres (3) ejes. El acelerómetro mide las fuerzas en los tres diferentes ejes (en \textit{g}) , el giroscopio se encarga de medir la velocidad angular en cada uno de los tres ejes (en degº/s )
@@ -437,10 +573,13 @@ En el caso de nuestro proyecto, se hará uso de este protocolo dado que existe l
 En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para la realización de este proyecto. 
 
 
-\begin{table}
+\afterpage{
+\clearpage
+\begin{landscape}
+\begin{table}[H]
 	\begin{center}	
 		\rowcolors {2}{gray!35}{}
-		\begin{tabular}{m{4.6cm} | c | m{2cm} | c | m{5cm}}\hline
+		\begin{tabular}{m{5cm} | c | m{4cm} | c | m{7cm}}\hline
 			\toprule
 			Mensaje & Código & Estructura & Parse & Descripción\\
 			\otoprule
@@ -458,9 +597,12 @@ En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para 
 \end{table} 
 
 La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, para mantener cierta coherencia con la tabla disponible en la descripción del protocolo MultiWii, \citep{wiki:MSPDefinition}. La columna \textit{Código} establece el número de comando enviado. Los comandos que empiezan por 1, se corresponden con solicitudes de información, y aquellos que comienzan por 2 son órdenes. Este valor será utilizado por la FC para establecer el parseo de la información enviada, de ser alguna. La columna \textit{Estructura} establece el tipo y la cantidad de cada dato que se envía o recibe. La columna \textit{Parse} establece el tipo de parser que se aplicará a la respuesta recibida de la FC. Nótese que solo se define el parser para los comandos que comienzan por 1, es decir, para las solicitudes de información.
-\\La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, \citep{wiki:PythonStruct} y  descrita en la tabla \ref{tb:PY35STRUCT}
+\end{landscape}
+\clearpage
+}
+La información del parser proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizlar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5, \citep{wiki:PythonStruct} y  descrita en la tabla \ref{tb:PY35STRUCT}
 
-\begin{table}
+\begin{table}[H]
 	\begin{center}	
 		\rowcolors {2}{gray!35}{}
 		\begin{tabular}{c | p{10cm}}\hline
