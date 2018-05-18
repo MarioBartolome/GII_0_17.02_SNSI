@@ -17,6 +17,7 @@ setup(
 	install_requires=[
 		'pyserial',
 		'numpy',
+		'Bluetin_Echo'
 	],
 	zip_safe=False
 )
