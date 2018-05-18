@@ -22,23 +22,23 @@ data representation are created:
 
 """
 
-
+from typing import Dict
 import numpy as np
 from scipy import signal
+
 
 class HistogramGrid:
 	"""
 	A Cartesian Histogram Grid 
 	"""
-	UNKNOWN_STATE = 0
 
-	def __init__(self, sensors: list, Rmax: int, Rmin: int, Ru: int, fullMap: np.ndarray, windowSize: int = 141, cellSize: int = 5,
+	def __init__(self, sensorsMeasurements: Dict, Rmax: int, Rmin: int, Ru: int, fullMap: np.ndarray, windowSize: int = 141, cellSize: int = 5,
 	             epsilon: float = 0.5, omega: int = 30):
 		"""
 		Constructor method for Cartesian Histogram Grid.
 
-		:param sensors: contains references to all the sensors to use.
-		:type sensors: list
+		:param sensorsMeasurements: contains all the measurements, as {angle: dst}, from the sensors as a dictionary.
+		:type sensorsMeasurements: Dict
 		:param Rmax: maximum distance for the sensors.
 		:type Rmax: int
 		:param Rmin: minimum distance for the sensors.
@@ -57,7 +57,7 @@ class HistogramGrid:
 		:type omega: int
 
 		"""
-		self._sensors = sensors
+		self._sensorsMeasurements = sensorsMeasurements
 		self._Rmax = Rmax//cellSize
 		self._Rmin = Rmin//cellSize
 		self._Ru = Ru//cellSize
@@ -90,7 +90,7 @@ class HistogramGrid:
 			self._windowSize, self._windowSize
 		)
 
-	def computeAngles(self)  -> np.ndarray:
+	def computeAngles(self) -> np.ndarray:
 		"""
 		Will calculate the angle from the center of the Active Window to each cell on the active window over *OX*.
 
@@ -109,11 +109,8 @@ class HistogramGrid:
 
 		:return: A (windowSize * windowSize) matrix representing the Active window
 		"""
-		return np.indices(
-			(self._windowSize, self._windowSize)
-		)[::-1]\
-			.ravel(order='F')\
-			.reshape(self._windowSize ** 2, 2)
+		tmp = np.indices((self._windowSize, self._windowSize))
+		return np.array((tmp[0].reshape(-1), tmp[1].reshape(-1))).T
 
 	def getAngles(self) -> np.ndarray:
 		"""
@@ -131,13 +128,13 @@ class HistogramGrid:
 		"""
 		return self._deltas
 
-	def getSensors(self) -> list:
+	def getSensorsMeasurements(self) -> Dict:
 		"""
 		Returns the sensor list.
 
 		:return: the list of sensors
 		"""
-		return self._sensors
+		return self._sensorsMeasurements
 
 	def getEpsilon(self) -> float:
 		"""
@@ -190,8 +187,8 @@ class HistogramGrid:
 
 		empt_window = np.zeros_like(self._deltas)
 		# Distance to the point inside the range [Rmin, R]
-		for sensor in self._sensors:
-			R = sensor.getDistance() / self._cellSize
+		for distance in self.getSensorsMeasurements().values():
+			R = distance / self._cellSize
 			dst_indexes = np.where((self._Rmin <= self._deltas) & (self._deltas <= R - self._epsilon))
 			empt_window[dst_indexes] = \
 				1 - (
@@ -213,8 +210,8 @@ class HistogramGrid:
 		"""
 
 		ocp_window = np.zeros_like(self._deltas)
-		for sensor in self._sensors:
-			R = sensor.getDistance() / self._cellSize
+		for distance in self.getSensorsMeasurements().values():
+			R = distance / self._cellSize
 			dst_indexes = np.where((R - self._epsilon <= self._deltas) & (self._deltas <= R + self._epsilon))
 			ocp_window[dst_indexes] = \
 				1 - (
@@ -240,8 +237,8 @@ class HistogramGrid:
 
 		ang_window = np.zeros_like(self._angles)
 		# Angle to the point inside the range [-omega/2, omega/2]
-		for sensor in self._sensors:
-			Theta = self._angles - np.deg2rad(droneHeading) - np.deg2rad(sensor.getAngle())
+		for angle in self.getSensorsMeasurements().keys():
+			Theta = self._angles - np.deg2rad(droneHeading) - np.deg2rad(angle)
 			Theta[Theta >= np.pi] -= np.pi * 2
 			effective_angle = np.deg2rad(self._omega/2.0)
 			ang_indexes = np.where((-effective_angle < Theta) & (Theta < effective_angle))
@@ -308,12 +305,12 @@ class PolarHistogram:
 		:return:
 		"""
 		ocp_window = self._histogrid.getOcpWindow()
-		for sensor in self._histogrid.getSensors():
-			R = sensor.getDistance() // self._histogrid.getCellSize()
+		for angle, distance in self._histogrid.getSensorsMeasurements().items():
+			R = distance // self._histogrid.getCellSize()
 			dst_indexes = (R - self._histogrid.getEpsilon() <= self._histogrid.getDistances()) &\
 			              (self._histogrid.getDistances() <= R + self._histogrid.getEpsilon())
 
-			Theta = self._histogrid.getAngles() - np.deg2rad(droneHeading) - np.deg2rad(sensor.getAngle())
+			Theta = self._histogrid.getAngles() - np.deg2rad(droneHeading) - np.deg2rad(angle)
 			Theta[Theta >= np.pi] -= np.pi * 2
 			idx = np.unravel_index(np.argmin(np.abs(Theta) + np.logical_not(dst_indexes) * 999), Theta.shape)
 
@@ -459,11 +456,10 @@ class HeadingControl:
 
 
 if __name__ == '__main__':
-	from test.Sensors import Sensors
 	sensor_pin = 10
 	sensor_angle = 15
-	sensor = Sensors(sensor_pin, sensor_angle)
-	histog = HistogramGrid([sensor], 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15, 15), cellSize=5, windowSize=7)
+	sensor = {45: 7, }
+	histog = HistogramGrid(sensor, 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15, 15), cellSize=5, windowSize=7)
 	polarHistog = PolarHistogram(histog)
 	headingController = HeadingControl(2, polarHistog)
 	drone_global_location = np.array([45, 12])
