@@ -31,29 +31,46 @@ class abcControllerPID(object, metaclass=abc.ABCMeta):
 		self._upperLimit = upper_Limit
 		self._lowerLimit = lower_limit
 
+		self._available = False
+
 	@abc.abstractmethod
 	def getChannels(self):
 		raise NotImplementedError('This class must implement a way to get which channels it is controlling')
 
-	@abc.abstractmethod
 	def isAvailable(self):
-		raise NotImplementedError('This class must implement a way to know if it is ready to be polled')
+		"""
+		Returns if the controller is ready.
+		:return: True or False
+		"""
+		return self._available
 
-	@abc.abstractmethod
-	def setAvailability(self, av):
-		raise NotImplementedError('This class must implement a way to set its availability be polled')
+	def setAvailability(self, av: bool):
+		"""
+		Sets the availability of the controller.
+		:param av: True or False
+		"""
+		self._available = av
 
-	@abc.abstractmethod
-	def setTarget(self, target):
-		raise NotImplementedError('This class must implement a way to set its target')
+	def setTarget(self, target: int):
+		"""
+		Sets target to achieve.
+		:param target: The target to achieve.
+		:type: int
+		"""
+		self._target = target
 
 	@abc.abstractmethod
 	def setMeasurement(self, measurement):
 		raise NotImplementedError('This class must implement a way to set the reading from sensors')
 
-	@abc.abstractmethod
-	def setActualRAWRC(self, actualRAWRC):
-		raise NotImplementedError('This class must implement a way to set the real reading from RC')
+	def setActualRAWRC(self, actualRAWRC: int):
+		"""
+		Sets the actual RAW RC sent to the channel.
+		:param actualRAWRC:
+		:return:
+		"""
+		self._actualRAWRC = actualRAWRC
+
 
 	@abc.abstractmethod
 	def getLock(self):
