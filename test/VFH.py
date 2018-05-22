@@ -130,11 +130,19 @@ class HistogramGrid:
 
 	def getSensorsMeasurements(self) -> Dict:
 		"""
-		Returns the sensor list.
+		Returns a sensor dictionary
 
-		:return: the list of sensors
+		:return: a dictionary containing angle,distance from the sensors
 		"""
 		return self._sensorsMeasurements
+
+	def setSensorsMeasurements(self, sensorMeasurements: Dict):
+		"""
+		Sets the sensor measurements.
+
+		:param sensorMeasurements: The sensor measurements as a dict of {angle:distance}
+		"""
+		self._sensorsMeasurements = sensorMeasurements
 
 	def getEpsilon(self) -> float:
 		"""
@@ -391,6 +399,12 @@ class PolarHistogram:
 
 class HeadingControl:
 	def __init__(self, threshold: int, polarHistog: PolarHistogram, wideValleyThreshold: int = 15):
+		"""
+		This class is in charge of computing the heading correction to avoid obstacles, making use of VFH.
+		:param threshold: Under which a sector is not considered dangerous.
+		:param polarHistog: The PolarHistogram to gather the info from.
+		:param wideValleyThreshold: Max width of a wide valley.
+		"""
 		self._threshold = threshold
 		self._polarHistog = polarHistog
 		self._wideValleyThreshold = wideValleyThreshold
@@ -416,7 +430,19 @@ class HeadingControl:
 
 		return valleys
 
-	def computeHeading(self, droneHeading: int, target: np.ndarray, location: np.ndarray) -> float:
+	def computeSpeed(self, sector_sPOD:int, hm:int, Vmax:int = 8) -> int:
+		"""
+		Computes the speed the agent should take. It's calculated based on how cluttered the traveling sector is.
+		:param sector_sPOD: The traveling sector's smoothPOD
+		:param hm: The speed reducing factor
+		:param Vmax: The maximum speed of the agent. Defaults to 8 deg.
+		:return: The inclination the agent should take.
+		"""
+		hc = min(sector_sPOD, hm)
+		V = round(max(Vmax * (1 - hc/hm), 1))
+		return V
+
+	def computeHeading(self, droneHeading: int, target: np.ndarray, location: np.ndarray, hm: int = 8, Vmax:int = 8) -> (float, int):
 		"""
 		Computes the new heading the robot should take to avoid collision.
 
@@ -425,7 +451,7 @@ class HeadingControl:
 		:param target: the position of the target on the full map.
 		:type target: np.ndarray
 		:param location: the position of the drone on the full map.
-		:return: The new heading.
+		:return: The new heading and the speed
 		"""
 		direction = target - location
 		target_sector = np.rad2deg(np.arctan(direction[0]/direction[1]))
@@ -434,13 +460,12 @@ class HeadingControl:
 			target_sector += 360
 
 		target_sector /= self._polarHistog.getAlpha()
-		valleys = self.computeCandidateValleys(self._polarHistog.computePODsmoothing(
-			self._polarHistog.computeObstacleDensity(droneHeading))
-		)
+		sPOD = self._polarHistog.computePODsmoothing(self._polarHistog.computeObstacleDensity(droneHeading))
+		valleys = self.computeCandidateValleys(sPOD)
 
 		target_on_fov = np.where((valleys[:, 0] <= target_sector) & (valleys[:, 1] >= target_sector))[0]
 		if target_on_fov.size != 0:
-			theta = np.round(target_sector * self._polarHistog.getAlpha())
+			theta = target_sector
 		else:
 			idx = np.argmin(np.abs(valleys - target_sector))
 			kn = valleys.reshape(-1)[idx]
@@ -448,11 +473,14 @@ class HeadingControl:
 			valley_width = closest_valley[1] - closest_valley[0]
 			kf = min(360 / self._polarHistog.getAlpha() - 1, kn + self._wideValleyThreshold) \
 				if valley_width > self._wideValleyThreshold else closest_valley[1]
-			theta = ((kn + kf) // 2) * self._polarHistog.getAlpha()
+			theta = ((kn + kf) // 2)
 
+		V = self.computeSpeed(sPOD[theta], hm, Vmax)
+		theta *= self._polarHistog.getAlpha()
 		theta -= droneHeading
 		theta += 360 if theta < -180 else -360 if theta > 180 else 0
-		return theta
+		theta = round(theta)
+		return theta, V
 
 
 if __name__ == '__main__':
