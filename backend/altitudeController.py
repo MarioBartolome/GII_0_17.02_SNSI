@@ -1,20 +1,18 @@
 from backend import abcControllerPID
-from backend.Sensor import Sensor
 from typing import List
 
 
-class altitudeController(abcControllerPID.abcControllerPID):
+class AltitudeController(abcControllerPID.abcControllerPID):
 
-	def __init__(self, altSensor: Sensor,
+	def __init__(self,
 	             upper_Limit: int = 1600,
 	             lower_limit: int = 1000,
 	             kP: float = 0.02,
 	             kI: float = 0.005,
 	             kD: float = 0.01):
 
-		super(altitudeController, self).__init__(kP, kI, kD, upper_Limit, lower_limit)
+		super(AltitudeController, self).__init__(kP, kI, kD, upper_Limit, lower_limit)
 
-		self._altSensor = altSensor
 		self._available = False
 
 	def setTarget(self, target: int):
@@ -25,12 +23,12 @@ class altitudeController(abcControllerPID.abcControllerPID):
 		"""
 		self._target = target
 
-	def setMeasurement(self, measurement: int):
+	def setMeasurement(self, measurement: List[int]):
 		"""
 		Sets the real measurement.
 		:param measurement: The measurement taken.
 		"""
-		self._measurement = measurement
+		self._measurement = measurement[0]
 
 	def setActualRAWRC(self, actualRAWRC: int):
 		"""
@@ -52,7 +50,6 @@ class altitudeController(abcControllerPID.abcControllerPID):
 		Returns the channels values as a list.
 		:return: a list with the RAW RC values.
 		"""
-		self._measurement = self._altSensor.getDistance()
 		return [self.computePID()]
 
 	def isAvailable(self):
