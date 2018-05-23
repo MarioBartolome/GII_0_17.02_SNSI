@@ -475,11 +475,11 @@ class HeadingControl:
 				if valley_width > self._wideValleyThreshold else closest_valley[1]
 			theta = ((kn + kf) // 2)
 
-		V = self.computeSpeed(sPOD[theta], hm, Vmax)
+		V = self.computeSpeed(sPOD[int(round(theta))], hm, Vmax)
 		theta *= self._polarHistog.getAlpha()
 		theta -= droneHeading
 		theta += 360 if theta < -180 else -360 if theta > 180 else 0
-		theta = round(theta)
+		theta = int(round(theta))
 		return theta, V
 
 
