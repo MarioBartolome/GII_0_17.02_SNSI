@@ -18,7 +18,8 @@ class ObstacleAvoidanceWrapper:
 			VFH_cellSize: int = 5,
 			VFH_epsilon: float = 0.5,
 			VFH_omega: int = 30,
-			VFH_safetyThreshold: int = 2
+			VFH_safetyThreshold: int = 2,
+			VFH_MaxSpeed: int = 8
 	):
 
 		self._yawController = YawController()
@@ -43,10 +44,11 @@ class ObstacleAvoidanceWrapper:
 		self._headingController = HeadingControl(VFH_safetyThreshold, self._polarHistog)
 		self._agent_position = np.array([0, 0])
 		self._goal = np.array([10, 10])
-		# TODO: Maybe the PF should run on a separate thread... so it will make all its math while ctrlWrapper is bussy
+		# TODO: Maybe the PF should run on a separate thread... so it will make all its math while ctrlWrapper is busy
 		# TODO: consider blocking access to sensor readings and agent_position to achieve it
 		# self._pf = ParticleFilter()
 		self._speed = 0
+		self._max_speed = VFH_MaxSpeed
 
 	def getPriority(self):
 		return self._yawC_priority
@@ -81,8 +83,14 @@ class ObstacleAvoidanceWrapper:
 	def setMeasurement(self, measurements: List[Dict, Dict]):
 		distances = measurements[0]
 		heading = measurements[1]['heading']
+		self._yawController.setMeasurement(heading)
 
 		self._histog.setSensorsMeasurements(distances)
 
-		desired_heading, desired_speed = self._headingController.computeHeading(heading, self._goal, self._agent_position)
+		desired_heading, desired_speed = self._headingController.computeHeading(heading,
+		                                                                        self._goal,
+		                                                                        self._agent_position,
+		                                                                        Vmax=self._max_speed
+		                                                                        )
 		self.setSpeed(desired_speed)
+		self._yawController.setTarget(desired_heading)
