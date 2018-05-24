@@ -442,7 +442,7 @@ class HeadingControl:
 		V = round(max(Vmax * (1 - hc/hm), 1))
 		return V
 
-	def computeHeading(self, droneHeading: int, target: np.ndarray, location: np.ndarray, hm: int = 8, Vmax:int = 8) -> (float, int):
+	def computeHeading(self, droneHeading: int, target: np.ndarray, location: np.ndarray, hm: int = 8, Vmax:int = 8) -> (int, int):
 		"""
 		Computes the new heading the robot should take to avoid collision.
 
@@ -451,6 +451,9 @@ class HeadingControl:
 		:param target: the position of the target on the full map.
 		:type target: np.ndarray
 		:param location: the position of the drone on the full map.
+		:type location: np.ndarray
+		:param Vmax: the maximum speed for the agent.
+		:type Vmax: int
 		:return: The new heading and the speed
 		"""
 		direction = target - location
