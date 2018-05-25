@@ -3,8 +3,12 @@
 ![maintainability](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=sqale_rating)
 ![TechDebt](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=sqale_index)
 ![Reliability](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=reliability_rating)
+
+
 ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=coverage)
 ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=bugs)
+
+
 ![Lines](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=ncloc)
 ![DuplicatedLines](https://sonarcloud.io/api/project_badges/measure?project=GII_0_17.02_SNSI&metric=duplicated_lines_density)
 
