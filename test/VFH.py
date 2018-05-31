@@ -246,11 +246,11 @@ class HistogramGrid:
 		ang_window = np.zeros_like(self._angles)
 		# Angle to the point inside the range [-omega/2, omega/2]
 		for angle in self.getSensorsMeasurements().keys():
-			Theta = self._angles - np.deg2rad(droneHeading) - np.deg2rad(angle)
-			Theta[Theta >= np.pi] -= np.pi * 2
+			theta = self._angles - np.deg2rad(droneHeading) - np.deg2rad(angle)
+			theta[theta >= np.pi] -= np.pi * 2
 			effective_angle = np.deg2rad(self._omega/2.0)
-			ang_indexes = np.where((-effective_angle < Theta) & (Theta < effective_angle))
-			ang_window[ang_indexes] += 1 - (2 * Theta[ang_indexes] / self._omega) ** 2
+			ang_indexes = np.where((-effective_angle < theta) & (theta < effective_angle))
+			ang_window[ang_indexes] += 1 - (2 * theta[ang_indexes] / self._omega) ** 2
 
 		return ang_window
 
