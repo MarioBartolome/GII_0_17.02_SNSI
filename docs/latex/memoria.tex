@@ -470,7 +470,12 @@ D. \cotutorTwo
 % Abstract en castellano
 \renewcommand*\abstractname{Resumen}
 \begin{abstract}
-El objetivo del proyecto es diseñar un sistema de navegación semi-autónomo en espacios cerrados, destinado a la asistencia en vigilancia de seguridad mediante drones. Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando vídeo que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad.
+El objetivo del proyecto es diseñar un sistema de navegación semi-autónomo en espacios cerrados, destinado a la asistencia en vigilancia de seguridad mediante drones. Dada una estancia, el drone deberá ser capaz de realizar un recorrido por el interior, grabando vídeo que será emitido a un servidor, y transmitiendo su posición dentro del mapa a un responsable de seguridad. El drone estará equipado con una RaspberryPi que hará las veces de sistema de control y de transmisor de vídeo. 
+Para llevar a cabo la evasión de obstáculos se han implementado dos soluciones, una basada en campos potenciales, y otra, conocida como Vector Field Histogram, que complementa a esta primera, solucionando algunos de los problemas que esta presenta. 
+
+La localización en interiores no es fiable mediante GPS, por ello se hará uso de un sistema probabilístico basado en simulación de instancias. Dicho sistema, conocido como filtro de partículas, está basado en el método de Montecarlo como estimador de una variable en base a observaciones del entorno. 
+
+Para lograr la comunicación entre el drone y la RaspberryPi, se ha creado una implementación del protocolo MultiWii Serial Protocol, el cual permite tanto el envío de comandos, como la solicitud de información a la controladora de vuelo.
 \end{abstract}
 
 \renewcommand*\abstractname{Descriptores}
@@ -483,7 +488,12 @@ drone, UAV, semi-autónomo, semi-automático, vigilancia, navegación, interior,
 % Abstract en inglés
 \renewcommand*\abstractname{Abstract}
 \begin{abstract}
-The point of this project is to design a semi-autonomous navigation system in enclosed spaces, destined to aid security vigilance using drones. Given an enclosed space, the drone should be able to make its path through it, recording video which will be streamed to a server, and updating its position inside of it to the security guard in charge.
+The point of this project is to design a semi-autonomous navigation system in enclosed spaces, destined to aid security vigilance using drones. Given an enclosed space, the drone should be able to make its path through it, recording video which will be streamed to a server, and updating its position inside of it to the security guard in charge. The drone will be guided making use of a RaspberryPi, which will be controlling it and streaming the video. 
+To achieve the obstacle avoidance, two different solutions have been implemented, the first based on potential fields, and another one, known as \emph{Vector Field Histogram}, to complement the first one, solving some of its caveats.
+
+Enclosed space location through GPS is not reliable enough, therefore a probabilistic method, based on instance simulation will be used. Also known as \emph{Particle Filter}, this method is based on Montecarlo simulations as an estimator of an unknown variable taking in account multiple observations of the environment.
+
+To achieve communication between the drone and the RaspberryPi, an implementation of the MultiWii Serial Protocol was developed, which allows to send commands and retrieve information from the flight controller.
 \end{abstract}
 
 \renewcommand*\abstractname{Keywords}
