@@ -127,7 +127,6 @@ class abcControllerPID(object, metaclass=abc.ABCMeta):
 
 		self._acc_error += self._error
 
-		new_RAW_RC = int(max(min(self._upperLimit, new_RAW_RC), self._lowerLimit))
+		new_RAW_RC = max(min(self._upperLimit, new_RAW_RC), self._lowerLimit)
 		self._actualRAWRC = new_RAW_RC
-
-		return new_RAW_RC
+		return int(round(new_RAW_RC))
