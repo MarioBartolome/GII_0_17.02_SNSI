@@ -15,7 +15,6 @@ class ParticleFilter:
 	             turn_noise: float,
 	             forward_noise: float,
 	             sense_noise: float,
-	             sensors: list,
 	             heading_coverage: int = 12
 	             ):
 
@@ -29,7 +28,6 @@ class ParticleFilter:
 		self._turn_noise = turn_noise
 		self._forward_noise = forward_noise
 		self._sense_noise = sense_noise
-		self._sensors = sensors
 
 	def getParticleNumber(self) -> tuple:
 		return self._particle_number
@@ -140,7 +138,7 @@ class ParticleFilter:
 			self.computeVectorizedGaussianProb(
 				particles_measurements,
 				self.getSenseNoise(),
-				agent_measurements)
+				agent_measurements), axis=1
 		)
 		return probs / np.sum(probs)
 
@@ -155,20 +153,19 @@ class ParticleFilter:
 		:return:
 		'''
 
-		particles_number = np.prod(self.getParticleNumber())
 		if not amount:
-			amount = int(particles_number * 0.25)
-		return np.random.choice(np.arange(particles_number), replace=True, p=probabilities, size=amount)
+			amount = int(probabilities.shape[0] * 0.25)
+		return np.random.choice(np.arange(probabilities.shape[0]), replace=True, p=probabilities, size=amount)
 
 
 if __name__ == '__main__':
 
 	import backend.Geometry as Geometry
 
-	pFilter = ParticleFilter(np.eye(10), 0.02, 0.02, 0.02, [], 2)
+	pFilter = ParticleFilter(np.eye(10), 0.02, 0.02, 0.02, 2)
 	particles = pFilter.getParticleMap().T
 	# print(particles[:, 0].T)
-	sensor_number = 7
+	sensor_number = 5
 	world_size = np.array([5.0, 5.0])
 	angles = []
 	for i in range(particles.shape[0]):
@@ -191,4 +188,12 @@ if __name__ == '__main__':
 	])
 
 	intersections = Geometry.segIntersections(pFilter.getPositions().T, particles_rays, obstacles)
-	
+	particles_measurements = np.linalg.norm(
+		np.repeat(particles[:, :2], sensor_number * obstacles.shape[1], axis=0).reshape(
+			intersections.shape) - intersections, axis=2)
+
+	#print(particles_measurements)
+	agent_measurements = np.array([2.5822, 12.0415, 12.0415])
+	particles_probabilities = pFilter.computeProbabilities(particles_measurements, agent_measurements)
+	next_gen_sample = pFilter.resample(particles_probabilities)
+	print(next_gen_sample)
