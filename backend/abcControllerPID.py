@@ -7,14 +7,14 @@ class abcControllerPID(object, metaclass=abc.ABCMeta):
 	of the ctrlWrapper. Classes implementing this AbstractClass will be treated as prioritizedController.
 
 	"""
-	def __init__(self, kP: float, kI: float, kD: float, upper_Limit: int, lower_limit: int):
+	def __init__(self, kP: float, kI: float, kD: float, upper_limit: int, lower_limit: int):
 		"""
 		Constructor for a PID system related to ctrlWrapper.
 
 		:param kP:
 		:param kI:
 		:param kD:
-		:param upper_Limit:
+		:param upper_limit:
 		:param lower_limit:
 		"""
 		self._kP = kP
@@ -28,7 +28,7 @@ class abcControllerPID(object, metaclass=abc.ABCMeta):
 		self._measurement = 0.0
 		self._actualRAWRC = 1000
 
-		self._upperLimit = upper_Limit
+		self._upperLimit = upper_limit
 		self._lowerLimit = lower_limit
 
 		self._available = False
