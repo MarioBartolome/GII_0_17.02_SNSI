@@ -9,12 +9,15 @@ Wrapper for agent controller systems
 
 from backend.MultiWiiProtocol import MSPio
 from backend.RemoteControl import RemoteServer
-from backend.altitudeController import AltitudeController
+# from backend.altitudeController import AltitudeController
 from backend.Sensor import Sensor
 from backend.sr04Wrapper import sr04Wrapper
+# from backend.obsAvoidanceWrapper import ObstacleAvoidanceWrapper
+# from backend.inclinationController import InclinationController
+from backend.takeOffLanding import TakeOffLander
 import numpy as np
 import sys
-from typing import List, Callable, Dict, AnyStr
+from typing import List, Callable, Dict, AnyStr, Generator
 
 
 class CtrlWrapper:
@@ -46,6 +49,20 @@ class CtrlWrapper:
 		:type checkAvailability: List[Callable]
 		:param getLock: a List of methods of *controller* that will be called to achieve a synchronized lock over the controller.
 		:type getLock: List[Callable]
+		:param obstacleAvoidanceSensor_triggerPins: Trigger pins for the distance sensors.
+		:type obstacleAvoidanceSensor_triggerPins: List
+		:param obstacleAvoidanceSensor_echoPins: Echo pins for the distance sensors.
+		:type obstacleAvoidanceSensor_echoPins: List
+		:param obstacleAvoidanceSensor_angles: Angles for the distance sensors.
+		:type obstacleAvoidanceSensor_angles: List
+		:param altitudeSensor_triggerPin: Trigger pin for the altitude sensor.
+		:type altitudeSensor_triggerPin: int
+		:param altitudeSensor_echoPin: Echo pin for the altitude sensor.
+		:type altitudeSensor_echoPin: int
+		:param mspioPort: Port to connect the MSPio instance.
+		:type mspioPort: str
+		:param baud_rate: Baud rate to connect the MSPio instance.
+		:type baud_rate: int
 		"""
 		self._controllers = {}
 
@@ -65,16 +82,44 @@ class CtrlWrapper:
 
 		self._altSensor = Sensor(altitudeSensor_triggerPin, altitudeSensor_echoPin, 0)
 
-	def getAltitude(self):
-		return self._altSensor.getDistance()
+	def getAltitude(self) -> int:
+		"""
+		Returns the altitude from the altitude sensor.
+
+		:return: a value indicating the altitude in cm.
+		:rtype: int
+		"""
+		altitude = self._altSensor.getDistance()
+		print(altitude)
+		return altitude
 
 	def getAttitude(self) -> Dict:
+		"""
+		Returns a dictionary containing the values from the accelerometer/gyro/magnetometer.
+		Mapped as {'x':VALUE, 'y':VALUE, 'heading':VALUE}.
+
+		:return: a dictionary with the key:value described above.
+		:rtype: Dict
+		"""
 		return self._mspio.readAttitude()
 
 	def getObstacleDistances(self):
+		"""
+		Returns the distances to the obstacles from the distance sensors.
+
+		:return: A dictionary containing the distances
+		:rtype: Dict
+		"""
+
 		return self._dstSensors.getAnglesAndDistances()
 
-	def getMultipleSensors(self, functions: List[Callable]):
+	def getMultipleSensors(self, functions: List[Callable]) -> Generator:
+		"""
+		Returns feedback from multiple sensors as necessary.
+		:param functions: A list of functions to call to retrieve the info.
+		:return: A generator containing the values retrieved from the sensors.
+		:rtype: Generator
+		"""
 		return (val() for val in functions)
 
 	def getMSPio(self) -> MSPio:
@@ -132,13 +177,23 @@ class CtrlWrapper:
 			self._getFeedBack = getFeedBack
 			self._setFeedBack = setFeedBack
 
-		def getPriority(self):
+		def getPriority(self) -> int:
+			"""
+			Gets the priority.
+
+			:return: the priority.
+			:rtype: int
+			"""
 			return self._priority
 
 		def getController(self):
 			return self._controller
 
-		def getChannels(self):
+		def getChannels(self) -> List:
+			"""
+			Returns a list of the channels driven by the controller.
+			:return: the channel list.
+			"""
 			return self._channels
 
 		def getValues(self):
@@ -146,16 +201,35 @@ class CtrlWrapper:
 			assert len(self._channels) == len(self._values)
 			return self._values
 
-		def isAvailable(self):
+		def isAvailable(self) -> bool:
+			"""
+			Checks if the controller is available.
+
+			:return: True or False
+			"""
 			return self._checkAvailability()
 
 		def getLock(self):
+			"""
+			Gets the lock from the controller class, if existing.
+
+			:return: the locked lock.
+			"""
 			return self._getLock()
 
-		def requiresFeedBack(self):
+		def requiresFeedBack(self) -> bool:
+			"""
+			Checks if the controller requieres feedback to work.
+			:return: True or False.
+			"""
 			return self._requiresFeedBack
 
 		def getFeedBack(self) -> List[Callable]:
+			"""
+			Returns the feedback methods
+			
+			:return: a list containing the methods tha should be called to gather feedback.
+			"""
 			return self._getFeedBack
 
 		def setFeedBack(self, feedBack):
@@ -246,8 +320,12 @@ class CtrlWrapper:
 		Initializes the ctrlWrapper.
 
 		"""
+		initValues = [1000, 1500, 1500, 1500, 1000]
 		mspio = self._mspio
 		if mspio.isOpen():
+			start = time.time()
+			while abs(time.time() - start < 5):
+				mspio.setRawRC(initValues)
 			while True:
 				mspio.setRawRC(self.computeChannels())
 		# print(mspio.readAttitude())
@@ -266,13 +344,15 @@ if __name__ == '__main__':
 	dstSensors_triggerPins = [13, 9, 5, 3, 21]
 	dstSensors_echoPins = [19, 10, 6, 2, 20]
 	dstSensors_angles = [0, 53, 90, 127, 180]
+	MAX_ALTITUDE = 80
+	MAX_INCLINATION = 8
 
 	channels = [[0, 1, 2, 3, 4]]
 	getterMethod = [remoteController.getChannels]
 	availMethod = [remoteController.isManualEnabled]
 	getLockMethod = [remoteController.getLock]
 	controller = CtrlWrapper(
-		{0: remoteController},
+		{10: remoteController},
 		channels,
 		getterMethod,
 		availMethod,
@@ -283,14 +363,13 @@ if __name__ == '__main__':
 		altSensor_trigPin,
 		altSensor_echoPin
 	)
-	time.sleep(2)
+	time.sleep(1)
 
 	# Altitude controller
-	altHoldController = AltitudeController()
+
+	altHoldController = TakeOffLander(MAX_ALTITUDE)
 	altH_priority = 9
-	altH_channels = [0]
-	altHoldController.setAvailability(True)
-	altHoldController.setTarget(15)
+	altH_channels = [0, 4]
 	altH_checkAvMethod = altHoldController.isAvailable
 	altH_getLockMethod = altHoldController.getLock
 	altH_retrieveFBMethod = [controller.getAltitude]
@@ -308,7 +387,59 @@ if __name__ == '__main__':
 		setFeedBack=altH_setFBMethod
 	)
 
+	"""
 	# Obstacle Avoidance controller
-	# TODO: UNDER DEVELOPMENT
+	yawC_priority = 10
+	yawC_channels = [4]
+	VFH_sensorsMaxDst = 375
+	VFH_sensorsMinDst = 5
+	WorldMap = np.array([])  # TODO CREATE A WORLD MAP ;)
+	obstacleAvoidanceController = ObstacleAvoidanceWrapper(yawC_priority,
+	                                                       yawC_channels,
+	                                                       VFH_sensorsMaxDst,
+	                                                       VFH_sensorsMinDst,
+	                                                       WorldMap
+	                                                       )
 
+	yawC_checkAvMethod = obstacleAvoidanceController.isAvailableMethod
+	yawC_getLockMethod = obstacleAvoidanceController.getLockMethod
+	yawC_retrieveFBMethod = [controller.getObstacleDistances, controller.getAttitude]
+	yawC_setFBMethod = obstacleAvoidanceController.setMeasurement
+	yawC_getterMethod = obstacleAvoidanceController.getChannels
+
+	controller.addPrioritizedController(
+		yawC_priority,
+		obstacleAvoidanceController,
+		yawC_channels,
+		yawC_getterMethod,
+		yawC_checkAvMethod,
+		yawC_getLockMethod,
+		requiresFeedBack=True,
+		getFeedBack=yawC_retrieveFBMethod,
+		setFeedBack=yawC_setFBMethod
+	)
+
+	# Inclination/Speed controller
+	inclController = InclinationController()
+	inclC_priority = 11
+	inclC_channels = [2]
+	inclController.setAvailability(True)
+	inclController.setTarget(MAX_INCLINATION)
+	inclC_checkAvMethod = inclController.isAvailable
+	inclC_getLockMethod = inclController.getLock
+	inclC_retrieveFBMethod = [controller.getAttitude, obstacleAvoidanceController.getSpeed]
+	inclC_setFBMethod = inclController.setMeasurement
+	inclC_getterMethod = inclController.getChannels
+	controller.addPrioritizedController(
+		inclC_priority,
+		inclController,
+		inclC_channels,
+		inclC_getterMethod,
+		inclC_checkAvMethod,
+		inclC_getLockMethod,
+		requiresFeedBack=True,
+		getFeedBack=altH_retrieveFBMethod,
+		setFeedBack=altH_setFBMethod
+	)
+	"""
 	controller.start()
