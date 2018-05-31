@@ -23,17 +23,17 @@ from typing import List, Callable, Dict, AnyStr, Generator
 class CtrlWrapper:
 
 	def __init__(self, controllers: Dict = None,
-				channels: List = None,
-				retrieveValues: List = None,
-				checkAvailability: List = None,
-				getLock: List = None,
-				obstacleAvoidanceSensor_triggerPins: List = None,
-				obstacleAvoidanceSensor_echoPins: List = None,
-				obstacleAvoidanceSensor_angles: List = None,
-				altitudeSensor_triggerPin: int = None,
-				altitudeSensor_echoPin: int = None,
-				mspioPort: AnyStr = '/dev/ttyUSB0',
-				baud_rate : int =115200):
+	             channels: List = None,
+	             retrieveValues: List = None,
+	             checkAvailability: List = None,
+	             getLock: List = None,
+	             obstacleAvoidanceSensor_triggerPins: List = None,
+	             obstacleAvoidanceSensor_echoPins: List = None,
+	             obstacleAvoidanceSensor_angles: List = None,
+	             altitudeSensor_triggerPin: int = None,
+	             altitudeSensor_echoPin: int = None,
+	             MSPio_Port: AnyStr = '/dev/ttyUSB0',
+	             baud_rate : int =115200):
 		"""
 		Constructor for the Control Wrapper.
 		This class aims to provide a prioritized way to manage every existent control input.
@@ -59,8 +59,8 @@ class CtrlWrapper:
 		:type altitudeSensor_triggerPin: int
 		:param altitudeSensor_echoPin: Echo pin for the altitude sensor.
 		:type altitudeSensor_echoPin: int
-		:param mspioPort: Port to connect the MSPio instance.
-		:type mspioPort: str
+		:param MSPio_Port: Port to connect the MSPio instance.
+		:type MSPio_Port: str
 		:param baud_rate: Baud rate to connect the MSPio instance.
 		:type baud_rate: int
 		"""
@@ -72,7 +72,7 @@ class CtrlWrapper:
 			):
 				self.addPrioritizedController(priority, controller, chann, getterMethod, checkerMethod, lockerMethod)
 
-		self._mspio = MSPio(serial_port=mspioPort, baud_rate=baud_rate)
+		self._mspio = MSPio(serial_port=MSPio_Port, baud_rate=baud_rate)
 
 		self._dstSensors = sr04Wrapper(
 			obstacleAvoidanceSensor_triggerPins,
@@ -335,6 +335,7 @@ class CtrlWrapper:
 
 if __name__ == '__main__':
 	import time
+	from backend.obsAvoidanceWrapper import ObstacleAvoidanceWrapper
 
 	# Remote controller
 	remoteController = RemoteServer()

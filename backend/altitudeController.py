@@ -5,13 +5,13 @@ from typing import List
 class AltitudeController(abcControllerPID.abcControllerPID):
 
 	def __init__(self,
-	             upper_Limit: int = 1800,
+	             upper_limit: int = 1800,
 	             lower_limit: int = 1000,
 	             kP: float = 0.01,
 	             kI: float = 0.00,
 	             kD: float = 0.01):
 
-		super(AltitudeController, self).__init__(kP, kI, kD, upper_Limit, lower_limit)
+		super(AltitudeController, self).__init__(kP, kI, kD, upper_limit, lower_limit)
 
 		self._available = False
 

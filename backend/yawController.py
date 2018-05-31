@@ -5,14 +5,14 @@ from typing import List
 class YawController(abcControllerPID.abcControllerPID):
 
 	def __init__(self,
-	             upper_Limit: int = 1600,
+	             upper_limit: int = 1600,
 	             lower_limit: int = 1400,
 	             kP: float = 0.02,
 	             kI: float = 0.0,
 	             kD: float = 0.01
 	             ):
 
-		super(YawController, self).__init__(kP, kI, kD, upper_Limit, lower_limit)
+		super(YawController, self).__init__(kP, kI, kD, upper_limit, lower_limit)
 		self.setActualRAWRC(1500)
 
 	def setMeasurement(self, measurement: int):
