@@ -21,7 +21,7 @@
                             video.play();
                         },
                         function (error) {
-                            alert(error);
+                            console.error(error.toString());
                         },
                         function () {
                             console.log('websocket closed. bye bye!');
@@ -29,7 +29,7 @@
                             isStreaming = false;
                         },
                         function (message) {
-                            alert(message);
+                            console.log(message.toString());
                         }
                 );
             }
