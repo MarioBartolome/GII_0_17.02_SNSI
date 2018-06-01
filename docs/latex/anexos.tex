@@ -8,7 +8,7 @@
 \usepackage{lmodern} % scalable font
 \usepackage{microtype}
 \usepackage{placeins}
-
+\usepackage{eurosym}
 \RequirePackage{booktabs}
 \RequirePackage[table]{xcolor}
 \RequirePackage{xtab}
@@ -19,6 +19,8 @@
 \hypersetup{
 	allcolors = {red}
 }
+
+\usepackage[numbers,sort]{natbib}
 
 % Ecuaciones
 \usepackage{amsmath}
@@ -278,7 +280,8 @@
 
 
 
-\graphicspath{ {./img/} }
+
+\graphicspath{ {../img/} }
 
 % Capítulos
 \chapterstyle{bianchi}
@@ -299,12 +302,15 @@
 	\chapter{#1}
 }
 
-\renewcommand*\cftappendixname{\appendixname\ }
 
+
+\renewcommand*\cftappendixname{\appendixname\ }
 % Formato de portada
 \makeatletter
 \usepackage{xcolor}
 \newcommand{\tutor}[1]{\def\@tutor{#1}}
+\newcommand{\cotutorOne}[1]{\def\@cotutorOne{#1}}
+\newcommand{\cotutorTwo}[1]{\def\@cotutorTwo{#1}}
 \newcommand{\course}[1]{\def\@course{#1}}
 \definecolor{cpardoBox}{HTML}{E6E6FF}
 \def\maketitle{
@@ -315,11 +321,11 @@
   \vfill
   % Título proyecto y escudo informática ----------------
   \colorbox{cpardoBox}{%
-    \begin{minipage}{.8\textwidth}
-      \vspace{.5cm}\Large
+    \begin{minipage}{.9\textwidth}
+      \vspace{.5cm}\large
       \begin{center}
       \textbf{TFG del Grado en Ingeniería Informática}\vspace{.6cm}\\
-      \textbf{\LARGE\@title{}}
+      \textbf{\@title{}}
       \end{center}
       \vspace{.2cm}
     \end{minipage}
@@ -332,10 +338,10 @@
   % Datos de alumno, curso y tutores ------------------
   \begin{center}%
   {%
-    \noindent\LARGE
+    \noindent\large
     Presentado por \@author{}\\ 
-    en Universidad de Burgos --- \@date{}\\
-    Tutor: \@tutor{}\\
+    en Universidad de Burgos --- \@date{}\vspace{.6cm}\\
+    \noindent Tutores: \@tutor{}\\\@cotutorOne{}\\\@cotutorTwo{}
   }%
   \end{center}%
   \null
@@ -343,21 +349,23 @@
   }
 \makeatother
 
+\newcommand{\nombre}{Mario Bartolomé Manovel} %%% cambio de comando
 
 % Datos de portada
-\title{título del TFG \\Documentación Técnica}
-\author{nombre alumno}
-\tutor{nombre tutor}
+\title{Sistema de Navegación Semiautónomo en Interiores}
+\author{\nombre}
+\tutor{Dr. Alejandro Merino Gómez}
+\cotutorOne{Dr. César Ignacio García Osorio}
+\cotutorTwo{Dr. José Francisco Díez Pastor}
 \date{\today}
 
 \begin{document}
 
 \maketitle
-
-
-
-\cleardoublepage
-
+\def\titulo{Sistema de Navegación Semiautónomo en Interiores}
+\def\tutor{Dr. Alejandro Merino Gómez}
+\def\cotutorOne{Dr. César Ignacio García Osorio}
+\def\cotutorTwo{Dr. José Francisco Díez Pastor}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -393,7 +401,7 @@
 \include{./tex/E_Manual_usuario}
 
 
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{bibliografiaAnexos}
 
 \end{document}
