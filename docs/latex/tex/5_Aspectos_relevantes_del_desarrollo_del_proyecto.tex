@@ -52,7 +52,7 @@ Se detallará más sobre las pruebas en la sección \ref{sec:testing}.
 
 Para el desarrollo del proyecto se ha hecho uso de conocimientos adquiridos en la presente carrera, en muchos años de curiosidad y de búsqueda en internet. 
 
-El desarrollo ha sido, en su mayor parte, escrito en Python, y se ha hecho uso de librerías como Numpy, Matplotlib y SciKit que se estudian durante la carrera, y otras que no, como PySerial (para establecer una comunicación serie), Bluetin-Echo (para hacer uso de los sensores de distancia HC-SR04), el framework Flask (para el desarrollo de la web-app) y la API WebRTC (para el vídeo en tiempo real) entre otras.
+El desarrollo ha sido, en su mayor parte, escrito en Python, y se ha hecho uso de librerías como Numpy, Matplotlib y SciPy que se estudian durante la carrera, y otras que no, como PySerial (para establecer una comunicación serie), Bluetin-Echo (para hacer uso de los sensores de distancia HC-SR04), el framework Flask (para el desarrollo de la web-app) y la API WebRTC (para el vídeo en tiempo real) entre otras.
 
 Sin embargo, cabe destacar la lectura de ciertos artículos, y el acceso a ciertos recursos:
 
@@ -110,7 +110,7 @@ Puede parecer una sobresimplificación del problema, pero lo cierto es que tras 
 
 Una vez obtenida la malla, esta se convierte en un histograma polar. Para ello se divide esta en sectores de una amplitud determinada (5º se ha mostrado como una cantidad aceptable, generando así 72 sectores que cubrirán los 360º). De esta forma, ya se dispone de una representación aproximada de la ubicación de los obstáculos. 
 
-Aún así se somete el histograma a una función de suavizado. En el artículo presentado por Borenstein y Koren en \citep{art:BorensteinKorenVFH}, la función utilizada contiene una errata. Tras discutirlo con mis tutores, decidimos utilizar cualquiera de las funciones de suavizado o filtrado disponibles en SciKit, y me decanté por la señal de Hann. 
+Aún así se somete el histograma a una función de suavizado. En el artículo presentado por Borenstein y Koren en \citep{art:BorensteinKorenVFH}, la función utilizada contiene una errata. Tras discutirlo con mis tutores, decidimos utilizar cualquiera de las funciones de suavizado o filtrado disponibles en SciPy, y me decanté por la señal de Hann. 
 De esta forma, los obstáculos parecen \textit{estirarse}, ya que la señal de Hann permite establecer la simetría de los valores a suavizar. Así que la certidumbre sobre la existencia de obstáculos en un punto contiguo a los obtenidos en la malla de certidumbre se verá incrementada, creando un histograma todavía más conservador sobre la posición de los obstáculos. 
 
 Por si esto pudiera parecer poco, se define un umbral. El umbral establece cual es el nivel máximo de certidumbre de obstáculos en una zona, como para considerarla segura para navegar. 
@@ -174,7 +174,7 @@ En el desarrollo de este proyecto, se ha llevado a cabo el desarrollo de tres si
 \begin{itemize}
 \item Un sistema de comunicación entre un ordenador y un Drone. Llevado a cabo mediante la librería de implementación propia \emph{MSPio}.
 \item Un sistema de control remoto de un drone a través de un navegador web. Llevado a cabo mediante Flask, Python y la librería MSPio.
-\item Un sistema de vídeo en tiempo real. Llevado a cabo mediante la API de WebRTC, HTML, JavaScript, y en la parte del servidor (la RaspberryPi) se ha hecho uso de UV4L, un driver que accede a la cámara de la Raspberry, y provee de un servidor WebRTC al que conectarse.
+\item Un sistema de vídeo en tiempo real. Llevado a cabo mediante la API de WebRTC, HTML, JavaScript, y en la parte del servidor (la RaspberryPi) se ha hecho uso de UV4L, un driver que accede a la cámara de la Raspberry, y provee de un servidor WebRTC al que conectarse, puede consultarse la web del proyecto en \citep{wiki:uv4l}.
 \end{itemize}
 
 \subsubsection{MSPio}
@@ -310,7 +310,7 @@ El equipamiento empleado en el drone es el siguiente:
 
 
 \section{Testing}
-
+\label{sec:testing}
 Sin duda la parte más relevante del proyecto es la implementación física del mismo. Las pruebas llevadas a cabo se han centrado en la componente práctica, y en pruebas de campo. 
 
 Las diferentes clases desarrolladas han sido testeadas de forma interna, y no se dispone de pruebas como tal, que puedan ser desplegadas en un sistema de integración continua. 

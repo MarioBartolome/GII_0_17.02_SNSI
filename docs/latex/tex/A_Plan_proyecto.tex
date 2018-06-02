@@ -222,13 +222,59 @@ Para el desarrollo del proyecto tan solo se ha empleado un desarrollador, emplea
 			\textbf{Total 4 meses} & $8000 $\euro\\
 			\bottomrule
 		\end{tabular}
-		\caption{Costes de personal}
+		\caption{Costes de personal de desarrollo}
 		\label{tb:costesPersonal}
 	\end{center}
 \end{table}
 
 La retribución a la Seguridad Social se ha calculado como un 23,60\% por contingencias comunes, más un 5,50\% por desempleo de tipo general, más un 0,20\% para el Fondo de Garantía Salarial y má un 0,60\% de formación profesional. En total un 29,9\% que se aplica al salario bruto. Ver \citep{wiki:basesCot18}.
 
+Se estima también la ayuda prestada por los tres tutores, dividiendo un crédito a partes iguales entre ellos. Para lo cual se utilizará la tabla disponible en \citep{wiki:ubupdiwages}, y haciendo el cálculo de la siguiente manera: 
+
+\begin{itemize}
+\item Sueldo base Ayudante Doctor: $1815.61$\euro. $14$ pagas anuales. Total $25418.54$\euro  al año. El cual imparte 24 créditos, de forma que tiene un coste por crédito de $1059.1$\euro  al año. Quedando así en $353.04$\euro por los 4 meses.
+\item Sueldo base Contratado Doctor Permanente: $2325.24$\euro. $14$ pagas anuales. Total $32553.36$\euro   al año. El cual imparte 32 créditos, de forma que tiene un coste por crédito de $1017.3$\euro  al año. Quedando así en $339.1$\euro por los 4 meses.
+\item Sueldo base Contratado Doctor Básico: $2001.27$\euro. $14$ pagas anuales. Total $28017.8$\euro  al año. El cual imparte 24 créditos, de forma que tiene un coste por crédito de $1167.41$\euro  al año. Quedando así en $389.14$\euro por los 4 meses.
+\end{itemize}
+
+De esta forma, y tal y como se ha establecido la división a partes iguales del crédito correspondiente: 
+\begin{table}[H]
+	\begin{center}
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{l | c}\hline
+			\toprule
+			Concepto & Coste\\
+			\otoprule
+			Ayudante Doctor & $353.04 * 0.3\overline{3} = 117.68$\euro\\
+			Contratado Doctor  Permanente & $339.1 * 0.3\overline{3} = 113.04$\euro\\
+			Contratado Doctor Básico & $389.14 * 0.3\overline{3} = 129.72$\euro\\
+			\hline
+			\textbf{Total 4 meses} & $360.44$\euro\\
+			\bottomrule
+		\end{tabular}
+		\caption{Costes totales de asesoría}
+		\label{tb:costesAsesoria}
+	\end{center}
+\end{table}
+
+De esta manera, los costes totales de personal ascienden a: 
+\begin{table}[H]
+	\begin{center}
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{l | c}\hline
+			\toprule
+			Concepto & Coste\\
+			\otoprule
+			Desarrolladores & $8000$\euro\\
+			Asesoría Doctores & $360.44$\euro\\
+			\hline
+			\textbf{Total 4 meses} & $8360.44$\euro\\
+			\bottomrule
+		\end{tabular}
+		\caption{Costes totales de personal}
+		\label{tb:costesPersonalTotales}
+	\end{center}
+\end{table}
 
 \paragraph{De hardware:}
 
@@ -329,12 +375,12 @@ El total de los costes es el siguiente:
 			\toprule
 			Concepto & Coste\\
 			\otoprule
-			Personal & $8000$ \euro \\
+			Personal & $8360.44$ \euro \\
 			Hardware & $1340.58$ \euro \\
 			Software & $194.63$ \euro\\
 			Varios & $1294.4$ \euro\\
 			\hline
-			\textbf{Total} & $10829.61 $\euro\\
+			\textbf{Total} & $11190.05 $\euro\\
 			\bottomrule
 		\end{tabular}
 		\caption{Costes totales del proyecto}
@@ -370,7 +416,52 @@ El último elemento de la tabla \ref{tb:money}, se corresponde con un grupo de n
 
 Los costes serían rentables para las empresas, dado que contratar personal de seguridad acorde a la dimensionalidad del negocio es más costoso que mantener los drones establecidos en la tabla \ref{tb:money}.
 
+\paragraph{Punto de equilibrio} El punto de equilibrio establece el momento en el que se alcanza a cubrir la inversión inicial. Los cálculos propuestos a continuación son una estimación aproximada: 
+
+Asumiendo el coste de personal de estos 4 meses en los $8360.44$\euro resultantes de la tabla \ref{tb:costesPersonalTotales}, podemos suponer uno coste anual de $25081.32$\euro por empleado\footnote{No se ha eliminado el coste de los tutores.}. 
+Se estima que para llevar a cabo este proyecto de forma correcta, y ágil, se deberían emplear a tiempo completo, al menos ,3 desarrolladores y 2 ingenieros en electrónica. Suponiendo unos gastos anuales de personal de desarrollo de $125406.6$\euro.
+
+Se establece que un vigilante/piloto es capaz de atender hasta 8 drones. De forma que se añade otro empleado por cada 8 drones construidos.
+
+El coste de elaborar un drone con las características detalladas en la tabla \ref{tb:costesHardware} asciende, sin contar con la necesidad de una emisora por drone, y un ordenador portátil por drone, a $362.79$\euro. Sin embargo, teniendo en cuenta que la tecnología empleada no es tan precisa como se desearía, se añade un margen que permitiría mejorar el hardware empleado, estableciendo el total de elaboración de un drone en $550$\euro. 
+
+Los costes de mantenimiento y reparación de un drone, basados en la experiencia personal con estos dispositivos, y en la tecnología empleada, se establece en $150$\euro anuales por dispositivo. El coste del seguro de responsabilidad civil de la empresa se estima en $265$\euro por dispositivo, con una cobertura mínima de $300000$\euro, tal y como se estipula en \citep{wiki:respCivil}, y teniendo en cuenta que este seguro cubriría daños al dispositivo (lo cual permite acotar mejor las estimaciones dadas). Para más información ver \href{https://www.aenus.es/responsabilidad-civil-danos-profesional/}{tablas de costes}. 
+
+Además, se incluye un gasto de daño social generado, ver \ref{subsec:respSocial}, valorado en $30000$\euro al año, en concepto de formación para los afectados.
+
+De esta forma, se establece el siguiente resumen de costes, asumiendo que las suscripciones anuales generadas son siempre la suscripción más simple de que se dispone, y que establece un ingreso de $8000$\euro anuales: 
+
+\begin{table}[H]
+	\begin{center}
+		\rowcolors {2}{gray!35}{}
+		\begin{tabular}{l | c}\hline
+			\toprule
+			Concepto & Coste anual\\
+			\otoprule
+			Desarrolladores & $125406.6$\euro\\
+			Piloto/Vigilante & $25081.32$\euro * drone/8 \\ 
+			Hardware   & $550$\euro * drone\\
+			Mantenimiento & $150$\euro * drone\\
+			Seguros & $265$\euro * drone\\
+			Formación & $30000$\euro \\
+			\hline
+			\textbf{Total anual} & $(125406.6 + 965*drone + 30000 + 25081.52*drone/8) $\euro\\
+			\bottomrule
+		\end{tabular}
+		\caption{Gastos totales}
+		\label{tb:gastosTotalesEq}
+	\end{center}
+\end{table}
+
+Y por lo tanto el cálculo sería, donde $x=\text{drone}$ por simplificar: 
+\begin{equation}
+8000x - (125406.6 + 965x + 30000 + \frac{25081.52x}{8}) \approx 40 \text{ drones/año}
+\end{equation}
+ para cubrir los costes generados.
+
+
 \subsubsection{Responsabilidad Social}
+\label{subsec:respSocial}
 Con el auge de la mecanización y automatización de los puestos de trabajo, es obvio que los seres humanos iremos perdiendo cabida en empleos que un sistema informatizado podría realizar con mayor eficiencia, y sobre todo de forma más económica. 
 
 Este proyecto, tiene un gran potencial de causar un daño social importante. El puesto de vigilante nocturno ha provisto de seguridad en muchos entornos laborales, y ha contribuido a generar riqueza protegiendo los bienes de las diferentes empresas que hacen uso de este personal.
