@@ -1,4 +1,4 @@
-from backend.altitudeController import AltitudeController
+from backend.autoControllers.altitudeController import AltitudeController
 from typing import List
 import time
 

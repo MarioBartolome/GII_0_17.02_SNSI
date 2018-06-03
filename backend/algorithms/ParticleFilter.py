@@ -156,7 +156,7 @@ class ParticleFilter:
 
 if __name__ == '__main__':
 
-	import backend.Geometry as Geometry
+	import backend.algorithms.Geometry as Geometry
 
 	pFilter = ParticleFilter(np.eye(10), 0.02, 0.02, 0.02, 2)
 	particles = pFilter.getParticleMap().T

@@ -1,5 +1,5 @@
 
-from backend.Sensor import Sensor
+from backend.sensors.Sensor import Sensor
 from typing import List, Dict, Iterable
 import atexit
 

@@ -302,6 +302,14 @@ class HistogramGrid:
 
 class PolarHistogram:
 	def __init__(self, histogrid: HistogramGrid, alpha: int = 5):
+		"""
+		A Polar Histogram. This class provides a description of the agent's environment divided by sectors with *⍺* width.
+
+		:param histogrid: The HistogramGrid to represent.
+		:type histogrid: HistogramGrid
+		:param alpha: The width of the sectors.
+		:type alpha: int
+		"""
 		self._histogrid = histogrid
 		self._alpha = alpha
 
