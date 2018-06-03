@@ -19,9 +19,6 @@ class ParticleFilter:
 	             ):
 
 		self._area_map = areaMap
-		#TODO MODIFY THIS TO BE ABLE TO DEFINE BEGIN AND END OF A SEGMENT REPRESENTING A BARRIER!
-		#todo IT WILL TAKE LESS MEMORY, AS ONLY SEGMENTS ARE KEPT AND MAP IS GENERATED ON THE FLY
-		#todo SLOWER, BUT EASIER TO USE WITH Geometry.py
 		self._empty_spaces = np.where(areaMap == 0)
 		self._particle_number = (self._empty_spaces[0].shape[0], heading_coverage)
 		self._particle_map = self.generateParticles()
@@ -147,9 +144,8 @@ class ParticleFilter:
 		Creates a new generation of *amount* particles taken from the original population with a given *probabilities*
 		The resampling process works with replacement, so likely particles will appear often.
 
-		:param particles_number: The ammount of particles available
-		:param probabilities:
-		:param amount:
+		:param probabilities: The probability of each particle
+		:param amount: The amount of particles available
 		:return:
 		'''
 
