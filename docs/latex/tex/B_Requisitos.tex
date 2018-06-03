@@ -108,10 +108,10 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 											\item Se muestra la página principal con el logo y los botones asociados al streaming de vídeo.
 											\end{enumerate}\\
 			
-			\textbf{Postcondición} & El sistema habrá asignado al usuario el drone correspondiente. \\
+			\textbf{Postcondición} & El sistema habrá asignado al usuario el \emph{drone} correspondiente. \\
 			\textbf{Excepciones} & \begin{itemize}
 												\item Contraseña/Usuario incorrectos (mensaje).
-												\item No existen drones asociados (mensaje).
+												\item No existen \emph{drones} asociados (mensaje).
 												\end{itemize}\\
 			\textbf{Importancia} & Alta.\\
 			\hline
@@ -161,15 +161,15 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\otoprule
 			\textbf{Actor} & Vigilante\\
 			\textbf{Requisitos asociados} & RF-1, RF-3\\
-			\textbf{Descripción} & Permite al usuario gestionar las acciones del drone vía web.\\
-			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un drone.\\
+			\textbf{Descripción} & Permite al usuario gestionar las acciones del \emph{drone} vía web.\\
+			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un \emph{drone}.\\
 			\textbf{Acciones} & \begin{enumerate}
 											\item El usuario conecta un dispositivo con el número de canales necesarios. 
 											\item Se informa sobre el reconocimiento de dicho dispositivo y se muestran los valores de los canales activos.
 											\item Se muestra el botón de activación del control manual.
 											\end{enumerate}\\
 			
-			\textbf{Postcondición} & El sistema habrá asignado al usuario el drone correspondiente. La aplicación web habrá reconocido el dispositivo conectado. Se dará la posibilidad de activar el control manual.\\
+			\textbf{Postcondición} & El sistema habrá asignado al usuario el \emph{drone} correspondiente. La aplicación web habrá reconocido el dispositivo conectado. Se dará la posibilidad de activar el control manual.\\
 			\textbf{Excepciones} & Dispositivo no reconocido.\\
 			\textbf{Importancia} & Alta.\\
 			\hline
@@ -190,8 +190,8 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\otoprule
 			\textbf{Actor} & Vigilante\\
 			\textbf{Requisitos asociados} & RF-3, RF-3.1 RF-3.5\\
-			\textbf{Descripción} & Permite al usuario activar/desactivar el feed de vídeo proveniente del drone.\\
-			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un drone.\\
+			\textbf{Descripción} & Permite al usuario activar/desactivar el feed de vídeo proveniente del \emph{drone}.\\
+			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un \emph{drone}.\\
 			\textbf{Acciones} & \item El usuario pulsa sobre el botón `Start/Stop Streaming'\\
 			
 			\textbf{Postcondición} & La aplicación web inicia/detiene el vídeo.\\
@@ -215,8 +215,8 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\otoprule
 			\textbf{Actor} & Vigilante\\
 			\textbf{Requisitos asociados} & RF-3, RF-3.2 RF-3.5\\
-			\textbf{Descripción} & Permite al usuario grabar el feed de vídeo proveniente del drone.\\
-			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un drone.\\
+			\textbf{Descripción} & Permite al usuario grabar el feed de vídeo proveniente del \emph{drone}.\\
+			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un \emph{drone}.\\
 			\textbf{Acciones} & \item El usuario pulsa sobre el botón `Record Video'\\
 			
 			\textbf{Postcondición} & La aplicación web comienza con la grabación del feed de vídeo.\\
@@ -235,15 +235,15 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 	\rowcolors {2}{gray!15}{}
 		\begin{tabular}{m{3cm} | m{10cm}}\hline
 			\toprule
-			\textbf{CU-06} & \textbf{Control manual del drone}\\
+			\textbf{CU-06} & \textbf{Control manual del \emph{drone}}\\
 			\otoprule
 			\textbf{Actor} & Vigilante\\
 			\textbf{Requisitos asociados} & RF-3, RF-3.3 RF-3.5, RF-3.3.1, RF-6\\
-			\textbf{Descripción} & Permite al usuario controlar el drone de forma manual.\\
-			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un drone. El usuario ha conectado un dispositivo adecuado.\\
+			\textbf{Descripción} & Permite al usuario controlar el \emph{drone} de forma manual.\\
+			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un \emph{drone}. El usuario ha conectado un dispositivo adecuado.\\
 			\textbf{Acciones} & El usuario pulsa sobre el botón `Enable/Disable Manual'\\
 											
-			\textbf{Postcondición} & La aplicación web solicita la activación del control manual al sistema. El sistema se conecta al drone y transmite la información proveniente de la aplicación web.\\
+			\textbf{Postcondición} & La aplicación web solicita la activación del control manual al sistema. El sistema se conecta al \emph{drone} y transmite la información proveniente de la aplicación web.\\
 			\textbf{Excepciones} & Drone no disponible (mensaje).\\
 			\textbf{Importancia} & Alta.\\
 			\hline
@@ -263,14 +263,14 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\otoprule
 			\textbf{Actor} & Vigilante\\
 			\textbf{Requisitos asociados} & RF-3, RF-3.4 RF-3.5\\
-			\textbf{Descripción} & Permite al usuario activar/desactivar los mecanismos de control automatizado del drone.\\
-			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un drone.\\
+			\textbf{Descripción} & Permite al usuario activar/desactivar los mecanismos de control automatizado del \emph{drone}.\\
+			\textbf{Precondiciones} & La base de datos está activa. El usuario dispone de cuenta activa. El usuario tiene iniciada una sesión. El usuario tiene asignado un \emph{drone}.\\
 			\textbf{Acciones} & \begin{enumerate}
 											\item El usuario selecciona los mecanismos de control automatizado que desea emplear.
 											\item El usuario pulsa sobre el botón `Enable auto'
 											\end{enumerate}\\
 											
-			\textbf{Postcondición} & La aplicación web solicita la activación de los controles automatizados al sistema. El sistema se conecta al drone y transmite la información proveniente de la aplicación web.\\
+			\textbf{Postcondición} & La aplicación web solicita la activación de los controles automatizados al sistema. El sistema se conecta al \emph{drone} y transmite la información proveniente de la aplicación web.\\
 			\textbf{Excepciones} & \begin{itemize}
 												\item Drone no disponible (mensaje).
 												\item Mecanismo automatizado no reconocido (mensaje).
@@ -294,7 +294,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\otoprule
 			\textbf{Actor} & Admin\\
 			\textbf{Requisitos asociados} & RF-4, RF-5\\
-			\textbf{Descripción} & Permite al usuario gestionar el equipo que controla el drone.\\
+			\textbf{Descripción} & Permite al usuario gestionar el equipo que controla el \emph{drone}.\\
 			\textbf{Precondiciones} & El usuario dispone de credenciales de acceso al sistema.\\
 			\textbf{Acciones} & \begin{enumerate}
 											\item El usuario inicia sesión en el sistema.

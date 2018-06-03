@@ -11,9 +11,9 @@ En el siguiente apartado se detallan las conclusiones obtenidas del desarrollo d
 \item Hacer uso de PyCharm ha facilitado mucho el desarrollo del sistema. Presenta una integración casi perfecta con despliegue en remoto, lo que ha facilitado mucho la ejecución, debug y despliegue final de la arquitectura en la RaspberryPi.
 \item En teoría, todo funciona. En la práctica es cuando se descubren los verdaderos problemas. La componente física del proyecto ha aportado una visión muy crítica sobre los cursos y artículos publicados en internet. Haciendo ver que estos en muchos casos están \emph{ajustados} para que el proceso quede perfecto para su presentación.
 \item Estimar la duración de las tareas es de gran dificultad, aunque se ha seguido una estrategia más bien conservadora, haciéndolas más largas de lo que en principio se preveía. 
-\item Los servicios de integración continua, sobre todo aquellos relacionados con plataformas de testing, habrían sido de utilidad para evitar cometer algunos errores, sin embargo no proveen de una forma de someter a pruebas el hardware necesario. Además, no proveen de acceso gratuito a repositorios privados, como es el caso de este proyecto.
+\item Los servicios de integración continua, sobre todo aquellos relacionados con plataformas de testing, habrían sido de utilidad para evitar cometer algunos errores, sin embargo, no proveen de una forma de someter a pruebas el hardware necesario. Además, no proveen de acceso gratuito a repositorios privados, como es el caso de este proyecto.
 \item Los sensores utilizados para el proyecto puede que no sean los ideales para el mismo. Si bien son baratos, y fáciles de instalar y utilizar, no son lo suficientemente rápidos en la adquisición de datos. 
-\item Python es ``lento'', pero cuando se vectoriza el cálculo haciendo uso de Numpy es casi equiparable a C.
+\item Python es <<lento>>, pero cuando se vectoriza el cálculo haciendo uso de Numpy es casi equiparable a C.
 \item Las pruebas son parte fundamental de un proyecto, sobre todo si incluye una componente física como este. De haber realizado un proyecto más sencillo, se habría dispuesto de más tiempo para llevarlas a cabo correctamente. 
 \end{itemize}
 
@@ -30,11 +30,11 @@ El proyecto realizado ha dado como fruto algunas líneas de trabajo por las que 
 \item Desarrollar un servidor propio de WebRTC para no depender de UV4L.
 \item Mejorar la interfaz web. Sin duda esta es la parte más floja del proyecto.
 \end{itemize}
-\item Finalizar con la etapa de pruebas, llevándolas a cabo con un drone mejorado (sensores más rápidos, piezas a medida mediante impresión 3D... etc).
+\item Finalizar con la etapa de pruebas, llevándolas a cabo con un \emph{drone} mejorado (sensores más rápidos, piezas a medida mediante impresión 3D... etc).
 \item Implementar un framework de testing que permita hacer uso de mocks de sensores y dispositivos hardware, sin necesidad de crearlos cada vez que se quiera hacer un test.
 \item Implementar un sistema de detección de intrusos y alertas al panel de control haciendo uso de la cámara disponible en la RaspberryPi. 
-\item Implementar una arquitectura de enjambre de drones. Esta arquitectura multi-agente permitiría el uso de múltiples drones para llevar a cabo diferentes tareas. La comunicación entre los diferentes agentes para evaluar estrategias, o modificar el comportamiento de los mismos sería de gran utilidad. 
-\item Implementar la creación de diferentes rutas en un equipo más potente. Si el mapa es grande y complejo, la RaspberryPi puede no ser lo suficientemente potente como para hacer esta labor de forma eficiente, de forma que sería interesante que el servidor que proporciona acceso a los drones, pueda enviar las rutas que deben seguir estableciendo las metas a lograr.
+\item Implementar una arquitectura de enjambre de \emph{drones}. Esta arquitectura multi-agente permitiría el uso de múltiples \emph{drones} para llevar a cabo diferentes tareas. La comunicación entre los diferentes agentes para evaluar estrategias, o modificar el comportamiento de los mismos sería de gran utilidad. 
+\item Implementar la creación de diferentes rutas en un equipo más potente. Si el mapa es grande y complejo, la RaspberryPi puede no ser lo suficientemente potente como para hacer esta labor de forma eficiente, de forma que sería interesante que el servidor que proporciona acceso a los \emph{drones}, pueda enviar las rutas que deben seguir estableciendo las metas a lograr.
 \item Migrar la arquitectura a un RTOS. 
 \item Implementar una controladora de vuelo dedicada al propósito de este proyecto, en lugar de depender de las existentes en el mercado.
 \item Implementar un sistema de evasión de obstáculos no basado en un algoritmo como el VFH, sino en una CNN\footnote{Convolutional Neural Network. Este tipo de redes neuronales son muy utilizadas en procesamiento de imágenes.} haciendo uso de cámaras.

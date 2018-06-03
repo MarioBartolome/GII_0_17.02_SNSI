@@ -1,32 +1,33 @@
 \capitulo{2}{Objetivos del proyecto}
 
-Este apartado explica de forma precisa y concisa cuales son los objetivos que se persiguen con la realización del proyecto. Se puede distinguir entre los objetivos marcados por los requisitos del software a construir y los objetivos de carácter técnico que plantea a la hora de llevar a la práctica el proyecto.
+Este apartado explica de forma precisa y concisa cuales son los objetivos que se persiguen con la realización del proyecto. Se puede distinguir entre los objetivos marcados por los requisitos del software a construir y los objetivos de carácter técnico que se plantean a la hora de llevar a la práctica el proyecto.
 
 \section{Objetivos marcados por Requisitos Funcionales}
 
 \begin{itemize}
-\item Diseñar un drone capaz de recorrer un espacio, en el que existan obstáculos, de forma segura.
-\item Diseñar un sistema de acceso al drone de forma segura. Tanto para controlarlo de forma remota, como para activa los mecanismos de control automatizados.
-\item Diseñar una interfaz web que permita la visualización en tiempo real de la cámara del drone, así como su control remoto por un operador.
+\item Diseñar un \emph{drone} capaz de recorrer de forma segura un espacio en el que existan obstáculos.
+\item Diseñar un sistema de acceso seguro al \emph{drone}. Tanto para controlarlo de forma remota, como para activar los mecanismos de control automatizados.
+\item Diseñar una interfaz web que permita la visualización en tiempo real de la cámara del \emph{drone}, así como su control remoto por un operador.
 \end{itemize}
 
 
 \section{Objetivos técnicos derivados}
 
 \begin{itemize}
-\item Implementar un protocolo de comunicación entre el sistema de control de vuelo de un drone, y una RaspberryPi o similar.
+\item Implementar un protocolo de comunicación entre el sistema de control de vuelo de un \emph{drone}, y una RaspberryPi o similar.
 \item Implementar la adquisición de información de una serie de sensores de ultrasonidos mediante una RaspberryPi.
-\item Implementar un algoritmo de evasión de obstáculos haciendo uso de sensores de ultrasonidos y del magnetómetro disponible en la controladora de vuelo, que permita el movimiento del drone por el interior de un entorno cerrado. 
+\item Implementar un algoritmo de evasión de obstáculos haciendo uso de sensores de ultrasonidos y del magnetómetro disponible en la controladora de vuelo, que permita el movimiento del \emph{drone} por el interior de un entorno cerrado. 
 \item Implementar un algoritmo de localización \emph{sin} hacer uso de GPS.
 \item Implementar una solución de comunicación en tiempo real para vídeo, a través de una aplicación web, haciendo uso de WebRTC.
 \item Implementar una solución de control remoto en tiempo real, a través de una aplicación web, haciendo uso de WebSockets.
-\item Lograr que dicha solución de control remoto permita la utilización de una emisora, u otro tipo de Joystick con el número de ejes necesario, para controlar el drone de forma adecuada.
+\item Lograr que dicha solución de control remoto permita la utilización de una emisora, u otro tipo de Joystick con el número de ejes necesario, para controlar el \emph{drone} de forma adecuada.
 \item Hacer uso de protocolos seguros, como SSL/TLS, para el desarrollo de las comunicaciones.  
 \item Aplicar metodologías ágiles, como SCRUM, para el desarrollo del proyecto.
-\item Utilizar ZenHub como implementación de Kanban, y de Sprints mediante \textit{épicas}.
-\item Hacer de Git como sistema de control de versiones.
+\item Utilizar ZenHub como implementación de Kanban, y de Sprints mediante \textit{épicas}\footnote{Una \emph{épica} es una tarea que por su complejidad, puede ser fragmentada en tareas más pequeñas.}.
+\item Hacer uso de Git como sistema de control de versiones.
 \item Hacer uso de GitHub como repositorio remoto del sistema de control de versiones.
 \item Hacer uso de GitHub como implementación de SCRUM mediante su sistema de gestión de tareas.
+\item Mejorar el \emph{drone} de que se dispone, incluyendo los componentes \emph{hardware} necesarios para la realización del proyecto.
 \end{itemize}
 
 
