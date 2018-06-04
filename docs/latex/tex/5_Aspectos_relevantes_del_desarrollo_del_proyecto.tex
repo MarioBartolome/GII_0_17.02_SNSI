@@ -163,7 +163,7 @@ La controladora de vuelo entiende entradas en sus canales (Acelerador, Inclinaci
 \item Control de Altitud: Es fundamental disponer de un mecanismo de control constante de la altitud. Se alimenta de la información proveniente de un sensor de ultrasonidos que mira hacia el suelo, de forma que se puede establecer la altitud que debe alcanzar el \emph{drone}, relativa al suelo sobre el que se encuentra. Se encarga del canal 1, o Acelerador.
 \item Control de Orientación: Este controlador se encarga de dirigir al \emph{drone} por el entorno, mediante cambios en su orientación. Se alimenta de la salida del VFH, ver subsección \ref{subsec:VFHcomments}, para establecer su objetivo, y del magnetómetro para establecer la medida real, y así crear una salida entre $[1400, 1600]\mu s$.
 Esta salida es debida a la posición central del canal, $1500\mu s$, estableciendo la \emph{no} rotación del \emph{drone} en ningún sentido. Se encarga del canal 4, o Rotación.
-\item Control de Velocidad: Este controlador se encarga de controlar la inclinación del \emph{drone}. No es posible determinar una velocidad concreta para el desplazamiento, dado que es muy variable, pero si se puede establecer la inclinación que debe alcanzar el \emph{drone}. Esta inclinación es generada en base a los obstáculos en el sector en que se navega, y provista por el VFH, ver subsección \ref{subsec:VFHcomments}. De forma que tanto el objetivo, como el ajuste a realizar están automatizados. Genera una salida entre $[1400, 1600]\mu s$. La medida actual de la inclinación puede obtenerse de la controladora de vuelo. Se encarga del canal 2, o Elevación.
+\item Control de Velocidad: Este controlador se encarga de controlar la inclinación del \emph{drone}. No es posible determinar una velocidad concreta para el desplazamiento, dado que es muy variable, pero sí se puede establecer la inclinación que debe alcanzar el \emph{drone}. Esta inclinación es generada en base a los obstáculos en el sector en que se navega, y provista por el VFH, ver subsección \ref{subsec:VFHcomments}. De forma que tanto el objetivo, como el ajuste a realizar están automatizados. Genera una salida entre $[1400, 1600]\mu s$. La medida actual de la inclinación puede obtenerse de la controladora de vuelo. Se encarga del canal 2, o Elevación.
 \end{itemize}
 
 
@@ -182,14 +182,14 @@ En el desarrollo de este proyecto, se ha llevado a cabo el desarrollo de tres si
 En este proyecto, la RaspberryPi no consta de un sistema de tiempo real y, por lo tanto, no es lo ideal para llevar a cabo el control de un sistema de tiempo real como lo es un \emph{drone}. De esta manera, se ha relegado esta tarea en una controladora de vuelo. 
 
 Las controladoras de vuelo actuales, en su mayoría, implementan un mecanismo de comunicación con un ordenador para su configuración. 
-Dicha configuración se realiza a través de una aplicación que muestra toda la parametrización que puede ser llevada a cabo (parámetros de PID, canales de radio, protocolos de radio, telemetría, alarmas, calibración... etc)
+Dicha configuración se realiza a través de una aplicación que muestra toda la parametrización que puede ser llevada a cabo (parámetros de PID, canales de radio, protocolos de radio, telemetría, alarmas, calibración, etc).
 
 El protocolo que utilizan dichas controladoras de vuelo es generalmente el mismo: MultiWii Serial Protocol. 
 Este protocolo se hereda de las primeras versiones de controladoras de vuelo, basadas en los mandos de la consola Wii de Nintendo\footnote{Wii y Nintendo son marcas registradas de Nintendo Co. LTD}, y de ahí su nombre.
 La definición del protocolo es pública, así que cualquiera puede crear una implementación. 
 
 Para este proyecto, se ha creado una implementación para Python 3.x, a la que se ha llamado MSPio.
-Esta implementación es totalmente genérica, y permite el envío de órdenes a la controladora de vuelo, entre ellas la entrada de los canales que permiten mover el \emph{drone}, así como la solicitud de información, como inclinación, estado de la batería, temperatura... etc.
+Esta implementación es totalmente genérica, y permite el envío de órdenes a la controladora de vuelo, entre ellas la entrada de los canales que permiten mover el \emph{drone}, así como la solicitud de información, como inclinación, estado de la batería, temperatura, etc.
 
 Para mayor comodidad, se han creado varios métodos que permiten la obtención de información, o el envío de los canales de radio como una lista de valores, con tan solo llamarlos. Aún así, se ha determinado como \emph{genérico}, ya que se ha definido el \emph{parseo} de los valores de respuesta de la controladora de vuelo, como una cadena de texto.
 De forma que implementar la adquisición de nuevos datos es tan sencillo como pasar como parámetro una cadena de texto que representa la estructura de retorno. Ver tabla \ref{tb:MSP_MESSAGES}.
@@ -198,7 +198,7 @@ De forma que implementar la adquisición de nuevos datos es tan sencillo como pa
 
 El mecanismo de control remoto se ha llevado a cabo mediante un navegador web, dado que proporciona un acceso sencillo y sin barreras a cualquier usuario. 
 
-Tan sencillo como iniciar sesión, el sistema establece que \emph{drone} tiene asignado el usuario, y le conecta con él. La interfaz web permite la visualización en tiempo real de la emisión de vídeo disponible en el \emph{drone}, a traves de WebRTC, y su control con tan solo conectar una emisora al puerto USB del ordenador. 
+Tan sencillo como iniciar sesión, el sistema establece qué \emph{drone} tiene asignado el usuario, y le conecta con él. La interfaz web permite la visualización en tiempo real de la emisión de vídeo disponible en el \emph{drone}, a traves de WebRTC, y su control con tan solo conectar una emisora al puerto USB del ordenador. 
 
 Una vez conectada la emisora, la web reconoce la misma como un joystick, y es capaz de leer los canales, y enviarlos al servidor remoto, el cual los convierte en valores aceptables para el \emph{drone}, y se los envía a este a través de una comunicación socket.
 Para activar el control remoto basta con activarlo y el \emph{drone} ya estará listo para ser controlado.
@@ -274,13 +274,13 @@ El equipamiento empleado en el \emph{drone} es el siguiente:
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{SR04layout_bb}
+	\includegraphics[width=0.9\textwidth]{SR04layout_bb}
 	\caption[Conceptual de conexión de sensores a RaspberryPi]{Vista conceptual del conexionado de los sensores a la RaspberryPi.}\label{fig:schHCPi}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{SR04layout_schem}
+	\includegraphics[width=0.9\textwidth]{SR04layout_schem}
 	\caption[Diagrama de conexión de sensores a RaspberryPi]{Vista esquemática del conexionado de los sensores a la RaspberryPi.}\label{fig:concepHCPi}
 \end{figure}
 
@@ -325,7 +325,7 @@ La motivación de no realizar este tipo de pruebas es la siguiente:
 
 
 \item De igual manera sucede con el sistema de control Remoto, que depende de la controladora de vuelo para comprobar su completo funcionamiento. De testearlo de forma parcial, solo se conseguiría comprobar que los paquetes llegan de forma correcta hasta el destino, y esta prueba se ha realizado como parte de las pruebas de campo, ver subsección \ref{subsec:fieldTestingv1}, de forma satisfactoria, ya que ayudó a corregir un \emph{bug} de difícil detección.
-\item Las pruebas relacionadas con el sistema de evasión de obstáculos, requieren de los diferentes sensores de distancia, de nuevo no existe ningún sistema de integración que proporcione dicho hardware. Realizar un mock de dichos sensores supone perder por completo la dinámica del sistema, i.e, los sensores no son perfectos, dan medidas con ruido, el \emph{drone} no siempre se moverá con perfección milimétrica, los sensores no están perfectamente alineados... etc. Se realizaron pruebas durante su desarrollo mediante mock de los sensores, la cual puede ejecutarse si se utiliza la clase del VFH como \code{\_\_main\_\_}.
+\item Las pruebas relacionadas con el sistema de evasión de obstáculos, requieren de los diferentes sensores de distancia, de nuevo no existe ningún sistema de integración que proporcione dicho hardware. Realizar un mock de dichos sensores supone perder por completo la dinámica del sistema, i.e, los sensores no son perfectos, dan medidas con ruido, el \emph{drone} no siempre se moverá con perfección milimétrica, los sensores no están perfectamente alineados, etc. Se realizaron pruebas durante su desarrollo mediante mock de los sensores, la cual puede ejecutarse si se utiliza la clase del VFH como \code{\_\_main\_\_}.
 \item Las pruebas relacionadas con el sistema de localización están basadas en los mismos sensores anteriores. El mock de dichos sensores para esta clase caería en una sobresimplificación del sistema, tal y como ocurre en el curso de UdaCity, ver \citep{wiki:UdCityPF}, que solo daría una sensación de falsa funcionalidad del sistema. Realizar pruebas sobre el funcionamiento base del Filtro de Partículas no es relevante, ya que no existe la dinámica encontrada en un entorno real. Pese a ello, en la clase que representa el Filtro de Partículas, se encuentra una pequeña prueba de su funcionamiento para un pequeño mapa en el que existen tres obstáculos. La dimensionalidad que alcanza el filtro es tal, que durante las pruebas no es nada sencillo apreciar el recorrido del algoritmo. De igual manera existe una pequeña prueba en la clase que representa los cálculos geométricos requeridos para el Filtro de Partículas.
 \end{itemize}
 
@@ -388,7 +388,7 @@ Las pruebas realizadas comprenden los siguientes apartados, puntuados según la 
 \end{figure}
 
 \begin{itemize}
-\item Calibrado del sistema de control de altitud: Se trata de un controlador PID que debe ser parametrizado. Dada la dinámica del sistema, tan dependiente del estado de la batería, de los cambios de contexto realizados por el sistema (recordemos que no es un RTOS\footnote{Real Time Operative System}), de los errores de medida proporcionados por el sensor... etc, la parametrización del PID ha sido bastante compleja. De hecho durante el transcurso de las pruebas, se rompió una hélice y una de las patas que hacían de apoyo para el \emph{drone}, dificultando esto último, todavía más, el proceso de estabilización durante el despegue. 
+\item Calibrado del sistema de control de altitud: Se trata de un controlador PID que debe ser parametrizado. Dada la dinámica del sistema, tan dependiente del estado de la batería, de los cambios de contexto realizados por el sistema (recordemos que no es un RTOS\footnote{Real Time Operative System}), de los errores de medida proporcionados por el sensor, etc. La parametrización del PID ha sido bastante compleja. De hecho durante el transcurso de las pruebas, se rompió una hélice y una de las patas que hacían de apoyo para el \emph{drone}, dificultando esto último, todavía más, el proceso de estabilización durante el despegue. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth]{ftest2cripple}
@@ -406,7 +406,7 @@ En el vídeo \href{FALTA REF!!!}{V\#4} puede verse el proceso llevado a cabo.
 
 Se detectó un \emph{bug} existente en el cálculo del PID que llevaba a la pérdida de precisión al realizar una conversión a entero, antes de realizar redondeo. Esto podía causar que el error acumulado se disparase, y por lo tanto dar a la componente Integral del sistema una importancia no deseada. Dado que se trata de un \emph{bug} menor, se solucionó \textit{in situ} por lo que no se generó una issue para ello.
 
-Se detectó un \emph{bug} existente en el sistema de control que no permitía que un controlador automatizado controlase cuando armar el \emph{drone}. Esto produciría que el sistema de control de altitud, no pudiese actuar. Se trata de un \emph{bug} menor, basado en añadir una pequeña espera en la que se mantiene la entrada del canal 5 (armar/desarmar) a un valor mínimo durante unos segundos, a la espera de que el sistema calibre el acelerómetro y el giróscopo. Solucionado \textit{in situ}, no se ha generado una issue para ello.
+Se detectó un \emph{bug} existente en el sistema de control que no permitía que un controlador automatizado controlase cuándo armar el \emph{drone}. Esto produciría que el sistema de control de altitud, no pudiese actuar. Se trata de un \emph{bug} menor, basado en añadir una pequeña espera en la que se mantiene la entrada del canal 5 (armar/desarmar) a un valor mínimo durante unos segundos, a la espera de que el sistema calibre el acelerómetro y el giróscopo. Solucionado \textit{in situ}, no se ha generado una issue para ello.
  El resultado de las pruebas de altitud no ha sido el deseado. No se ha conseguido que el \emph{drone} mantenga la altitud de forma correcta. Si que la alcanza sin problema, pero requiere de ajustar más los parámetros del controlador PID.
  \begin{figure}[H]
 	\centering
@@ -428,8 +428,8 @@ Dados los resultados de las pruebas, convendría valorar los siguientes cambios 
 \begin{itemize}
 \item Reducir el peso total del dispositivo. Puede utilizarse una estructura de carbono, o similar.
 \item Mejorar el control de estabilidad del \emph{drone}. Parece que la controladora de vuelo Flip32 no es lo ideal para este tipo de \emph{drone} tan pesado y grande. Podría valorarse la posibilidad de cambiar a una controladora más moderna, y realizar una calibración de los PID mucho más acertada. De hecho la controladora de vuelo es, en términos tecnológicos, antigua.
-\item Cambiar los sensores de altitud, por uno con una tasa de adquisición mucho mayor. Este es uno de los principales problemas del cálculo del PID. El cuello de botella del sistema no está en el hecho de usar Python o de que no se trate de un sistema operativo de tiempo real, sino en la lentitud de los sensores. Los HC-SR04 requieren de un tiempo para tomar sus medidas demasiado elevado, unos $0.06s$, lo cual quiere decir que si el número de veces por segundo que se calcula el PID es muy superior al número de veces de que se dispone de información actualizada de los sensores, el cálculo del PID no es totalmente fiable, dado que trabaja con información antigua constantemente, y durante una cantidad de ciclos elevada. Por ello el uso de la componente integral queda muy limitado, ya que se dispara al no existir, aparentemente, cambios en los resultados provistos por el sensor. Podría limitarse la frecuencia del cálculo de PID, aunque esto tampoco es panacea. 
-\item Para evitar ecos, el `disparo' de ultrasonidos se realiza de forma secuencial, no enviando el siguiente disparo hasta que el anterior sensor haya recibido su medida. Dada la lentitud de estos sensores y que existen 5 de ellos en el cálculo de distancia a obstáculos, tomar una sola medida llevaría $0.06s * 5 = 0.3s$. Esta cantidad de tiempo, puede tornarse inaceptable en el momento en el que el sistema se desplace a una velocidad mayor, o requiera de mayor precisión. Por tanto se sugiere cambiar estos sensores por un sensor de distancia mucho más preciso y rápido, una solución basada en LIDAR debería ser valorada, o incluso en cámaras, dado el aumento de la capacidad de cómputo de las RaspberryPi.
+\item Cambiar los sensores de altitud, por uno con una tasa de adquisición mucho mayor. Este es uno de los principales problemas del cálculo del PID. El cuello de botella del sistema no está en el hecho de usar Python o de que no se trate de un sistema operativo de tiempo real, sino en la lentitud de los sensores. Los HC-SR04 requieren de un tiempo para tomar sus medidas demasiado elevado, unos $0.06s$, lo cual quiere decir que el número de veces por segundo que se calcula el PID no es elevado. Por ello, la salida proveniente del cálculo del PID es difícil de ajustar, ya que pueden darse variaciones relativamente grandes entre las medidas tomadas por los sensores. Se tiene que limitar la frecuencia del cálculo de PID a la tasa de adquisición de medidas del sensor, dejando una frecuencia de muestreo de, como máximo, 16Hz en el caso del sensor de altitud. 
+\item Para evitar ecos, el `disparo' de ultrasonidos se realiza de forma secuencial, no enviando el siguiente disparo hasta que el anterior sensor haya recibido su medida. Dada la lentitud de estos sensores y que existen 5 de ellos en el cálculo de distancia a obstáculos, tomar una sola medida llevaría $0.06s \times 5 = 0.3s$. De esta forma, la frecuencia de muestreo, y por tanto del cálculo del PID, cae a tan solo 3Hz. Esta cantidad de tiempo, puede tornarse inaceptable en el momento en el que el sistema se desplace a una velocidad mayor, o requiera de mayor precisión. Por tanto se sugiere cambiar estos sensores por un sensor de distancia mucho más preciso y rápido, una solución basada en LIDAR debería ser valorada, o incluso en cámaras, dado el aumento de la capacidad de cómputo de las RaspberryPi.
 \end{itemize}
 
 
