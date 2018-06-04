@@ -21,5 +21,13 @@
 <button id='start'>Start Streaming</button>
 <button id='stop'>Stop Streaming</button>
 
+    <div>
+        <button id="record" disabled>Start Recording</button>
+        <button id="download" disabled>Download</button>
+    </div>
+
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="{{ url_for('static', filename='recorder.js') }}"></script>
+
 
 {% endblock %}
