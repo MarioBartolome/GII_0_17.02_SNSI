@@ -59,7 +59,10 @@
 	\end{figure}
 }
 
-
+\usepackage{breakurl}
+% Links en footnote 
+\let\oldhref\href
+\renewcommand{\href}[2]{\oldhref{#1}{#2}\footnote{\burl{\detokenize{#1}}}}
 
 % El comando \figura nos permite insertar figuras comodamente, y utilizando
 % siempre el mismo formato. Los parametros son:
@@ -349,7 +352,10 @@
     \noindent\large
     Presentado por \@author{}\\ 
     en Universidad de Burgos --- \@date{}\vspace{.6cm}\\
-    \noindent Tutores: \@tutor{}\\\@cotutorOne{}\\\@cotutorTwo{}
+    \noindent \textbf{Tutores}\\[.5em]
+    \@tutor{}\\
+    \@cotutorOne{}\\
+    \@cotutorTwo{}
   }%
   \end{center}%
   \null

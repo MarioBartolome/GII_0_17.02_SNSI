@@ -1,16 +1,16 @@
 \apendice{Especificación de diseño}
 
 \section{Introducción}
-En este anexo se definirá la forma en que se han resuelto los requisitos expuestos anteriormente. Se dará una visión detallada de la arquitectura del sistema, diferenciando la aplicación web y el agente, o drone.
+En este anexo se definirá la forma en que se han resuelto los requisitos expuestos anteriormente. Se dará una visión detallada de la arquitectura del sistema, diferenciando la aplicación web y el agente, o \emph{drone}.
 
 \section{Diseño de datos}
 \subsection{WebApp}
 La aplicación visible por el usuario final maneja los siguientes datos, o entidades:
 \begin{itemize}
 \item Usuario: Un usuario dispone de un nombre, apellidos, una dirección de correo electrónico, un nombre de usuario (que utilizará para iniciar sesión), y una contraseña cifrada. Se genera un id automáticamente para cada usuario.
-\item Drone: Un drone dispone de un nombre, una localización, un controlador (que se corresponde con el id de usuario que lo controla), un puerto para el control remoto y un puerto para el feed de vídeo Se genera un id automáticamente para cada drone.
+\item Drone: Un \emph{drone} dispone de un nombre, una localización, un controlador (que se corresponde con el id de usuario que lo controla), un puerto para el control remoto y un puerto para el \emph{feed} de vídeo. Se genera un id automáticamente para cada \emph{drone}.
 \item Registro de sesión: La aplicación web guarda registros del inicio/cierre de sesión por parte de un usuario. Dispone del identificador de usuario y de un timestamp.
-\item Registro de intrusión: La aplicación web guarda registros de inicios de sesión infructuosos. Dispone del usuario utilizado, y un timestamp.
+\item Registro de intrusión: La aplicación web guarda registros de inicios de sesión infructuosos. Dispone del usuario utilizado, y un \emph{timestamp}.
 \item Registro de acciones: La aplicación web guarda registros de las acciones llevadas a cabo por cada usuario. Dispone de un identificador del usuario que realiza la acción, un timestamp y un identificador de la acción realizada.
 \item Acciones: Se trata de las acciones que realizan los usuarios. Dispone de un identificador y una descripción de la acción.
 \end{itemize}
@@ -21,7 +21,7 @@ El agente basa su funcionamiento en el uso de las siguientes entidades:
 \item Controladores PID: Los controladores PID se encargan de proveer de valores para los diferentes canales automatizados del agente. Disponen de los coeficientes de las distintas componentes proporcional, integral y derivativa, así como de un límite superior y un límite inferior.
 \item Sensores: Los sensores de distancia disponen de un pin de disparo, un pin de recepción del eco, y un ángulo.
 \item Control Remoto: Se trata de un pequeño servidor encargado de recibir las órdenes de un usuario remoto. Dispone de una dirección y un puerto en el que escuchar. 
-\item MSPio: Se trata de la implementación del protocolo MultiWiiSerialProtocol, el cual permite establecer comunicación con la controladora de vuelo. Dispone de un puerto serie y una velocidad de transferencia (en baudios).
+\item MSPio: Se trata de la implementación del protocolo MultiWiiSerialProtocol, el cual permite establecer comunicación con la controladora de vuelo. Dispone de un puerto serie y una velocidad de transferencia.
 \item Evasión de obstáculos: Se trata de la implementación del algoritmo VFH. Dispone de las siguientes entidades: 
 	\begin{itemize}
 	\item Malla de histograma: Una representación del entorno del agente. Dispone de las medidas de los sensores, distancias máxima y mínima a cubrir, el mapa del entorno, el tamaño de la ventana a cubrir, el tamaño de las celdas que componen la malla, una medida del error de los sensores y su apertura.
@@ -85,20 +85,20 @@ El patrón catálogo no es tan habitual. Se utiliza sobre todo en lenguajes en l
 
 Permite establecer el comportamiento de una instancia más genérica, estableciendo los métodos generales de esta a métodos especializados de la clase que encapsula. En este caso, se encarga de proporcionar un acceso genérico a los métodos especializados de cada controlador automatizado. 
 
-Este patrón es el núcleo de funcionamiento del sistema de control del agente. En el diagrama \ref{fig:SeqDiag} puede verse como se instancian numerosos controladores (\textit{RemoteControl, TakeOffLander} y  \textit{obstacleAvoidanceWrapper}). Dichos controladores, en el momento de ser instanciados por el \textit{ctrlWrapper} se encapsulan en una clase interna denominada \emph{PrioritizedController}. Dicha clase, podría ser considerada como la capa externa de un patrón proxy de protección\footnote{El patrón proxy de protección controla el acceso al objeto original}, el cual permite comprobar si el controlador está activo, si requiere de información de los sensores para su funcionamiento, y si requiere ser bloqueado para usarse (para protegerse de accesos simultáneos en el caso de tener un comportamiento asíncrono). Además, provee de información sobre la \emph{prioridad} del controlador. 
+Este patrón es el núcleo de funcionamiento del sistema de control del agente. En el diagrama \ref{fig:SeqDiag} puede verse como se instancian numerosos controladores (\texttt{RemoteControl, TakeOffLander} y  \texttt{obstacleAvoidanceWrapper}). Dichos controladores, en el momento de ser instanciados por el \texttt{ctrlWrapper} se encapsulan en una clase interna denominada \texttt{PrioritizedController}. Dicha clase, podría ser considerada como la capa externa de un patrón proxy de protección\footnote{El patrón proxy de protección controla el acceso al objeto original}, el cual permite comprobar si el controlador está activo, si requiere de información de los sensores para su funcionamiento, y si requiere ser bloqueado para usarse (para protegerse de accesos simultáneos en el caso de tener un comportamiento asíncrono). Además, provee de información sobre la \emph{prioridad} del controlador. 
 
-La prioridad de un controlador es lo que hace tan flexible el sistema. El diagrama \ref{fig:SeqDiag} presenta un uso secuencial de los diferentes \emph{PrioritizedController} generados, sin embargo, el orden de ejecución de cada uno, puede cambiar de forma dinámica. 
-El \emph{ctrlWrapper} basa el procesamiento de los canales de control (Acelerador, Balanceo, Inclinación, Rotación, Armar/Desarmar... etc) en la prioridad de los controladores. 
+La prioridad de un controlador es lo que hace tan flexible el sistema. El diagrama \ref{fig:SeqDiag} presenta un uso secuencial de los diferentes \texttt{PrioritizedController} generados, sin embargo, el orden de ejecución de cada uno, puede cambiar de forma dinámica. 
+El \texttt{ctrlWrapper} basa el procesamiento de los canales de control (Acelerador, Balanceo, Inclinación, Rotación, Armar/Desarmar... etc) en la prioridad de los controladores. 
 
-Por ejemplo: Supongamos que existen dos controladores, uno remoto y manual (este es el usuario conectado al drone a través de la interfaz web) con una prioridad igual a $5$, y un controlador de rotación y velocidad autónomo, con una prioridad igual a $10$. 
+Por ejemplo: Supongamos que existen dos controladores, uno remoto y manual (este es el usuario conectado al \emph{drone} a través de la interfaz web) con una prioridad igual a $5$, y un controlador de rotación y velocidad autónomo, con una prioridad igual a $10$. 
 
-La solicitud de los valores de los canales, se realiza por orden de prioridad de menor a mayor. De manera que el controlador automático de rotación y velocidad sobreescribirá el input del usuario (solo en los canales controlados), ya que tiene una prioridad superior. 
-Supongamos que el usuario no desea eso. Prefiere ser él quien controle por completo el sistema, así que sencillamente arrancaría el sistema estableciéndose a si mismo como el controlador más prioritario. Sobreescribiendo de esta forma al controlador automatizado. 
+La solicitud de los valores de los canales, se realiza por orden de prioridad de menor a mayor. De manera que el controlador automático de rotación y velocidad sobreescribirá la entrada del usuario (solo en los canales controlados), ya que tiene una prioridad superior. 
+Supongamos que el usuario no desea eso. Prefiere ser él quien controle por completo el sistema, así que sencillamente arrancaría el sistema estableciéndose a sí mismo como el controlador más prioritario. Sobreescribiendo de esta forma al controlador automatizado. 
 
 
 \subsection{Arquitectura general}
 
-La arquitectura de la parte visible del proyecto, la aplicación web, no presenta una complejidad elevada. Sin embargo el sistema de control del agente no es tan intuitivo. Por ello, se presenta el siguiente diagrama \ref{fig:arch} a modo aclaratorio.
+La arquitectura de la parte visible del proyecto, la aplicación web, no presenta una complejidad elevada. Sin embargo, el sistema de control del agente no es tan intuitivo. Por ello, se presenta el siguiente diagrama \ref{fig:arch} a modo aclaratorio.
 
 
 \begin{figure}[H]
@@ -176,7 +176,7 @@ Siguiendo con la nomenclatura utilizada en el diseño de la estructura de paquet
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{frontendClassDiag}
-	\caption[Diagrama de clases FrontEnd]{Diagrama de clases del frontend.}\label{fig:frontendClassDiag}
+	\caption[Diagrama de clases FrontEnd]{Diagrama de clases del \emph{frontend}.}\label{fig:frontendClassDiag}
 \end{figure}
 
 
@@ -193,41 +193,19 @@ Siguiendo con la nomenclatura utilizada en el diseño de la estructura de paquet
 \item \texttt{\textbf{autoControllers}.yawController}: Se trata de una implementación de la metaclase abcControllerPID, destinada al control de la orientación.
 \item \texttt{\textbf{autoControllers}.obsAvoidanceWrapper}: Se trata de una clase implementada para encapsular los algoritmos de evasión de obstáculos, y generar el cálculo del control de orientación e inclinación para alimentar los controladores PID correspondientes.
 \item \texttt{\textbf{autoControllers}.takeOffLanding}: Se trata de una clase implementada para encapsular el controlador de altitud. Permite tanto el despegue como el aterrizaje, y genera el cálculo del control de altitud para alimentar al controlador PID correspondiente. 
-\item \texttt{\textbf{comms}.MultiWiiProtocol}: Esta es la implementación del protocolo MultiWiiSerial Protocol. Dicho protocolo es utilizado por las herramientas de configuración de las controladoras de vuelo de los \emph{drones} actuales, que ejecutan un firmware basado en el controlador MultiWii. Se encarga de llevar a cabo la comunicación entre el drone y la RaspberryPi, permitiendo el flujo de información en ambas direcciones. 
+\item \texttt{\textbf{comms}.MultiWiiProtocol}: Esta es la implementación del protocolo MultiWiiSerial Protocol. Dicho protocolo es utilizado por las herramientas de configuración de las controladoras de vuelo de los \emph{drones} actuales, que ejecutan un firmware basado en el controlador MultiWii. Se encarga de llevar a cabo la comunicación entre el \emph{drone} y la RaspberryPi, permitiendo el flujo de información en ambas direcciones. 
 \item \texttt{\textbf{comms}.RemoteControl}: Se trata del servidor encargado de recibir las órdenes remotas del usuario.
 \item \texttt{\textbf{sensors}.sr04Wrapper}: Se trata de una pequeña clase que encapsula el acceso a los sensores de ultrasonidos utilizados para el cálculo de distancias, para el sistema de evasión de obstáculos.
 \item \texttt{\textbf{sensors}.Sensor}: Se trata de una pequeña clase que representa un sensor de ultrasonidos, incluyendo el acceso a la instancia de la clase \emph{Echo} (perteneciente a la librería \emph{Bluetin\_Echo} ), así como el ángulo en el que está orientado el sensor, y los pines a los que está conectado.
-\item \texttt{\textbf{systemControl}.ctrlWrapper}: Se trata de la implementación del sistema de control del drone. Se posiciona como un mecanismo de separación entre el drone y sus sensores, y los diferentes controladores. Se encarga de coordinar, de forma priorizada, los diferentes mecanismos de control del agente, así como de suministrar a aquellos que así lo requieran la información de los diferentes sensores a los que tiene acceso.
+\item \texttt{\textbf{systemControl}.ctrlWrapper}: Se trata de la implementación del sistema de control del \emph{drone}. Se posiciona como un mecanismo de separación entre el \emph{drone} y sus sensores, y los diferentes controladores. Se encarga de coordinar, de forma priorizada, los diferentes mecanismos de control del agente, así como de suministrar a aquellos que así lo requieran la información de los diferentes sensores a los que tiene acceso.
 \end{itemize}
 
-Se dispone de un diagrama de clases del backend en la figura \ref{fig:backendClassDiag}. Se han añadido colores para tratar de aumentar la claridad del diagrama, de por sí algo complejo.
+Se dispone de un diagrama de clases del \emph{backend} en la figura \ref{fig:backendClassDiag}. Se han añadido colores para tratar de aumentar la claridad del diagrama, de por sí algo complejo.
 \newpage
-
-
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{backendClassDiag}
-	\caption[Diagrama de clases BackEnd]{Diagrama de clases del backend.}\label{fig:backendClassDiag}
+	\caption[Diagrama de clases BackEnd]{Diagrama de clases del \emph{backend}.}\label{fig:backendClassDiag}
 \end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

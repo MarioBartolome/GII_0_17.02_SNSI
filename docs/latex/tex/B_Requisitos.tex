@@ -9,13 +9,13 @@ En este anexo se recogen las especificaciones de requisitos requeridas para este
 En este proyecto se ha tratado de llevar a cabo los siguientes objetivos de carácter general: 
 
 \begin{itemize}
-\item Diseñar un drone capaz de recorrer un espacio, en el que existan obstáculos, de forma segura.
-\item Diseñar un sistema de acceso al drone de forma segura. Tanto para controlarlo de forma remota, como para activa los mecanismos de control automatizados.
-\item Diseñar una interfaz web que permita la visualización en tiempo real de la cámara del drone, así como su control remoto por un operador.
+\item Diseñar un \emph{drone} capaz de recorrer un espacio, en el que existan obstáculos, de forma segura.
+\item Diseñar un sistema de acceso al \emph{drone} de forma segura. Tanto para controlarlo de forma remota, como para activar los mecanismos de control automatizados.
+\item Diseñar una interfaz web que permita la visualización en tiempo real de la cámara del \emph{drone}, así como su control remoto por un operador.
 \end{itemize}
 
 
-\section{Catalogo de requisitos}
+\section{Catálogo de requisitos}
 Los siguientes requisitos se derivan de los objetivos generales arriba dispuestos: 
 
 \subsubsection{Requisitos Funcionales}
@@ -24,22 +24,22 @@ Los siguientes requisitos se derivan de los objetivos generales arriba dispuesto
 
 \item[\textbf{RF-2}] Cierre de sesión: El usuario debe poder cerrar sesión en el sistema.
 
-\item[\textbf{RF-3}] Gestión del sistema: El usuario debe ser capaz de gestionar el sistema completo que hay a bordo del drone.
+\item[\textbf{RF-3}] Gestión del sistema: El usuario debe ser capaz de gestionar el sistema completo que hay a bordo del \emph{drone}.
 
 	\begin{itemize}
 
-			\item[\textit{RF-3.1}] Gestión del streaming de vídeo: El usuario debe poder iniciar/detener el streaming de vídeo.
+			\item[\textit{RF-3.1}] Gestión del \emph{streaming} de vídeo: El usuario debe poder iniciar/detener el streaming de vídeo.
 			\item[\textit{RF-3.2}] Grabaciones de vídeo: El usuario debe poder iniciar/detener y descargar las grabaciones de vídeo.
-			\item[\textit{RF-3.3}] Gestión de controles del drone: El usuario debe poder activar/desactivar el control manual del dispositivo.
+			\item[\textit{RF-3.3}] Gestión de controles del \emph{drone}: El usuario debe poder activar/desactivar el control manual del dispositivo.
 				\begin{itemize}
-					\item[RF-3.3.1] Seguridad automatizada: El drone debe presentar mecanismos de autopreservación. Debe protegerse frente a obstáculos.
+					\item[RF-3.3.1] Seguridad automatizada: El \emph{drone} debe presentar mecanismos de autopreservación. Debe protegerse frente a obstáculos.
 				\end{itemize}
-			\item[\textit{RF-3.4}] Gestión de control automático del drone: El usuario debe poder activar/desactivar los mecanismos de control automatizado.
+			\item[\textit{RF-3.4}] Gestión de control automático del \emph{drone}: El usuario debe poder activar/desactivar los mecanismos de control automatizado.
 
 		\item[\textit{RF-3.5}] Registro de acciones: Las acciones llevadas a cabo por el usuario deben guardarse en un registro.
 		\end{itemize}
 		
-\item[\textbf{RF-4}] Gestión del backend: El usuario debe poder acceder a la equipo que controla el backend.
+\item[\textbf{RF-4}] Gestión del \emph{backend}: El usuario debe poder acceder al equipo que controla el \emph{backend}.
 			\begin{itemize}
 				\item[\textit{RF-4.1}] Gestión del sistema operativo: El usuario debe poder llevar a cabo las tareas de gestión del sistema operativo como crea conveniente.
 			\end{itemize}		
@@ -47,7 +47,7 @@ Los siguientes requisitos se derivan de los objetivos generales arriba dispuesto
 
 \item[\textbf{RF-5}] Registro de sucesos: Intentos de intrusión deben ser registrados.
 
-\item[\textbf{RF-6}] Reconocimiento de dispositivos: La aplicación web debe ser capaz de reconocer un dispositivo (joystick o emisora) conectado al equipo, para llevar a cabo el control del drone.
+\item[\textbf{RF-6}] Reconocimiento de dispositivos: La aplicación web debe ser capaz de reconocer un dispositivo (\emph{joystick} o emisora) conectado al equipo, para llevar a cabo el control del \emph{drone}.
 
 
 \end{itemize}
@@ -55,11 +55,11 @@ Los siguientes requisitos se derivan de los objetivos generales arriba dispuesto
 
 \subsubsection{Requisitos no funcionales}
 \begin{itemize}
-\item[\textbf{RNF-1}] Usabilidad: El frontend ha de ser sencillo de utilizar e intuitiva. En el caso de producirse errores, estos deben ser claramente explicados, o registrados.
-\item[\textbf{RNF-2}] Rendimiento: Tanto el frontend, como el backend deben funcionar de forma eficiente. Retardos elevados podrían dar lugar a problemas muy serios en la ejecución de las ordenes del usuario.
-\item[\textbf{RNF-3}] Capacidad y Escalabilidad: Tanto el frontend como el backend deben ser escalables. El frontend debe ser capaz de soportar una asiduidad grande de usuarios, así como permitir añadir múltiples agentes a cada usuario. El backend, debe permitir añadir controladores sin que haya que reestructurar todo el sistema.
-\item[\textbf{RNF-4}] Disponibilidad: El sistema al completo debe ser robusto. El frontend debe estar disponible para su uso el mayor tiempo que sea posible. El backend debe ser capaz de recuperarse de errores, y determinar acciones a tomar en el caso de los mismos.
-\item[\textbf{RNF-5}] Seguridad: Tanto el acceso al frontend como al backend deben hacerse de forma segura. En ningún momento el drone debe guardar imágenes de la zona vigilada. El almacenamiento de contraseñas se hará de forma cifrada, y la comunicación entre el backend y el frontend deberá ser segura.
+\item[\textbf{RNF-1}] Usabilidad: El \emph{frontend} ha de ser sencillo de utilizar e intuitivo. En el caso de producirse errores, estos deben ser claramente explicados, o registrados.
+\item[\textbf{RNF-2}] Rendimiento: Tanto el \emph{frontend}, como el \emph{backend} deben funcionar de forma eficiente. Retardos elevados podrían dar lugar a problemas muy serios en la ejecución de las ordenes del usuario.
+\item[\textbf{RNF-3}] Capacidad y Escalabilidad: Tanto el \emph{frontend} como el \emph{backend} deben ser escalables. El \emph{frontend} debe ser capaz de soportar una asiduidad grande de usuarios, así como permitir añadir múltiples agentes a cada usuario. El \emph{backend}, debe permitir añadir controladores sin que haya que reestructurar todo el sistema.
+\item[\textbf{RNF-4}] Disponibilidad: El sistema al completo debe ser robusto. El \emph{frontend} debe estar disponible para su uso el mayor tiempo que sea posible. El \emph{backend} debe ser capaz de recuperarse de errores, y determinar acciones a tomar en el caso de que se produzcan.
+\item[\textbf{RNF-5}] Seguridad: Tanto el acceso al \emph{frontend} como al \emph{backend} deben hacerse de forma segura. En ningún momento el \emph{drone} debe guardar imágenes de la zona vigilada. El almacenamiento de contraseñas se hará de forma cifrada, y la comunicación entre el \emph{backend} y el \emph{frontend} deberá ser segura.
 \end{itemize}
 
 \section{Especificación de requisitos}
@@ -85,7 +85,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \subsection{Actores}
 
 \begin{itemize}
-\item \textbf{Vigiliante:} Actor a cargo de la gestión del sistema en producción. Interactúa con el FrontEnd.
+\item \textbf{Vigilante:} Actor a cargo de la gestión del sistema en producción. Interactúa con el FrontEnd.
 \item \textbf{Admin:} Actor a cargo de la gestión del sistema en desarrollo o en caso de resolución de problemas en producción. Interactúa con el BackEnd.
 \end{itemize}
 
@@ -94,7 +94,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-01} & \textbf{Acceso al sistema}\\
 			\otoprule
@@ -127,7 +127,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-02} & \textbf{Cierre de sesión}\\
 			\otoprule
@@ -155,7 +155,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-03} & \textbf{Gestión del sistema}\\
 			\otoprule
@@ -184,7 +184,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-04} & \textbf{Gestión del streaming de vídeo}\\
 			\otoprule
@@ -195,7 +195,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\textbf{Acciones} & \item El usuario pulsa sobre el botón `Start/Stop Streaming'\\
 			
 			\textbf{Postcondición} & La aplicación web inicia/detiene el vídeo.\\
-			\textbf{Excepciones} &  Drone no disponible (mensaje).\\
+			\textbf{Excepciones} &  \emph{Drone} no disponible (mensaje).\\
 			\textbf{Importancia} & Alta.\\
 			\hline
 			\bottomrule
@@ -209,7 +209,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-05} & \textbf{Grabación de vídeo}\\
 			\otoprule
@@ -233,7 +233,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-06} & \textbf{Control manual del \emph{drone}}\\
 			\otoprule
@@ -244,7 +244,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\textbf{Acciones} & El usuario pulsa sobre el botón `Enable/Disable Manual'\\
 											
 			\textbf{Postcondición} & La aplicación web solicita la activación del control manual al sistema. El sistema se conecta al \emph{drone} y transmite la información proveniente de la aplicación web.\\
-			\textbf{Excepciones} & Drone no disponible (mensaje).\\
+			\textbf{Excepciones} & \emph{Drone} no disponible (mensaje).\\
 			\textbf{Importancia} & Alta.\\
 			\hline
 			\bottomrule
@@ -257,7 +257,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
 			\textbf{CU-07} & \textbf{Gestión de controles automáticos}\\
 			\otoprule
@@ -272,7 +272,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 											
 			\textbf{Postcondición} & La aplicación web solicita la activación de los controles automatizados al sistema. El sistema se conecta al \emph{drone} y transmite la información proveniente de la aplicación web.\\
 			\textbf{Excepciones} & \begin{itemize}
-												\item Drone no disponible (mensaje).
+												\item \emph{Drone} no disponible (mensaje).
 												\item Mecanismo automatizado no reconocido (mensaje).
 												\end{itemize}\\
 			\textbf{Importancia} & Media.\\
@@ -288,9 +288,9 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 \begin{table}[H]
 	\begin{center}
 	\rowcolors {2}{gray!15}{}
-		\begin{tabular}{m{3cm} | m{10cm}}\hline
+		\begin{tabular}{m{3cm}  m{10cm}}\hline
 			\toprule
-			\textbf{CU-08} & \textbf{Gestión del backend}\\
+			\textbf{CU-08} & \textbf{Gestión del \emph{backend}}\\
 			\otoprule
 			\textbf{Actor} & Admin\\
 			\textbf{Requisitos asociados} & RF-4, RF-5\\
@@ -299,7 +299,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\textbf{Acciones} & \begin{enumerate}
 											\item El usuario inicia sesión en el sistema.
 											\item Se informa sobre el registro de intentos de acceso no autorizado.
-											\item Se muestra prompt del sistema a la espera de órdenes.
+											\item Se muestra el \emph{prompt} del sistema a la espera de órdenes.
 											\end{enumerate}\\
 			
 			\textbf{Postcondición} & El sistema operativo habrá registrado el inicio de sesión del usuario. El sistema operativo habrá iniciado sesión con el usuario solicitado.\\
@@ -308,7 +308,7 @@ Esta sección detallará el diagrama de casos de uso, y detallará cada uno de e
 			\hline
 			\bottomrule
 		\end{tabular}
-		\caption{CU-08. Gestión del backend.}
+		\caption{CU-08. Gestión del \emph{backend}.}
 		\label{tb:CU08}
 	\end{center}
 \end{table}

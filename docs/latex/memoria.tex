@@ -291,9 +291,10 @@
   \end{center}
 }
 
-
-
-
+\usepackage{breakurl}
+% Links en footnote 
+\let\oldhref\href
+\renewcommand{\href}[2]{\oldhref{#1}{#2}\footnote{\burl{\detokenize{#1}}}}
 
 
 
