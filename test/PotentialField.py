@@ -11,8 +11,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial import distance
-
-
+import warnings
+warnings.warn("The PotentialField module is deprecated. Please, use VFH for improved obstacle avoidance",
+              category=DeprecationWarning, stacklevel=2)
 
 class PotentialField:
 
@@ -56,8 +57,7 @@ class PotentialField:
 		elif dst != 0:
 				return eta * ((1/dst) - (1/rho))**2
 		else:
-			#import sys
-			return 90 #sys.maxsize
+			return 90
 
 	def Upot(self, r_pos, lspace, goal, obstacles, epsilon=0.0625, eta=5, exp=2, rho=5):
 		"""

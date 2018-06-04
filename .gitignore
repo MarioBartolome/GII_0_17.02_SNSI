@@ -344,3 +344,7 @@ TSWLatexianTemp*
 deletions/
 
 private/
+
+\.scannerwork/
+
+sonar-project\.properties

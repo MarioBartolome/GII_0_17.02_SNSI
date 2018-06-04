@@ -68,8 +68,8 @@ function addgamepad(gamepad) {
 
     var a = document.createElement("div");
     a.className = "axes";
-    for (i=0; i < 5; i++) {
-        e = document.createElement("progress");
+    for (var i=0; i < 5; i++) {
+        var e = document.createElement("progress");
         e.className = "axis";
         //e.id = "a" + i;
         e.setAttribute("max", "2");
@@ -85,7 +85,7 @@ function addgamepad(gamepad) {
 function updateStatus(){
     scangamepads();
     var axisValues = {};
-    for (j in controllers) {
+    for (var j in controllers) {
         var controller = controllers[j];
         var d = document.getElementById("controller" + j);
 
