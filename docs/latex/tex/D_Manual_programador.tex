@@ -170,7 +170,7 @@ Para el desarrollo del proyecto se ha utilizado un repositorio Git local, al que
 \begin{enumerate}
 \item Abrir un terminal bash. 
 \item Moverse hasta el directorio en el que se quiera clonar el repositorio. Para ello puede utilizarse el comando \code{cd}.
-\item Clonar el repositorio mediante el comando: \code{git clone git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git} para clonar la rama \emph{master}. Si se desea trabajar en alguna de las ramas en desarrollo, puede usarse el comando \code{git clone -b NOMBRE\_RAMA git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git}
+\item Clonar el repositorio mediante el comando:\\ \code{git clone git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git} para clonar la rama \emph{master}. Si se desea trabajar en alguna de las ramas en desarrollo, puede usarse el comando\\ \code{git clone -b NOMBRE\_RAMA git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git}
 \item Con esto se iniciará la descarga del repositorio completo.
 \end{enumerate}
 
@@ -231,7 +231,7 @@ Si se quisiese ejecutar el proyecto desde una terminal, el proceso requiere de a
 \item Abrir un terminal bash.
 \item Activar el entorno virtual a utilizar. \code{source EntornoVirtual/bin/activate}.
 \item Establecer la variable de entorno \emph{PYTHONPATH} a la raíz del proyecto. Este paso PyCharm lo hace por defecto. \code{export PYTHONPATH=\$(pwd)}.
-\item Ejecutar el script deseado desde la raíz del proyecto. \code{python3 -m backend.systemControl.ctrlWrapper} o \code{python3 -m frontend.droneControlWebUI}
+\item Ejecutar el script deseado desde la raíz del proyecto.\\ \code{python3 -m backend.systemControl.ctrlWrapper} o \\ \code{python3 -m frontend.droneControlWebUI}
 \end{enumerate}
 
 \begin{figure}[H]
@@ -249,7 +249,7 @@ Añadir nuevos controladores al sistema de control es relativamente sencillo. Pa
 \item Crear una clase para el \emph{controller} a generar: \texttt{improvedSpeedController.py}, por ejemplo, que implemente los métodos necesarios. Hacer \emph{commit} del nuevo fichero y la lógica generada.
 \item Refactorizar el código para mejorar su calidad. Hacer \emph{commit}.
 \item Incluir el nuevo controlador generado en el \texttt{ctrlWrapper.py}. Para ello solo se deben proporcionar los métodos requeridos por el controlador principal. 
-\item Una vez que se ha implementado correctamente el nuevo controlador, se debe sincronizar en la rama del nuevo desarrollador, anteriormente creada, mediante \code{git push}, y seguidamente incorporar esta rama a la rama de la \emph{release} en desarrollo, y existente en GitHub. Para ello, lo ideal es generar una \emph{pull-request} estableciendo la necesidad de una revisión, pero como se ha comentado solo existe un desarrollador, de manera que en el desarrollo se ha simplificado este paso:\\ \code{git request-pull nombre1erCommit origin\footnote{El origen del proyecto se habrá establecido a https://github.com/mbm0089/GII\_0\_17.02\_SNSI/} new-controller}
+\item Una vez que se ha implementado correctamente el nuevo controlador, se debe sincronizar en la rama del nuevo desarrollador, anteriormente creada, mediante \code{git push}, y seguidamente incorporar esta rama a la rama de la \emph{release} en desarrollo, y existente en GitHub. Para ello, lo ideal es generar una \emph{pull-request} estableciendo la necesidad de una revisión, pero como se ha comentado solo existe un desarrollador, de manera que en el desarrollo se ha simplificado este paso:\\ \code{git request-pull nombre1erCommit origin new-controller}.\footnote{El origen del proyecto se habrá establecido a https://github.com/mbm0089/GII\_0\_17.02\_SNSI/}
 \end{enumerate}
 
 De esta forma se generará una \emph{pull-request} en el repositorio remoto hospedado en GitHub. 
@@ -266,7 +266,7 @@ Se hace notar que la clase \texttt{ctrlWrapper}, encargada del control de todo e
 De esta manera, añadir un nuevo controlador a la lista de controladores priorizados que genera el \emph{ctrlWrapper}, requiere pasar como parámetro las funciones requeridas. 
 
 \subsection{Servicios de integración continua}
-
+\label{subsec:sonarcloud}
 Para llevar a cabo una toma de medidas del código generado, se ha hecho uso de una suscripción a \emph{SonarCloud}. Se trata de un servicio proporcionado por \emph{SonarCloud}, de forma que no es necesario instalar un servidor local, sino que se realiza el escaneo del proyecto y los resultados se envían al servicio en línea de \emph{SonarCloud}. 
 
 El escáner a utilizar, se puede descargar de \citep{wiki:getSonarScanner}.
@@ -301,6 +301,189 @@ Seguidamente, entrando en \href{https://sonarcloud.io/dashboard?id=GII_0_17.02_S
 
 
 \section{Pruebas del sistema}
+
+Las pruebas de software se llevarán a cabo mediante PyCharm, el cual provee de sus propio \emph{framework} de pruebas, que permite llevar a cabo un análisis del cubrimiento obtenido por los diferentes test ejecutados. Se ha creado una serie de pruebas que tratan de cubrir la mayor cantidad de código posible. 
+
+No se han creado pruebas para los métodos \emph{setter} o \emph{getter} del desarrollo. Sin embargo, el uso de test más complejos, obtiene resultados idénticos sin realizar específicamente ese tipo de test. 
+
+
+\subsection{Configuración de los test}
+\label{subsec:configtest}
+En primer lugar es conveniente establecer la configuración de los test. Desde PyCharm es posible ejecutar test en el intérprete local, así como en el intérprete remoto existente en el entorno virtual de la RaspberryPi. 
+
+Los test locales se pueden ejecutar de forma sencilla pulsando sobre la carpeta \texttt{testing} existente dentro de algunas de las características del sistema: 
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{testLocal}
+	\caption[Ejecución de test en intérprete local]{Ejecución de test y métricas de cubrimiento de forma local.}\label{fig:testLocal}
+\end{figure}
+
+Tan solo con eso, ya se habrá generado la configuración de ejecución de test de forma local. 
+
+El caso de los test a ejecutar en la RaspberryPi es algo más complejo. Éstos, requieren de crear las configuraciones para la ejecución de los diferentes test, estableciendo el intérprete remoto existente en el entorno virtual creado mediante los \emph{scripts} de instalación, ver la subsección \ref{subsec:installersh}.
+
+Para ello, se puede dar click derecho sobre la carpeta \texttt{testing} de alguna de las características que dependen de las librerías existentes en la RaspberryPi, como por ejemplo la contenida en \texttt{backend/comms/}. 
+A continuación se pulsa sobre \emph{Create py.test in test...}, tal y como puede verse en la Figura \ref{fig:createPytestRemote}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{createPytestRemote}
+	\caption[Creación de configuración de test de ejecución remota]{Creación de la configuración para ejecutar test en un intérprete remoto.}\label{fig:createPytestRemote}
+\end{figure}
+
+Seguidamente, se debe establecer el nombre y la ubicación del intérprete remoto, tal y como se muestra en la Figura \ref{fig:configRemoteTest}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{configRemoteTest}
+	\caption[Configuración de test de ejecución remota]{Configuración para ejecutar test en un intérprete remoto.}\label{fig:configRemoteTest}
+\end{figure}
+
+Una vez hecho esto, ya es posible ejecutar los test con la misma facilidad que si se tratase de test ejecutados mediante un intérprete local.
+
+
+\subsection{Pruebas Unitarias}
+Las pruebas unitarias comprueban el funcionamiento de una única clase o módulo, sin integrarse con otras. 
+
+Una vez ejecutada alguna de las pruebas, haciendo uso de las configuraciones explicadas en la subsección \ref{subsec:configtest}, se mostrarán los resultados de la siguiente forma:
+
+\begin{itemize}
+\item En el lado derecho de la aplicación, se mostrará el resultado del cubrimiento de los test ejecutados, tal y como se muestra en la Figura \ref{fig:coverResults}. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{coverResults}
+	\caption[Resultado de cubrimiento de test en intérprete local]{Resultado de métricas de cubrimiento ejecutado de forma local.}\label{fig:coverResults}
+\end{figure}
+
+\item En la zona inferior el resultado de dichos test, tal y como se muestra en la Figura \ref{fig:testResults}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{testResults}
+	\caption[Resultado de test en intérprete local]{Resultado de test ejecutado de forma local.}\label{fig:testResults}
+\end{figure}
+\end{itemize}
+
+\subsection{Pruebas de integración}
+
+Sin duda las pruebas más interesantes, y complejas, son las de integración. Éstas, comprueban que la unión entre las clases o módulos se ha llevado a cabo sin producir errores. Es decir, las clases funcionan de forma individual, tal y como se comprobó con los test unitarios, y ahora hay que comprobar que se integran bien entre sí. 
+
+Para ello se pueden ejecutar las pruebas contenidas dentro de la carpeta \texttt{/backend/comms} o \texttt{/backend/systemControl}. Ambas baterías de pruebas se deben ejecutar en el intérprete remoto, ya que requieren de acceder a los sensores de distancia, así como a la controladora de vuelo. 
+
+Una vez ejecutadas, se mostrarán los resultados por pantalla. 
+
+Cabe destacar, que el funcionamiento de algunas de estas pruebas, sobre todo las basadas en sensores, están condicionadas al correcto funcionamiento de los sensores. Por ejemplo, las pruebas contenidas en \texttt{/backend/systemControl} tratarán de acceder al sensor de altitud, y comprobará que la altura del \emph{drone}, respecto al suelo, no supera los 12 cm\footnote{El cálculo es aproximado dado el error existente en el sensor. Se admite un error de 1.5 cm}. Un fallo en estos test, puede indicar que el sensor no se encuentra en condiciones óptimas de funcionamiento, o que alguna conexión ha fallado. 
+
+De igual manera, las pruebas existentes en \texttt{/backend/comms} accederán al puerto serie y establecerán comunicación con la controladora de vuelo, para comprobar que la comunicación con esta es correcta, tratando de leer el estado del \emph{drone}. Un fallo en estos test, puede indicar que la controladora de vuelo no está respondiendo correctamente, que el cable USB que la conecta a la RaspberryPi está defectuoso, o que por algún motivo no se ha podido acceder al recurso.
+
+Por ello, las pruebas de integración llevadas a cabo son susceptibles de revisión y sus resultados no deben tomarse, por sí solos, como definitivos. 
+
+
+\subsection{Sistema de integración continua}
+
+Para llevar a cabo la comprobación continua del desarrollo del proyecto se ha hecho uso de SonarCloud. Tal y como se explicó en la subsección \ref{subsec:sonarcloud}, se dispone de un escáner que llevará a cabo una serie de procedimientos para comprobar las métricas de calidad del sistema en desarrollo. 
+
+Sin embargo, el escáner no incorpora ningún mecanismo, en su versión para Python, para llevar a cabo los test, y obtener métricas sobre el cubrimiento de estos. 
+
+Para ello, es necesario descargar una herramienta adicional que se integrará con SonarCloud. Dicha herramienta se llama \emph{coverage}, y está disponible a través de \emph{pip}, de forma que su instalación es muy sencilla. Basta con ejecutar \code{pip install coverage} dentro del entorno virtual del proyecto. 
+
+Una vez instalada, se pueden ejecutar las pruebas ejecutando los siguientes pasos: 
+\begin{enumerate}
+\item Abrir un terminal bash.
+\item Desplazarse hasta la ruta del proyecto. Puede hacerse mediante \code{cd}.
+\item Ejecutar el siguiente comando:\\ \code{coverage run --parallel-mode --omit backend/algorithms/testing/test\_*}\\ \code{ --omit backend/comms/testing/test\_MSPio.py}\\ \code{ --omit backend/systemControl/testing/test\_ctrlWrapper.py}\\ \code{ --omit frontend/model/migrations/*}\\ \code{--omit backend/algorithms/testing/test\_particleFilter.py}.
+De esta forma, se habrá ejecutado el test perteneciente a la carpeta \texttt{/backend/algorithms/testing} y de nombre \texttt{test\_particleFilter.py}. 
+
+Mediante los diferentes \emph{omit} hemos ordenado a \emph{coverage} que omita esos directorios, para que no trate de medir cuantas líneas de código del test han testado los propios test.
+
+De forma análoga es necesario ejecutar todos los demás test existente en las demás carpetas, tal y como se muestra en la Figura \ref{fig:coverageRun}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{coverageRun}
+	\caption[Uso de \emph{coverage} para recabar métricas de test]{Uso de \emph{coverage} para recabar métricas de test ejecutados en un intérprete local.}\label{fig:coverageRun}
+\end{figure}
+
+Sin embargo existe un problema, y es que \emph{coverage} no es capaz de ejecutar test haciendo uso de un intérprete remoto, por lo que las pruebas de integración existentes en el \emph{backend}, y que dependan de hardware disponible en la \emph{RaspberryPi}, no podrán ser llevadas a cabo mediante esta herramienta para ser incluidas en las métricas de SonarCloud.
+
+\item Seguidamente se combinan los resultados de las pruebas mediante \code{coverage combine}.
+\item Después se genera un reporte mediante \code{coverage report}.
+\item Y finalmente se exporta mediante \code{coverage xml}
+\end{enumerate}
+
+A continuación se puede ejecutar el escáner de SonarCloud, pero antes es necesario añadir una nueva línea a su archivo de configuración. Para ello:
+\begin{enumerate}
+\item Abrir un terminal bash.
+\item Desplazarse hasta la ruta del proyecto. Puede hacerse mediante \code{cd}.
+\item Editar el archivo de configuración de SonarCloud mediante el editor de elección. 
+\item Añadir la siguiente línea: \texttt{sonar.python.coverage.reportPath=coverage.xml}.
+\item Guardar y cerrar el archivo.
+\item Ejecutar el escáner de SonarCloud mediante\\ \code{sonar-scanner -Dproject.settings=./sonar-project.properties}
+\end{enumerate}
+
+Al poco, en el proyecto de SonarCloud, se verán las métricas actualizadas con la información del cubrimiento de los test realizados por \emph{coverage}. Ver Figura \ref{fig:sonarCloudCoverage}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{sonarCloudCoverage}
+	\caption[Métricas de \emph{coverage} en SonarCloud]{Actualización de métricas de cubrimiento en SonarCloud mediante \emph{coverage}.}\label{fig:sonarCloudCoverage}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

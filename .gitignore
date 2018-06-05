@@ -348,3 +348,11 @@ private/
 \.scannerwork/
 
 sonar-project\.properties
+
+.coverage*
+
+backend/algorithms/\.cache/v/cache/
+
+backend/algorithms/testing/\.cache/v/cache/
+
+backend/systemControl/testing/\.cache/v/cache/
