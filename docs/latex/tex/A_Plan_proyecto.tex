@@ -417,18 +417,18 @@ Los costes serían rentables para las empresas, dado que contratar personal de s
 
 \paragraph{Punto de equilibrio} El punto de equilibrio establece el momento en el que se alcanza a cubrir la inversión inicial. Los cálculos propuestos a continuación son una estimación aproximada: 
 
-Asumiendo el coste de personal de estos 4 meses en los $8360.44$\euro{} resultantes de la tabla \ref{tb:costesPersonalTotales}, podemos suponer uno coste anual de $25081.32$\euro{} por empleado\footnote{No se ha eliminado el coste de los tutores.}. 
+Asumiendo el coste de personal de estos 4 meses en los $8360.44$\euro{} resultantes de la tabla \ref{tb:costesPersonalTotales}, podemos suponer un coste anual de $25081.32$\euro{} por empleado\footnote{No se ha eliminado el coste de los tutores.}. 
 Se estima que para llevar a cabo este proyecto de forma correcta, y ágil, se deberían emplear a tiempo completo, al menos, 3 desarrolladores y 2 ingenieros en electrónica. Suponiendo unos gastos anuales de personal de desarrollo de $125406.6$\euro.
 
 Se establece que un vigilante/piloto es capaz de atender hasta 8 \emph{drones}. De forma que se añade otro empleado por cada 8 \emph{drones} construidos.
 
 El coste de elaborar un \emph{drone} con las características detalladas en la tabla \ref{tb:costesHardware} asciende, sin contar con la necesidad de una emisora por \emph{drone}, y un ordenador portátil por \emph{drone}, a $362.79$\euro. Sin embargo, teniendo en cuenta que la tecnología empleada no es tan precisa como se desearía, se añade un margen que permitiría mejorar el hardware empleado, estableciendo el total de elaboración de un \emph{drone} en $550$\euro. 
 
-Los costes de mantenimiento y reparación de un \emph{drone}, basados en la experiencia personal con estos dispositivos, y en la tecnología empleada, se establece en $150$\euro anuales por dispositivo. El coste del seguro de responsabilidad civil de la empresa se estima en $265$\euro por dispositivo, con una cobertura mínima de $300000$\euro, tal y como se estipula en \citep{wiki:respCivil}, y teniendo en cuenta que este seguro cubriría daños al dispositivo (lo cual permite acotar mejor las estimaciones dadas). Para más información ver \href{https://www.aenus.es/responsabilidad-civil-danos-profesional/}{tablas de costes}. 
+Los costes de mantenimiento y reparación de un \emph{drone}, basados en la experiencia personal con estos dispositivos, y en la tecnología empleada, se establece en $150$\euro anuales por dispositivo. El coste del seguro de responsabilidad civil de la empresa se estima en $265$\euro{} por dispositivo, con una cobertura mínima de $300000$\euro, tal y como se estipula en \citep{wiki:respCivil}, y teniendo en cuenta que este seguro cubriría daños al dispositivo (lo cual permite acotar mejor las estimaciones dadas). Para más información ver \href{https://www.aenus.es/responsabilidad-civil-danos-profesional/}{tablas de costes}. 
 
-Además, se incluye un gasto de daño social generado, ver \ref{subsec:respSocial}, valorado en $30000$\euro al año, en concepto de formación para los afectados.
+Además, se incluye un gasto de daño social generado, ver \ref{subsec:respSocial}, valorado en $30000$\euro{} al año, en concepto de formación para los afectados. 
 
-De esta forma, se establece el siguiente resumen de costes, asumiendo que las suscripciones anuales generadas son siempre la suscripción más simple de que se dispone, y que establece un ingreso de $8000$\euro anuales: 
+De esta forma, se establece el siguiente resumen de costes, asumiendo que las suscripciones anuales generadas son siempre la suscripción más simple de que se dispone, y que establece un ingreso de $8000$\euro{} anuales: 
 
 \begin{table}[H]
 	\begin{center}
@@ -444,7 +444,7 @@ De esta forma, se establece el siguiente resumen de costes, asumiendo que las su
 			Seguros & $265$\euro $\times$ \emph{drone}\\
 			Formación & $30000$\euro \\
 			\hline
-			\textbf{Total anual} & $(125406.6 + 965*\emph{drone} + 30000 + 25081.52*\emph{drone}/8) $\euro\\
+			\textbf{Total anual} & $(125406.6 + 965 \times \emph{drone} + 30000 + 25081.52 \times \emph{drone}/8) = 319414.2$\euro\\
 			\bottomrule
 		\end{tabular}
 		\caption{Gastos totales}
@@ -452,7 +452,7 @@ De esta forma, se establece el siguiente resumen de costes, asumiendo que las su
 	\end{center}
 \end{table}
 
-Y por lo tanto el cálculo sería, donde $x=\text{\emph{drone}}$ por simplificar: 
+El total anual de la tabla \ref{tb:gastosTotalesEq}, se extrae de obtener el número de \emph{drones} a través de la siguiente fórmula, donde $x=\text{\emph{drone}}$ por simplificar: 
 \begin{equation}
 8000x - \left(125406.6 + 965x + 30000 + \frac{25081.52x}{8}\right) \approx 40 \text{ \emph{drones}/año}
 \end{equation}
@@ -516,7 +516,7 @@ El proyecto consta de las siguientes dependencias software:
 
 De esta forma, el código desarrollado deberá tener una licencia compatible con MIT y BSD, ambas muy permisivas al respecto. 
 La monetización del proyecto se basa en un sistema de suscripción al mismo, pero la existencia de competencia redunda en una mejora de los productos y servicios, ya que fuerza a las empresas a mantenerse al día.
-Por tanto, se libera todo el código, tanto del \emph{backend} como del \emph{frontend}, bajo licencia BSD de 3 clausulas.
+Por tanto, se libera todo el código, tanto del \emph{backend} como del \emph{frontend}, bajo licencia BSD de 3 cláusulas.
 
 Puede leerse un resumen de la licencia en \href{https://opensource.org/licenses/BSD-3-Clause}{BSD-3 Clause license}.
 

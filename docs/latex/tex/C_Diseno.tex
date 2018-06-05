@@ -61,7 +61,7 @@ En este apartado se recoge el diagrama secuencial correspondiente a la totalidad
 
 \section{Diseño arquitectónico}
 En esta sección se dará una aclaración al diagrama \ref{fig:SeqDiag}, el cual da una idea general del funcionamiento del sistema. 
-Para lograr un código fácil de mantener, y de escalar dado el potencial de crecimiento de las tecnologías relacionadas con este proyecto, se han generado una serie de clases intermedias que actúan a modo de \textit{wrapper}. La interfaz de la aplicación se ha generado siguiendo el conocido patrón MVC.
+Para lograr un código fácil de mantener, y de escalar dado el potencial de crecimiento de las tecnologías relacionadas con este proyecto, se han generado una serie de clases intermedias que actúan a modo de \textit{wrapper}. La interfaz de la aplicación se ha generado siguiendo el conocido patrón MVC\footnote{Model View Controller. Es un patrón utilizado al diseñar interfaces gráficas, que permite desacoplar las capas de vista, modelo de datos y lógica de aplicación.}.
 
 \subsection{Patrón MVC}
 Para la parte representada por la aplicación web, se ha hecho uso del habitual patrón MVC (\textit{Model View Controller}), con la intención de separar la capa de lógica de la aplicación (\textit{Controller}), de la interfaz de usuario (\textit{View}) y de los datos manejados (\textit{Model}).

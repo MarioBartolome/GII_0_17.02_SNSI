@@ -1,6 +1,5 @@
 from unittest import TestCase
 from backend.systemControl.ctrlWrapper import CtrlWrapper
-from backend.comms.RemoteControl import RemoteServer
 from backend.autoControllers.takeOffLanding import TakeOffLander
 
 
@@ -8,13 +7,11 @@ class TestCtrlWrapper(TestCase):
 	def test_getAltitude(self):
 		self.assertAlmostEqual(controller.getAltitude(), 12.0, delta=1.0)
 
+
 	def test_getAttitude(self):
 		self.assertTrue(all(key in ['x', 'y', 'heading', 'timestamp'] for key in controller.getAttitude().keys()))
 
 
-# Remote controller
-remoteController = RemoteServer()
-remoteController.start()
 altSensor_trigPin = 7
 altSensor_echoPin = 8
 dstSensors_triggerPins = [13, 9, 5, 3, 21]
@@ -24,7 +21,7 @@ MAX_ALTITUDE = 80
 MAX_INCLINATION = 8
 
 
-controller = CtrlWrapper(altitudeSensor_echoPin=altSensor_echoPin, altitudeSensor_triggerPin=altSensor_trigPin)
+controller = CtrlWrapper({}, altitudeSensor_echoPin=altSensor_echoPin, altitudeSensor_triggerPin=altSensor_trigPin)
 
 # Altitude controller
 
