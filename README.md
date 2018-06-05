@@ -11,7 +11,7 @@ This project comprises two distributed systems:
 - A backend system. Usually a RaspberryPi-like computer. Small, not so power hungry and most importantly, lightweight.
 - A frontend system. Giving the user a  WebUI to access the backend system.
 
-![Drone Image](https://github.com/mbm0089/GII_0_17.02_SNSI/blob/5e03572352750919cc015e59bdead2220eca5f19/frontend/view/static/droneLogo.png "I know... it's beautiful. It's the stallion of the pictures")
+![Drone Image](https://github.com/mbm0089/GII_0_17.02_SNSI/blob/8a8b8ca259c6fafe8ef931677db3ec7cc57fd189/docs/img/Logo.png "I know... it's beautiful. It's the stallion of the pictures")
 
 ## BackEnd
 
@@ -33,14 +33,21 @@ The Raspberry Pi must have installed the following Python >=3.5 packages:
 - Numpy
 - PySerial
 - PyCamera
+- Bluetin_Echo
+- SciPy
+- PyTest
 
-Which could be installed with any Python packet manager, I suggest pip:
+All the dependencies can be installed making use of the installer script. It takes only two arguments:
+- The name of the Virtual Environment to create.
+- The name of the setup script to run.
 
-<code>pip3 install picamera numpy pyserial</code>
+It can be run as follows: 
 
-If Numpy gives a hard time trying to install, you could try:
+<code>user@frontend~> chmod +x installer.sh</code>
 
-<code>sudo apt-get install python3-numpy</code>
+<code>user@frontend~> ./installer.sh backEndVenv setupBackend.py</code>
+
+The installer will start the installation process, it may take a while as it needs to download, build and install.
 
 The Raspberry Pi is going to act as a WebRTC server to provide a real-time video feed to the client. So you will need to install also [UV4L](https://www.linux-projects.org/uv4l/). 
 
@@ -69,10 +76,17 @@ The server must have installed the following Python >=3.5 packages:
 - wtforms
 - eventlet
 
-Which could be installed with any Python packet manager, I suggest pip:
+All the dependencies can be installed making use of the installer script. It takes only two arguments:
+- The name of the Virtual Environment to create.
+- The name of the setup script to run.
 
-<code>pip3 install numpy flask flask_login flask_socketio flask_sqlalchemy flask_migrate flask_wtf wtforms eventlet</code>
+It can be run as follows: 
 
+<code>user@frontend~> chmod +x installer.sh</code>
+
+<code>user@frontend~> ./installer.sh frontEndVenv setupWebUI.py</code>
+
+The installer will start the installation process, it may take a while as it needs to download, build and install.
 
 ## Putting everything together
 
