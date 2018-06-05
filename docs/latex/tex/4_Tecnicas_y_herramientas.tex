@@ -1,7 +1,7 @@
 \capitulo{4}{Técnicas y herramientas}
 
-Esta parte de la memoria tiene como objetivo presentar las técnicas metodológicas y las herramientas de desarrollo que se han utilizado para llevar a cabo el proyecto. Si se han estudiado diferentes alternativas de metodologías, herramientas, bibliotecas se puede hacer un resumen de los aspectos más destacados de cada alternativa, incluyendo comparativas entre las distintas opciones y una justificación de las elecciones realizadas. 
-No se pretende que este apartado se convierta en un capítulo de un libro dedicado a cada una de las alternativas, sino comentar los aspectos más destacados de cada opción, con un repaso somero a los fundamentos esenciales y referencias bibliográficas para que el lector pueda ampliar su conocimiento sobre el tema.
+Esta parte de la memoria tiene como objetivo presentar las técnicas metodológicas y las herramientas de desarrollo que se han utilizado para llevar a cabo el proyecto. 
+
 
 
 \section{Metodologías de Desarrollo}
@@ -11,92 +11,95 @@ No se pretende que este apartado se convierta en un capítulo de un libro dedica
 
 Scrum es un marco de desarrollo ágil que se caracteriza por realizar ciclos de desarrollo. Se basa en usar una estrategia incremental, frente al carácter más completo y planificado de las metodologías tradicionales, mediante iteraciones a las que denomina \textit{sprint}. 
 
-En cada una de los sprint se revisa lo que se ha realizado durante la iteración anterior, y se determina que labores o tareas se pueden realizar en el nuevo ciclo. Esto aporta una gran cantidad de ventajas frente a los métodos tradicionales. Ver \citep{wiki:SCRUM}
+En cada una de los sprint se revisa lo que se ha realizado durante la iteración anterior, y se determina que labores o tareas se pueden realizar en el nuevo ciclo. Esto aporta una gran cantidad de ventajas frente a los métodos tradicionales. \citep{wiki:SCRUM}.
 
 \subsection{GitFlow}
 \label{sub:gitflow}
-El flujo de trabajo de Git permite establecer una forma organizada y ágil de llevar a cabo todos las aportaciones del proyecto. \citep{wiki:gitflow}
+El flujo de trabajo de Git permite establecer una forma organizada y ágil de llevar a cabo todos las aportaciones del proyecto. \citep{wiki:gitflow}.
 
 Se basa en el uso de ramas para organizar el flujo de trabajo. La rama \textit{master} contiene el estado actual del desarrollo estable, el cual está listo para ser desplegado en cualquier momento. Se suele crear una rama cuando se quiere añadir una nueva característica, o realizar una nueva versión del programa. 
 En el caso de este proyecto se ha mantenido la rama master y se ha creado una rama para las nuevas versiones. Estas han sido unidas a la rama master una vez listas para su despliegue.
-Sin embargo, no se han creado ramas de la principal o de las versiones para arreglar bugs o incluir pequeñas modificaciones. 
+Sin embargo, no se han creado ramas de la principal o de las versiones para corregir errores o incluir pequeñas modificaciones. 
 
 Dado que no se cuenta con un equipo de desarrollo completo, el flujo habitual de trabajo se ha desarrollado sobre la rama principal, master, con ramas de desarrollo a modo de \textit{releases}. 
 
 \subsection{Kanban}
 \label{sub:Kanban}
 
-Kanban es un sistema de organización y gestión de las tareas de un proyecto. Ver \citep{wiki:Kanban}
+Kanban es un sistema de organización y gestión de las tareas de un proyecto. \citep{wiki:Kanban}
 Viene del japonés \textit{Kanban}, o \textit{tarjeta de señal} en Castellano, llamado de esta manera por el uso que se hace de tarjetas que describen las tareas a realizar. 
 
 Su representación suele hacerse sobre una pizarra o panel en el que se van estableciendo las diferentes tareas a realizar en pequeñas tarjetas. Dichas tarjetas se organizan dentro del panel en diferentes zonas, como \textit{en progreso} o \textit{nueva tarea} o \textit{finalizada}. 
 De esta forma es sencillo comprobar el estado del desarrollo de un vistazo. 
 
-\section{Herramientas de gestión de repositorio}
-
-\subsection{Git}
+\section{Herramientas}
+En esta sección se darán descripciones de las herramientas utilizadas, y comparaciones de aquellas que presentaron alternativas atractivas.
+\subsection{Herramientas de gestión de repositorio}
+\subsubsection{Git}
 
 Git es una herramienta utilizada para llevar a cabo control de versiones. Es posiblemente la más utilizada entre empresas y desarrolladores, y viene integrada en la mayoría de los sistemas basados en UNIX.
 
 Para llevar a cabo la gestión de las versiones, establece un repositorio del cual se guarda un histórico de todas las modificaciones que se han llevado a cabo, permitiendo establecer quien hizo que modificación, así como hacer uso del sistema de ramas mencionado en \ref{sub:gitflow}. 
 
-\subsection{GitHub}
+\subsubsection{GitHub}
 
-GitHub es un repositorio de código remoto. Es posiblemente el servicio de hospedaje de código más extendido entre empresas y desarrolladores independientes. \citep{wiki:GitHub}
+GitHub es un repositorio de código remoto. Es posiblemente el servicio de hospedaje de código más extendido entre empresas y desarrolladores independientes \citep{wiki:GitHub}.
 
 Además de ser totalmente compatible con el sistema de ramas establecido en GitFlow \ref{sub:gitflow}, permite organizar el flujo de trabajo en forma de pequeñas tareas, que son fácilmente distribuibles en los diferentes sprints, ver \ref{sub:scrum}. 
 
 De esta forma, unido a Git, se convierte en una herramienta de gran utilidad para llevar a cabo la correcta organización de un repositorio de código. Sobre todo si interviene más de un desarrollador. 
 
-\subsubsection{GitLab}
+\paragraph{GitLab}
 En un principio, se valoró la posibilidad de hospedar un pequeño servidor GitLab que permitiese llevar a cabo el proyecto de forma privada de forma gratuita. Sin embargo, GitHub proporciona repositorios privados de forma gratuita a estudiantes, de forma que al final se eligió esta opción sobre GitLab.
 
-\subsection{ZenHub}
+\subsubsection{ZenHub}
 
-ZenHub es una extensión que se integra con GitHub. Se trata de una implementación del método Kanban, \ref{sub:Kanban}. Ver \citep{wiki:ZenHub}
+ZenHub es una extensión que se integra con GitHub. Se trata de una implementación del método Kanban, \ref{sub:Kanban}. \citep{wiki:ZenHub}.
 
 Muestra en el repositorio de GitHub, un panel informativo organizado por columnas que describen el estado de las tareas que en ellas se encuentran. 
 Permite visualizar rápidamente el estado del Sprint en el que se está trabajando, así como de las tareas que han quedado en espera.
 
-\subsection{GitKraken}
+\subsubsection{GitKraken}
 
-GitKraken es una aplicación de escritorio que permite hacer uso de Git desde una interfaz gráfica, \citep{wiki:GitKraken}. Presenta el flujo de trabajo que se ha ido realizando, las diferentes ramas y commits, y permite realizar diferentes acciones relacionadas con Git, como pull-request, commits, creación y borrado de ramas, unión de ramas... etc.
+GitKraken es una aplicación de escritorio que permite hacer uso de Git desde una interfaz gráfica, \citep{wiki:GitKraken}. Presenta el flujo de trabajo que se ha ido realizando, las diferentes ramas y \emph{commits}, y permite realizar diferentes acciones relacionadas con Git, como \emph{pull-request}, \emph{commits}, creación y borrado de ramas, unión de ramas... etc.
 
 Además provee de un sistema de resolución de conflictos entre archivos, que permite seleccionar los cambios a mantener de forma muy intuitiva y sencilla. 
 La versión más reciente añade una implementación de Kanban que permite visualizar el mismo panel que muestra ZenHub en GitHub.
 
-\subsubsection{GitHubDesktop}
+\paragraph{GitHubDesktop}
 Se valoró la posibilidad de utilizar GitHubDesktop, pero GitKraken es superior en algunos sentidos, ya que permite realizar ciertas tareas complejas con extrema facilidad, como deshacer errores o guardar cambios para más adelante (\textit{stash}), completamente integrado con GitFlow... etc.
 
-\section{Herramientas de desarrollo}
+\subsection{Herramientas de desarrollo}
 
-\subsection{PyCharm}
+\subsubsection{PyCharm}
 
 PyCharm es un IDE, \textit{Integrated Development Environment}, para el lenguaje de programación Python desarrollado por JetBrains, \citep{wiki:PyCharm}. 
 
-Se trata de un IDE que contiene todas las funcionalidades necesarias para el desarrollo de aplicaciones en Python, así como para la gestión de instalación de dependencias (vía pip, ver \citep{wiki:PyPa}, y la adquisición de documentación necesaria para el desarrollo. 
+Se trata de un IDE que contiene todas las funcionalidades necesarias para el desarrollo de aplicaciones en Python, así como para la gestión de instalación de dependencias (vía \code{pip}, ver \citep{wiki:PyPa}, y la adquisición de documentación necesaria para el desarrollo. 
 
-Es posiblemente el entorno de desarrollo más avanzado para Python. Se ha elegido porque permite hacer despliegue y debug de aplicaciones en remoto, de forma que es de gran utilidad al realizar tareas de debug en una RaspberryPi.
+Es posiblemente el entorno de desarrollo más avanzado para Python. Se ha elegido porque permite hacer despliegue y \emph{debug} de aplicaciones en remoto, de forma que es de gran utilidad al realizar tareas de \emph{debug} en una RaspberryPi.
+
+Cabe destacar que se está haciendo uso de una licencia de estudiante para acceder a todas las funcionalidades de PyCharm. Se puede obtener esta licencia a través de la página web, \citep{wiki:PyCharm}, creando una cuenta en la que se haga uso de un correo electrónico perteneciente a una institución educativa. 
 
 
-\subsection{WebStorm}
+\subsubsection{WebStorm}
 
 WebStorm es un IDE, \textit{Integrated Development Environment}, para el desarrollo de aplicaciones web desarrollado por JetBrains, \citep{wiki:WebStorm}. 
 
-Se trata de un IDE que contiene todas las funcionalidades necesarias para el desarrollo de aplicaciones en HTML, JavaScript, Node.js, Angular, Electron... etc, así como para la gestión de instalación de dependencias (vía npm o Yarn), y la adquisición de documentación necesaria para el desarrollo. 
+Se trata de un IDE que contiene todas las funcionalidades necesarias para el desarrollo de aplicaciones en HTML, JavaScript, Node.js, Angular, Electron, etc. Así como para la gestión de instalación de dependencias (vía npm o Yarn), y la adquisición de documentación necesaria para el desarrollo. 
 
 Se trata de un entorno de desarrollo parecido a PyCharm, y su elección está un tanto condicionada por ello. Se ha utilizado para la programación del entorno web del que dispondrá el proyecto. 
 
-\section{Herramientas de documentación}
+\subsection{Herramientas de documentación}
 
-\subsection{\LaTeX}
+\subsubsection{\LaTeX}
 
-Para llevar a cabo la documentación del proyecto se ha hecho uso de \LaTeX \citep{wiki:latex}. Se trata de un lenguaje de marcas que permite la redacción de textos que presentan alta calidad tipográfica. La filosofía de trabajo con \LaTeX   se basa en centrarse en el contenido y no en la forma. Es decir, el redactor de un documento no tiene porque centrarse en el formato, tipos de letra y demás, sino que su labor es redactar y por tanto se le deja dedicarse al contenido del mismo.
+Para llevar a cabo la documentación del proyecto se ha hecho uso de \LaTeX{} \citep{wiki:latex}. Se trata de un lenguaje de marcas que permite la redacción de textos que presentan alta calidad tipográfica. La filosofía de trabajo con \LaTeX{} se basa en centrarse en el contenido y no en la forma. Es decir, el redactor de un documento no tiene porque centrarse en el formato, tipos de letra y demás, sino que su labor es redactar y por tanto se le deja dedicarse al contenido del mismo.
 
-\subsubsection{TexMaker y TexLive}
-TexMaker es un editor multiplataforma de \LaTeX. Se trata de un entorno parecido al habitual procesador de textos, que permite la redacción de textos haciendo uso del lenguaje de marcas \textit{Tex}. Se caracteriza por implementar un corrector, disponer de auto-completado de marcas para \LaTeX y un visor PDF del documento generado. \citep{wiki:TexMaker}
+\paragraph{TexMaker y TexLive}
+TexMaker es un editor multiplataforma de \LaTeX. Se trata de un entorno parecido al habitual procesador de textos, que permite la redacción de textos haciendo uso del lenguaje de marcas \TeX. Se caracteriza por implementar un corrector, disponer de auto-completado de marcas para \LaTeX{} y un visor PDF del documento generado, \citep{wiki:TexMaker}.
 
-TexLive es una distribución de \LaTeX. Se trata de un compendio de herramientas, fuentes y archivos de configuración que permiten la compilación de código \textit{Tex} a un documento legible, como un PDF. \citep{wiki:TexLive}
+TexLive es una distribución de \LaTeX. Se trata de un compendio de herramientas, fuentes y archivos de configuración que permiten la compilación de código \TeX{} a un documento legible, como un PDF, \citep{wiki:TexLive}.
 
 
 

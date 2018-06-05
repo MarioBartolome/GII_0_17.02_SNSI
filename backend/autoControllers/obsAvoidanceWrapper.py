@@ -1,7 +1,7 @@
-from backend.yawController import YawController
-from test.VFH import HistogramGrid, PolarHistogram, HeadingControl
-from backend.ParticleFilter import ParticleFilter
-from backend import Geometry
+from backend.autoControllers.yawController import YawController
+from backend.algorithms.VFH import HistogramGrid, PolarHistogram, HeadingControl
+from backend.algorithms.ParticleFilter import ParticleFilter
+from backend.algorithms import Geometry
 import numpy as np
 from typing import List, Dict
 

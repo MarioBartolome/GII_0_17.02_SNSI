@@ -19,14 +19,18 @@
 
                             video.srcObject = stream;
                             video.play();
+                            document.getElementById("record").disabled = false;
                         },
                         function (error) {
                             console.error(error.toString());
+                            document.getElementById("record").disabled = true;
                         },
                         function () {
                             console.log('websocket closed. bye bye!');
                             video.srcObject = null;
                             isStreaming = false;
+                           document.getElementById("record").disabled = true;
+
                         },
                         function (message) {
                             console.log(message.toString());
@@ -39,6 +43,8 @@
             if (signalObj) {
                 signalObj.hangup();
                 signalObj = null;
+                document.getElementById("record").disabled = true;
+
             }
         }, false);
 

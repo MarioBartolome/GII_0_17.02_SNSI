@@ -302,6 +302,14 @@ class HistogramGrid:
 
 class PolarHistogram:
 	def __init__(self, histogrid: HistogramGrid, alpha: int = 5):
+		"""
+		A Polar Histogram. This class provides a description of the agent's environment divided by sectors with *⍺* width.
+
+		:param histogrid: The HistogramGrid to represent.
+		:type histogrid: HistogramGrid
+		:param alpha: The width of the sectors.
+		:type alpha: int
+		"""
 		self._histogrid = histogrid
 		self._alpha = alpha
 
@@ -318,9 +326,9 @@ class PolarHistogram:
 			dst_indexes = (R - self._histogrid.getEpsilon() <= self._histogrid.getDistances()) &\
 			              (self._histogrid.getDistances() <= R + self._histogrid.getEpsilon())
 
-			Theta = self._histogrid.getAngles() - np.deg2rad(droneHeading) - np.deg2rad(angle)
-			Theta[Theta >= np.pi] -= np.pi * 2
-			idx = np.unravel_index(np.argmin(np.abs(Theta) + np.logical_not(dst_indexes) * 999), Theta.shape)
+			theta = self._histogrid.getAngles() - np.deg2rad(droneHeading) - np.deg2rad(angle)
+			theta[theta >= np.pi] -= np.pi * 2
+			idx = np.unravel_index(np.argmin(np.abs(theta) + np.logical_not(dst_indexes) * 999), theta.shape)
 
 			ocp_window[idx] += 1
 
@@ -457,8 +465,7 @@ class HeadingControl:
 		:return: The new heading and the speed
 		"""
 		direction = target - location
-		target_sector = np.rad2deg(np.arctan(direction[0]/direction[1]))
-
+		target_sector = np.rad2deg(np.arctan2(direction[0], direction[1])) - 90
 		if target_sector < 0:
 			target_sector += 360
 
@@ -489,11 +496,11 @@ class HeadingControl:
 if __name__ == '__main__':
 	sensor_pin = 10
 	sensor_angle = 15
-	sensor = {45: 7, }
-	histog = HistogramGrid(sensor, 375, 5, 10, np.arange(15**2, dtype=np.float16).reshape(15, 15), cellSize=5, windowSize=7)
+	sensor = {-135: 7.7, }
+	histog = HistogramGrid(sensor, 375, 0, 10, np.arange(15**2, dtype=np.float16).reshape(15, 15), cellSize=5, windowSize=7)
 	polarHistog = PolarHistogram(histog)
-	headingController = HeadingControl(2, polarHistog)
-	drone_global_location = np.array([45, 12])
-	goal = np.array([40, 20])
-	print(headingController.computeHeading(0, goal, drone_global_location))
+	headingController = HeadingControl(0, polarHistog)
+	drone_global_location = np.array([4, 2])
+	goal = np.array([3,2])
+	print(headingController.computeHeading(-90, goal, drone_global_location))
 	print("Done...")

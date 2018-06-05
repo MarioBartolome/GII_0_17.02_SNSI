@@ -71,9 +71,8 @@ class ActionLogs(db.Model):
 	"""
 	Database Model for Actions logs.
 	"""
-	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow, primary_key=True)
 	action_id = db.Column(db.Integer, db.ForeignKey('action.id'), index=True)
 
 	def __repr__(self):

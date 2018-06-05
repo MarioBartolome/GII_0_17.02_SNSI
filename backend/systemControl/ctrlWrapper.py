@@ -7,14 +7,14 @@ Wrapper for agent controller systems
 '''
 
 
-from backend.MultiWiiProtocol import MSPio
-from backend.RemoteControl import RemoteServer
+from backend.comms.MultiWiiProtocol import MSPio
+from backend.comms.RemoteControl import RemoteServer
 # from backend.altitudeController import AltitudeController
-from backend.Sensor import Sensor
-from backend.sr04Wrapper import sr04Wrapper
+from backend.sensors.Sensor import Sensor
+from backend.sensors.sr04Wrapper import sr04Wrapper
 # from backend.obsAvoidanceWrapper import ObstacleAvoidanceWrapper
 # from backend.inclinationController import InclinationController
-from backend.takeOffLanding import TakeOffLander
+from backend.autoControllers.takeOffLanding import TakeOffLander
 import numpy as np
 import sys
 from typing import List, Callable, Dict, AnyStr, Generator
@@ -335,7 +335,6 @@ class CtrlWrapper:
 
 if __name__ == '__main__':
 	import time
-	from backend.obsAvoidanceWrapper import ObstacleAvoidanceWrapper
 
 	# Remote controller
 	remoteController = RemoteServer()
@@ -368,9 +367,9 @@ if __name__ == '__main__':
 
 	# Altitude controller
 
-	altHoldController = TakeOffLander(MAX_ALTITUDE)
 	altH_priority = 9
 	altH_channels = [0, 4]
+	altHoldController = TakeOffLander(MAX_ALTITUDE, altH_priority, altH_channels)
 	altH_checkAvMethod = altHoldController.isAvailable
 	altH_getLockMethod = altHoldController.getLock
 	altH_retrieveFBMethod = [controller.getAltitude]

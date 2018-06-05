@@ -1,4 +1,4 @@
-from backend.altitudeController import AltitudeController
+from backend.autoControllers.altitudeController import AltitudeController
 from typing import List
 import time
 
@@ -9,7 +9,8 @@ class TakeOffLander:
 	             channels: List[int],
 	             kP: float = 0.002,
 	             kI: float = 0.0,
-	             kD: float = 0.00085
+	             kD: float = 0.00085,
+	             available = False
 	             ):
 		"""
 		This class controls the process of TakingOff or Landing.
@@ -30,7 +31,7 @@ class TakeOffLander:
 		self._altHoldController = AltitudeController(kP=kP, kI=kI, kD=kD)
 		self._altH_priority = priority
 		self._altH_channels = channels
-		self._altHoldController.setAvailability(True)
+		self._altHoldController.setAvailability(available)
 		self._altH_checkAvMethod = self._altHoldController.isAvailable
 		self._altH_getLockMethod = self._altHoldController.getLock
 		self._taking_off = True
