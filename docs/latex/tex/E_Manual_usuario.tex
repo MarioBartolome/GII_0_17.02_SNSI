@@ -89,7 +89,7 @@ En esta pantalla solo se muestran los cuatro primeros canales. El canal que perm
 	\includegraphics[width=0.7\textwidth]{opentxconfig6}
 	\caption[Creación de modelos OpenTX. 6]{Creación de modelos mediante \emph{OpenTX}. Asistente de configuración}\label{fig:opentxconfig6}
 \end{figure}
-\item Se muestra ahora la configuración de un nuevo \emph{input}. Se le proporciona un nombre, \emph{Arm} en este caso, y se establece su \emph{Source} (fuente) a uno de los múltiples interruptores disponibles. En el caso de esta configuración se ha establecido en el interruptor marcado como \emph{SF}, ya que es de fácil acceso.
+\item Se muestra ahora la configuración de un nuevo \emph{input}. Se le proporciona un nombre, \emph{Arm} en este caso, y se establece su \emph{Source} (fuente) a uno de los múltiples interruptores disponibles. En el caso de esta configuración, se ha establecido en el interruptor marcado como \emph{SF}, ya que es de fácil acceso.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{opentxconfig7}
@@ -149,11 +149,11 @@ Ahora la emisora dispone de un nuevo modelo, el cual se puede utilizar para mane
 
 \section{Manual del usuario}
 
-Para utilizar la aplicación web, el usuario debe disponer de credenciales de acceso. Dichos credenciales solo pueden ser provistos por un administrador del servidor web. 
+Para utilizar la aplicación web, el usuario debe disponer de credenciales de acceso. Dichas credenciales solo pueden ser provistas por un administrador del servidor web. 
 
 \subsection{Inicio de sesión}
 \label{subsec:login}
-Cuando disponga de ellos, el usuario puede dirigirse a la página creada a tal efecto, e iniciar sesión, tal y como se muestra en la Figura \ref{fig:userManualLogin}.
+Cuando disponga de ellas, el usuario puede dirigirse a la página creada a tal efecto, e iniciar sesión, tal y como se muestra en la Figura \ref{fig:userManualLogin}.
 
 
 \begin{figure}[H]
@@ -162,7 +162,7 @@ Cuando disponga de ellos, el usuario puede dirigirse a la página creada a tal e
 	\caption[Inicio de sesión en la aplicación web.]{Inicio de sesión en la aplicación web.}\label{fig:userManualLogin}
 \end{figure}
 
-De intentar acceder al \emph{index} de la aplicación web directamente, sin haber realizado el inicio de sesión, redirigirá a la página de \emph{login}, mostrando un \emph{banner} informativo.
+De intentar acceder al \emph{index} de la aplicación web directamente, sin haber realizado el inicio de sesión, redirigirá a la página de \emph{login}, mostrando un aviso informativo.
 
 Si el usuario dispone de credenciales de acceso, y un \emph{drone} asignado, podrá acceder al sistema de control del dispositivo. Cabe destacar que las funcionalidades de sistemas automatizados se encuentran deshabilitadas, a falta de realizar más pruebas de campo.
 
@@ -175,7 +175,7 @@ Si el usuario dispone de credenciales de acceso, y un \emph{drone} asignado, pod
 
 \subsection{Activación de vídeo}
 \label{subsec:videoEnable}
-El \emph{drone} dispone de una cámara que puede ser activada a placer. Nada más iniciar sesión en la página, la aplicación web conecta con el \emph{drone} y le solicita que informe sobre la disponibilidad de vídeo bajo una configuración predefinida\footnote{Dicha configuración por el momento es fija, y se ha establecido en base a pruebas empíricas. Se hace uso de aceleración hardware para realizar el \emph{encoding} del vídeo a 1280$\times$720 a 15f/s. Será configurable en un futuro para llegar hasta una resolución de 1080p, aunque no se recomienda, dado el alto consumo de ancho de banda.}. De esta forma, en cuanto se solicita iniciar el vídeo, la aplicación ya dispone de la información necesaria para establecer la comunicación con el \emph{drone}.
+El \emph{drone} dispone de una cámara que puede ser activada a demanda. Nada más iniciar sesión en la página, la aplicación web conecta con el \emph{drone} y le solicita que informe sobre la disponibilidad de vídeo bajo una configuración predefinida\footnote{Dicha configuración por el momento es fija, y se ha establecido en base a pruebas empíricas. Se hace uso de aceleración hardware para realizar el \emph{encoding} del vídeo a 1280$\times$720 a 15f/s. Será configurable en un futuro para llegar hasta una resolución de 1080p, aunque no se recomienda, dado el alto consumo de ancho de banda.}. De esta forma, en cuanto se solicita iniciar el vídeo, la aplicación ya dispone de la información necesaria para establecer la comunicación con el \emph{drone}.
 
 Pulsando sobre el botón \emph{Start Streaming} se activa el vídeo disponible. Pulsando sobre el botón \emph{Stop Streaming} se detiene la emisión de vídeo. 
 
@@ -192,7 +192,7 @@ Pulsando sobre el botón \emph{Start Streaming} se activa el vídeo disponible. 
 	\caption[Página principal. Gestión de vídeo.]{Página principal del sistema de control remoto del agente. Ejemplo de vídeo con luz diurna.}\label{fig:samplevideo}
 \end{figure}
 
-Cabe destacar que el color del vídeo no es perfecto. Esto es debido a la falta de un filtro de luz infrarroja en la cámara utilizada. Si bien durante el día el tono del color es <<rojizo>>, aporta la capacidad de disponer de visión nocturna haciendo uso de los LED infrarrojos instalados en el \emph{drone}. Dichos LED se activan automáticamente\footnote{Su funcionamiento está basado en un LDR, o \emph{Light Dependent Resistor}, o fotorresistor. Un componente cuya resistencia varía en función de la luz que detecta.} cuando las condiciones de luminosidad son bajas, y su luz no es visible al ojo humano. Sin embargo, la cámara del \emph{drone} es capaz de captarla. Los anillos de 36 LED infrarrojos aportan una visibilidad perfecta a varios metros de distancia. 
+Cabe destacar que el color del vídeo no es perfecto. Esto es debido a la falta de un filtro de luz infrarroja en la cámara utilizada. Si bien durante el día el tono del color es <<rojizo>>, aporta la capacidad de disponer de visión nocturna haciendo uso de los LED infrarrojos instalados en el \emph{drone}. Dichos LED se activan automáticamente\footnote{Su funcionamiento está basado en un LDR, o \emph{Light Dependent Resistor}, o fotorresistor. Un componente cuya resistencia varía en función de la luz que detecta.} cuando las condiciones de luminosidad son bajas, y su luz no es visible al ojo humano. Sin embargo, la cámara del \emph{drone} es capaz de captarla. Los anillos de 36 LED infrarrojos aportan, en condiciones de baja luminosidad, una visibilidad perfecta a varios metros de distancia. 
 
 \begin{figure}[H]
 	\centering

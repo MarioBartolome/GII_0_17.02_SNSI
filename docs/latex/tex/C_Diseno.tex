@@ -32,13 +32,13 @@ El agente basa su funcionamiento en el uso de las siguientes entidades:
 \end{itemize}
 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{ERFrontend}
 	\caption{Diagrama E/R para WebApp.}\label{fig:erFront}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{erdiag}
 	\caption[Diagrama Relacional WebApp]{Diagrama Relacional WebApp. Generado mediante PyCharm.}\label{fig:erdiag}
@@ -49,7 +49,7 @@ En este apartado se recoge el diagrama secuencial correspondiente a la totalidad
 
 \afterpage{
 \begin{landscape}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=1.2\textwidth]{SeqDiag}
 	\caption[Diagrama de Secuencia]{Diagrama de secuencia del sistema.}\label{fig:SeqDiag}
@@ -73,7 +73,7 @@ El patrón sigue la siguiente disposición:
 \item \textbf{Controller}: El controlador podría considerarse el punto de comunicación entre el modelo y la vista. Se encarga de sincronizar los datos almacenados en el modelo con lo presentado en la vista, y de recibir los eventos generados por la vista y actuar en consecuencia.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.5\textwidth]{mvc}
 	\caption{Patrón MVC. Imagen de Wikipedia.}\label{fig:mvc}
@@ -100,7 +100,7 @@ Supongamos que el usuario no desea eso. Prefiere ser él quien controle por comp
 
 La arquitectura de la parte visible del proyecto, la aplicación web, no presenta una complejidad elevada. Sin embargo, el sistema de control del agente no es tan intuitivo. Por ello, se presenta el siguiente diagrama \ref{fig:arch} a modo aclaratorio.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.85\textwidth]{arch}
 	\caption[Arquitectura del sistema de control de agentes]{Encapsulación de controladores mediante controladores priorizados.}\label{fig:arch}
@@ -127,7 +127,7 @@ En la figura \ref{fig:backpackages} puede verse la estructura de paquetes seguid
 \item \textbf{systemControl}: Contiene la implementación del sistema de control del agente.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{backendpackages}
 	\caption[Estructura de paquetes en agente]{Estructura de los paquetes en el agente.}\label{fig:backpackages}
@@ -150,7 +150,7 @@ En la figura \ref{fig:frontpackages} puede verse la estructura de paquetes segui
 \end{itemize}
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{frontendpackages}
 	\caption[Estructura de paquetes en servidor web]{Estructura de los paquetes en el servidor web.}\label{fig:frontpackages}
@@ -172,7 +172,7 @@ Siguiendo con la nomenclatura utilizada en el diseño de la estructura de paquet
 \end{itemize}
 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{frontendClassDiag}
 	\caption[Diagrama de clases FrontEnd]{Diagrama de clases del \emph{frontend}.}\label{fig:frontendClassDiag}
@@ -202,7 +202,7 @@ Siguiendo con la nomenclatura utilizada en el diseño de la estructura de paquet
 Se dispone de un diagrama de clases del \emph{backend} en la figura \ref{fig:backendClassDiag}. Se han añadido colores para tratar de aumentar la claridad del diagrama, de por sí algo complejo.
 \newpage
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{backendClassDiag}
 	\caption[Diagrama de clases BackEnd]{Diagrama de clases del \emph{backend}.}\label{fig:backendClassDiag}

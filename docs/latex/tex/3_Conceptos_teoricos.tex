@@ -191,7 +191,7 @@ Donde $\delta$ es la distancia euclidiana desde la posición del agente $q$ a la
 -\nabla U_{att}(q) = -\epsilon \times (q - q_\mathit{meta})
 \label{equation:dUatt}
 \end{equation}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{UattrGradient}
 	\caption{Gradiente de Potencial de Atracción.}\label{fig:uattrgrad}
@@ -214,7 +214,7 @@ Donde $\eta$ es un factor de escalado positivo, que permite establecer con qué 
 \end{cases}
 \label{equation:dUrepq}
 \end{equation}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{UrepGradient}
 	\caption{Gradiente de Potencial de Repulsión.}\label{fig:urepgrad}
@@ -228,13 +228,13 @@ El algoritmo de campos potenciales se puede llevar a cabo con una implementació
 Esto hace sencillo realizar cálculo vectorizado sobre las matrices. \\Sin embargo, tiene ciertas desventajas, tal y como publicaron Borenstein y Koren \citep{art:BorensteinLims}, que lo han hecho, cuanto menos, inútil para las necesidades de este proyecto:
 \begin{itemize}
 \item Es un algoritmo basado en descenso de gradiente, y como tal puede quedar \textit{atascado} en mínimos locales. Estos mínimos pueden encontrarse en zonas que contengan obstáculos en forma cóncava o de caja abierta, tal como se ilustra en la Figura \ref{fig:localmin}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.5\textwidth]{localmin}
 	\caption{Mínimo local en zonas convexas.}\label{fig:localmin}
 \end{figure}
 \item \label{subsec:PFlims} De encontrarse en un espacio con forma de corredor o pasillo, cualquier acercamiento hacia las paredes ocasionará una corrección en el sentido opuesto al campo repulsor, lo cual puede ocasionar un movimiento oscilatorio si dicha corrección supone aproximar el agente a la pared opuesta, tal y como se ilustra en la Figura \ref{fig:corridoroverc} extraída de \citep{art:BorensteinLims}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{corridoroverc}
 	\caption[Movimiento oscilatorio en corredores estrechos.]{Movimiento oscilatorio en corredores estrechos. Imagen extraida de \citep{art:BorensteinKorenVFHHTML}}\label{fig:corridoroverc}
@@ -269,7 +269,7 @@ Se modela el espacio cercano al \emph{drone} en forma de malla. En cada celda $(
 Dicho valor se obtiene de la lectura proporcionada por el sensor de distancia, en este caso un sonar, y se establece en el centro del ángulo de barrido del sonar, ver subsección \ref{subsec:hcsr04}. 
 La eficiencia superior de este algoritmo se basa precisamente en incrementar el valor $c_{i,j}$ de únicamente una celda con cada medida. Dicha celda $(i,j)$ se encuentra a una distancia de $R = \frac{\delta_{obs}q}{c}$ celdas y en la bisectriz del ángulo barrido por el sonar.
 Si bien está solución puede parecer una simplificación del problema, se llega a generar una distribución probabilística tomando múltiples medidas de forma continua mientras el agente se desplaza por el entorno. Por tanto, la misma celda, cercana a un obstáculo, y sus vecinas serán incrementadas repetidas veces, tal y como se muestra en la Figura \ref{fig:histog1}.
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{HistoG1}
 	\caption[Distribución Histográmica de Probabilidades.]{Distribución Histográmica de Probabilidades. Extraida de \citep{art:BorensteinKorenVFH}}\label{fig:histog1}
@@ -284,7 +284,7 @@ A partir de las medidas obtenidas en el Histogram Grid, se realiza la primera re
 \end{equation}
 
 La ecuación \ref{equation:ObsAgAng} devuelve un valor $\beta \in [-\frac{\pi}{2}, \frac{\pi}{2}]\text{rad}$. Al hacer uso de Numpy, es sencillo calcular de forma vectorizada los ángulos en los que se encuentra cada celda de la región activa $C*$ con respecto al agente que se encuentra en su centro, de forma vectorizada. Tal y como puede verse en la Figura \ref{fig:histog2}.
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{HistoG2}
 	\caption{Angulos relativos al VCP del \emph{drone}.}\label{fig:histog2}
@@ -349,7 +349,7 @@ Donde $M$ es el número de puntos en la ventana de salida. En este caso tomará 
 
 De esta forma, de obtener un histograma de $n$ sectores con valores $h_k$ posiblemente dispares sectores $k$ contiguos, se pasa a obtener un histograma suavizado, que será de mayor utilidad para el sistema de evasión de obstáculos. Véase la Figura \ref{fig:PODandsPOD}
 
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{PODandsPOD}
 	\caption[POD vs smoothPOD.]{En azul Polar Obstacle Density (POD). En naranja el suavizado de este (sPOD).}\label{fig:PODandsPOD}
@@ -373,7 +373,7 @@ El sector que debe seguir el \emph{drone} para dirigirse hacia $k_\mathit{targ}$
 \end{equation}
 
 
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{wideValley1}
 	\caption[Valles estrechos y anchos.]{Valle ancho encontrado entre el obstáculo, a la derecha, y un espacio abierto, a la izquierda.}\label{fig:wvalley1}
@@ -382,7 +382,7 @@ El sector que debe seguir el \emph{drone} para dirigirse hacia $k_\mathit{targ}$
 
 Sin embargo, la ecuación \ref{equation:thetaYaw} presenta un comportamiento errático cuando el destino se encuentra dentro de un valle, dado que se establece $\theta_{yaw}$ como la media entre los sectores cercano y lejano, al encontrarse la meta en un sector dentro del valle, el \emph{drone} no se aproxima a ella, sino que realiza círculos cada vez más cerrados hasta llegar al destino, como puede verse en la Figura \ref{fig:nToWFOV}
 
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{narrowToWideVfov}
 	\caption[Movimiento circular del agente.]{Movimiento circular al encontrarse $k_{targ}$ en un sector seguro por ecuación \ref{equation:thetaYaw}}\label{fig:nToWFOV}
@@ -393,7 +393,7 @@ La intención tras la ecuación \ref{equation:thetaYaw} es la navegación segura
 Sin embargo, en el momento en el que el destino $k_\mathit{targ}$ se encuentra en un sector $k$ por el que es seguro navegar, no existe la necesidad escoger la zona intermedia del valle, sino que es deseable dirigirse hacia él directamente. 
 
 En el caso de \textit{valles estrechos}, la mecánica es prácticamente la misma. Para este caso el valor del último sector con un POD por debajo del umbral escogido será $k_f < s_\mathit{max}$. De nuevo se utiliza la ecuación \ref{equation:thetaYaw} para obtener el valor de $\theta_\mathit{yaw}$, siempre centrado entre los dos obstáculos, ilustrado en la Figura \ref{fig:nvalley1}.
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{narrowValley1}
 	\caption[Valle estrecho.]{Valle estrecho encontrado entre dos obstáculos. La ecuación \ref{equation:thetaYaw} proporciona un sector seguro ubicado en la zona central del valle.}\label{fig:nvalley1}
@@ -403,14 +403,14 @@ En el caso de \textit{valles estrechos}, la mecánica es prácticamente la misma
 Se ha referenciado numerosas veces el \textit{umbral} que parece definir un valle como candidato. Su definición se ha dejado para el final debido a que, el VFH presenta una gran robustez ante configuraciones probablemente erróneas. Aumentar o reducir el umbral, únicamente, afecta a la anchura de los valles candidatos cuando estos son estrechos. En el caso de los valles anchos sencillamente se aumenta o reduce la distancia existente entre el obstáculo y el \emph{drone}.
 
 Por ejemplo, establecer un umbral muy alto, ver Figura \ref{fig:highThreshold}, hace que el \emph{drone} no sea consciente de la existencia de obstáculos y que se aproxime a ellos. Sin embargo, las repetidas medidas de un obstáculo en ese sector harán que el valor de certidumbre del \emph{Polar Histogram} se eleve hasta superar el umbral, produciendo que el \emph{drone} trate de variar su curso. De esta forma el \emph{drone} se acercará mucho a los obstáculos y es posible que llegue a colisionar, si la velocidad de aproximación es demasiado rápida. 
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{highThreshold}
 	\caption[Umbral elevado.]{Con un umbral muy elevado, puede darse el caso de que todo sean valles hasta estar demasiado cerca del obstáculo.}\label{fig:highThreshold}
 \end{figure}
 
 Por el contrario, si el umbral es muy bajo, ver Figura \ref{fig:lowThreshold}, hará que los valles candidatos se vean reducidos, haciendo que el \emph{drone} no pueda pasar por espacios estrechos.
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{lowThreshold}
 	\caption[Umbral bajo.]{Con un umbral muy bajo, puede darse el caso de que los valles sean muy estrechos, o incluso inexistentes}\label{fig:lowThreshold}
@@ -424,7 +424,7 @@ Dado que el desarrollo de este proyecto implica también la construcción a medi
 
 \subsection{Raspberry Pi}
 
-\begin{table}[H]
+\begin{table}
 	\begin{center}
 		\rowcolors {2}{gray!35}{}
 		\begin{tabular}{l | c}\hline
@@ -542,7 +542,7 @@ Disponen de una interfaz muy sencilla. Se trata únicamente de cuatro pines que 
 
 En la Figura \ref{fig:sr04} pueden verse los pines y los elementos de disparo y recepción del ultrasonido. 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{sr04}
 	\caption[Sensor HC-SR04]{Sensor HC-SR04. Detalle de los pines y cabezales de envío y recepción de ultrasonido}\label{fig:sr04}
@@ -570,7 +570,7 @@ Estas son capaces de entender señales de entre 1000 y 2000\si{\us}. Cualquier v
 En el caso de este proyecto, se ha determinado que no se hará uso de este método para la comunicación entre la Raspberry Pi y la controladora de vuelo, véase la subsección \ref{subsec:MSP}, y por lo tanto el uso de estos pines queda descartado.
 
 Sin embargo, la comunicación entre la FC y los ESC se realiza mediante este tipo de señal, por ello se ha considerado relevante explicar, brevemente, su funcionamiento.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{PWM}
 	\caption[PWM. Modulación en Ancho de Pulso.]{Modulación en Ancho de Pulso. Arriba 100\% del ciclo usado. Centro 25\% del ciclo usado. Abajo 50\% del ciclo usado}\label{fig:PWM}
@@ -587,7 +587,7 @@ A los primeros creadores del sistema de control MultiWii se les ocurrió la posi
 Para crear un entorno amigable para el usuario común, se desarrolló una aplicación de escritorio capaz de configurar los parámetros de esta controladora de vuelo poco convencional. De alguna forma debía lograrse una comunicación entre la FC y la aplicación, y así se implementó MultiWii Serial Protocol, \citep{wiki:MSPDefinition}.\\Conocido como \textit{MSP}, se trata de un protocolo que se ha mantenido en diferentes implementaciones de sistemas de control de vuelo. No solo aquellos basados en sensores de la Nintendo Wii controlados por Arduino, sino en otros más modernos y potentes que han ido surgiendo los últimos años. Como el utilizado en nuestro proyecto.
 
 Es un protocolo eficiente y sencillo, que permite una comunicación rápida y completa. Su composición puede verse en la Figura \ref{fig:MSPlayout}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{MSPlayout}
 	\caption{Composición de un mensaje MSP.}\label{fig:MSPlayout}
@@ -610,7 +610,7 @@ En la tabla \ref{tb:MSP_MESSAGES} se dispone de los mensajes implementados para 
 
 
 \begin{landscape}
-\begin{table}[H]
+\begin{table}
 	\begin{center}	
 		\rowcolors {2}{gray!35}{}
 		\begin{tabular}{m{5cm}  c  m{4cm}  c  m{7cm}}\hline
@@ -637,7 +637,7 @@ La columna \textit{Mensaje} sigue esta nomenclatura por razones históricas, par
 
 La información del \emph{parser} proporciona la manera de decodificar la cadena de bytes devuelta por la FC al realizar una solicitud. Para ello se ha seguido la nomenclatura utilizada en el módulo \textit{struct} de Python 3.5 \citep{wiki:PythonStruct}, y  descrita en la tabla \ref{tb:PY35STRUCT}
 
-\begin{table}[H]
+\begin{table}
 	\begin{center}	
 		\rowcolors {2}{gray!35}{}
 		\begin{tabular}{c  p{10cm}}\hline

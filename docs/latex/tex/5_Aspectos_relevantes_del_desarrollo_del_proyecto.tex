@@ -16,7 +16,7 @@ Además, nos harían falta conocimientos fuertes sobre hardware y mecanismos de 
 
 Y así comencé con el desarrollo de este proyecto que, en algún momento, tendrá el potencial suficiente como para convertirse en el \emph{sereno} de la Escuela Politécnica Superior de la Universidad de Burgos.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.5\textwidth]{Logo}
 	\caption[Logo]{Logo de UBUDroneSereno.}\label{fig:Logo}
@@ -208,7 +208,7 @@ De esta manera, el usuario final no tiene una comunicación directa con el \emph
 Esto libera a la RaspberryPi de hospedar un servidor web y recibir clientes, así como del uso de un canal de comunicación potencialmente no seguro entre el cliente y el \emph{drone}. 
 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{webMain}
 	\caption[Web index]{Página principal de la aplicación.}\label{fig:webmain}
@@ -232,14 +232,14 @@ La solución pasaba por utilizar, o implementar, un servidor WebRTC, que impleme
 El manejo del \emph{drone} por parte del usuario se ha diseñado para ser de tremenda simplicidad. 
 Tan solo se muestra una página de login, tal y como se muestra en la Figura \ref{fig:login}, que permite al usuario iniciar sesión. 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{loginWeb}
 	\caption[Página de Login]{Página de inicio de sesión para los usuarios.}\label{fig:login}
 \end{figure}
 
 Una vez registrado en el sistema, se le muestra una interfaz que permite iniciar o detener el streaming de vídeo por parte del \emph{drone}. De esta forma, la RaspberryPi solo activa el servidor de vídeo cuando este se está visualizando, tal y como puede verse en la Figura \ref{fig:vidStream}. 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{vidStream}
 	\caption[Página de control]{Página de del \emph{drone} asignado para los usuarios.Los LED IR están activos dada la condición de baja luminosidad.}\label{fig:vidStream}
@@ -247,7 +247,7 @@ Una vez registrado en el sistema, se le muestra una interfaz que permite iniciar
 
 De conectar una emisora al equipo mientras el navegador está seleccionado, se reconoce ésta y permite controlar el \emph{drone} con tan solo pulsar un botón, tal y como puede verse en la Figura \ref{fig:fullConn}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{fullConn}
 	\caption[Página de control y emisora]{Página del \emph{drone} asignado para los usuarios lista para activar el control.}\label{fig:fullConn}
@@ -272,37 +272,37 @@ El equipamiento empleado en el \emph{drone} es el siguiente:
 \item Cables para conectar todo.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{SR04layout_bb}
 	\caption[Conceptual de conexión de sensores a RaspberryPi]{Vista conceptual del conexionado de los sensores a la RaspberryPi.}\label{fig:schHCPi}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{SR04layout_schem}
 	\caption[Diagrama de conexión de sensores a RaspberryPi]{Vista esquemática del conexionado de los sensores a la RaspberryPi.}\label{fig:concepHCPi}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.75\textwidth]{voltDivider}
 	\caption[Divisor de voltaje]{Vista imagen de los divisores de voltaje creados.}\label{fig:imgVoltDiv}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.6\textwidth]{IRLED}
 	\caption[LED IR]{Vista esquemática del conexionado de los LED Infrarrojos.}\label{fig:schIRLED}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{droneSide}
 	\caption[Lateral del \emph{drone}]{Detalle del \emph{drone} completo. Lateral.}\label{fig:droneSideView}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{droneFront}
 	\caption[Frontal del \emph{drone}]{Detalle del \emph{drone} completo. Frontal.}\label{fig:droneFrontView}
@@ -317,7 +317,7 @@ Las diferentes clases desarrolladas han sido testadas de forma interna, y no se 
 La motivación de no realizar este tipo de pruebas es la siguiente: 
 \begin{itemize}
 \item Las pruebas relacionadas con la comunicación entre el \emph{drone} y la RaspberryPi requieren de una controladora de vuelo, y hacer un \emph{mock} de este componente, supondría tener que estudiar la implementación completa que ofrece una controladora de vuelo al protocolo MultiWiiSerialProtocol, así como de todos los sensores. De no hacerlo, no existen sistemas de integración que pongan a nuestra disposición una controladora, un equipo que abra un puerto serie y que ejecute una serie de comandos/solicitudes interpretables por dicha controladora. Se incluye una pequeña clase de prueba que permite comprobar si se adquieren correctamente los datos de la controladora de vuelo, dibujando un plot de los ejes de inclinación y orientación, tal y como puede verse en la Figura \ref{fig:mspIMU}, y en el vídeo \href{https://universidaddeburgos-my.sharepoint.com/:v:/g/personal/mbm0089_alu_ubu_es/EezmUjB1BSdKp-_VQrUkIXwBPSrvQdSnmhSTd-QA3jJaIQ?e=RYEaIl}{V\#1}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{mspIMU}
 	\caption[Recepción de la IMU mediante MSPio]{Salida de los sensores de la controladora de vuelo. En azul la elevación, en naranja el balanceo y en verde la orientación.}\label{fig:mspIMU}
@@ -343,7 +343,7 @@ Esta sección se ha dividido en dos subsecciones, cada una establecida en base a
 Las primeras pruebas de campo llevadas a cabo, se realizaron en el polígono industrial de Villalonquejar, en Burgos. 
 Dado que la primera \emph{release} no incluye ningún elemento de automatización, sino que comprende el apartado relacionado con el control remoto del \emph{drone}, pudieron ser llevadas a cabo sin demasiados inconvenientes en una zona apartada, pero no cerrada. 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{ftest1}
 	\caption[Field Test 1. Villalonquejar]{Drone despegando durante la primera prueba de campo.}\label{fig:ftest1Drone}
@@ -381,7 +381,7 @@ La segunda release del proyecto, traerá las siguientes mejoras y característic
 \end{itemize}
 
 Las pruebas realizadas comprenden los siguientes apartados, puntuados según la calidad del resultado en una escala de $(0, 10]$. Dada la peligrosidad de algunas de las pruebas, se ha llevado el \emph{drone} a una nave industrial, ver agradecimientos en \ref{sec:agradecimientos}, dado que provee de un entorno seguro y cerrado en el que probar mecanismos automatizados:
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{ftest2init}
 	\caption[Field Test 2. Nave industrial]{Drone sobre superficie blanda durante el segundo field test}\label{fig:ftest2init}
@@ -389,12 +389,12 @@ Las pruebas realizadas comprenden los siguientes apartados, puntuados según la 
 
 \begin{itemize}
 \item Calibrado del sistema de control de altitud: Se trata de un controlador PID que debe ser parametrizado. Dada la dinámica del sistema, tan dependiente del estado de la batería, de los cambios de contexto realizados por el sistema (recordemos que no es un RTOS\footnote{Real Time Operative System}), de los errores de medida proporcionados por el sensor, etc. La parametrización del PID ha sido bastante compleja. De hecho durante el transcurso de las pruebas, se rompió una hélice y una de las patas que hacían de apoyo para el \emph{drone}, dificultando esto último, todavía más, el proceso de estabilización durante el despegue. 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{ftest2cripple}
 	\caption[Field Test 2. Demasiada kP]{Drone perdiendo una pata.}\label{fig:ftest2cripple}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{ftest2newleg}
 	\caption[Field Test 2. Prótesis]{Drone con prótesis.}\label{fig:ftest2newleg}
@@ -408,10 +408,10 @@ Se detectó un \emph{bug} existente en el cálculo del PID que llevaba a la pér
 
 Se detectó un \emph{bug} existente en el sistema de control que no permitía que un controlador automatizado controlase cuándo armar el \emph{drone}. Esto produciría que el sistema de control de altitud, no pudiese actuar. Se trata de un \emph{bug} menor, basado en añadir una pequeña espera en la que se mantiene la entrada del canal 5 (armar/desarmar) a un valor mínimo durante unos segundos, a la espera de que el sistema calibre el acelerómetro y el giróscopo. Solucionado \textit{in situ}, no se ha generado una issue para ello.
  El resultado de las pruebas de altitud no ha sido el deseado. No se ha conseguido que el \emph{drone} mantenga la altitud de forma correcta. Si que la alcanza sin problema, pero requiere de ajustar más los parámetros del controlador PID.
- \begin{figure}[H]
+ \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{ftest2altH}
-	\caption[Field Test 2. Altura alcanzada con suavidad]{El \emph{drone} alcanza con relativa suavidad la altura, pero no la mantiene correctamente.}\label{fig:ftest2cripple}
+	\caption[Field Test 2. Altura alcanzada con suavidad]{El \emph{drone} alcanza con relativa suavidad la altura, pero no la mantiene correctamente.}\label{fig:ftest2heightreached}
 \end{figure}
  
 Sin embargo ha arrojado claridad sobre ciertos problemas, y mejoras que se deberían probar. 5/10.

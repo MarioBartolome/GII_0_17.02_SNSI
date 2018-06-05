@@ -79,12 +79,12 @@ Una vez descargado el sistema, este ha sido instalado en una micro SD mediante e
 \label{subsec:pycharm}
 El IDE desarrollado por JetBrains es posiblemente el más avanzado para la creación de aplicaciones en Python. Se puede descargar desde \citep{wiki:PyCharm}, escogiendo el sistema operativo, y su instalación se basa en seguir el asistente de instalación.
 
-Sin embargo, si se va a trabajar con una RaspberryPi, es conveniente configurar esta como destino del despliegue del \emph{backend}, de manera que se pueda realizar el \emph{debuggeo} de las aplicaciones de forma remota, así como su despliegue. 
+Sin embargo, si se va a trabajar con una RaspberryPi, es conveniente configurar esta como destino del despliegue del \emph{backend}, de manera que se pueda realizar el depurado de las aplicaciones de forma remota, así como su despliegue. 
 
 Accediendo a las preferencias del IDE, en el apartado \emph{Build, Execution, Deployment} y bajo el subapartado \emph{Deployment}, se puede establecer la configuración del dispositivo sobre el que realizar el despliegue, tal y como se muestra en la figura \ref{fig:pycharmDeployConfig}.
 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{pycharmDeployConfig}
 	\caption[PyCharm. Configuración de despliegue]{Configuración del despliegue remoto en PyCharm.}\label{fig:pycharmDeployConfig}
@@ -94,7 +94,7 @@ Conviene configurar el acceso a la RaspberryPi mediante claves públicas. Para e
 
 Se debe configurar también el intérprete remoto para la ejecución y \emph{debug} de aplicaciones. Puede hacerse en PyCharm accediendo a las preferencias del IDE, en el apartado \emph{Project: GII\_0\_17.02\_SNSI} y bajo el subapartado \emph{Project Interpreter}, se puede establecer la configuración del dispositivo sobre el que realizar el despliegue, tal y como se muestra en la figura \ref{fig:pycharmRemoteDebug}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{pycharmRemoteDebug}
 	\caption[PyCharm. Configuración de intérprete remoto]{Configuración del intérprete remoto en PyCharm.}\label{fig:pycharmRemoteDebug}
@@ -102,14 +102,14 @@ Se debe configurar también el intérprete remoto para la ejecución y \emph{deb
 
 Se especificaría el host al que conectarse via SSH, tal y como se muestra en la imagen \ref{fig:sshinterpreter}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{sshinterpreter}
 	\caption[PyCharm. Configuración de intérprete remoto. SSH]{Configuración del intérprete remoto en PyCharm vía SSH.}\label{fig:sshinterpreter}
 \end{figure}
 
-Y por último se selecciona el intérprete existente en el entorno virtual generado mediante el script de instalación, ver subsección \ref{subsec:installersh}, y la correspondencia de carpetas, como se muestra en la imagen \ref{fig:sshvenv}.
-\begin{figure}[H]
+Y por último, se selecciona el intérprete existente en el entorno virtual generado mediante el script de instalación, ver subsección \ref{subsec:installersh}, y la correspondencia de carpetas, como se muestra en la imagen \ref{fig:sshvenv}.
+\begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{sshvenv}
 	\caption[PyCharm. Configuración de intérprete remoto. VirtualEnv]{Configuración del intérprete remoto en PyCharm vía SSH en un \emph{Virtual Environment}.}\label{fig:sshvenv}
@@ -148,18 +148,18 @@ GitKraken es un entorno de escritorio para Git. Tiene integración con GitHub y 
 Si se desea probar el proyecto, y desplegarlo en una RaspberryPi con acceso a todos los sensores, se deberían considerar los siguientes pasos: 
 
 \begin{itemize}
-\item Arrancar la RaspberryPi con la imagen grabada, tal y como se explicó en la subsección \ref{subsec:raspbian} y \textbf{SIN} conectar los sensores\footnote{Es muy importante no conectar los sensores hasta estar 100\% seguros de que no existe ningún pin del componente GPIO de la RaspberryPi enviando un voltaje a un periférico conectado a él. Esto podría causar daños en los sensores si el voltaje es aplicado al pin de salida en lugar de al pin de entrada.}
-\item Una vez arrancado el sistema, se puede acceder a él vía SSH. Se deberá dar acceso al usuario al puerto serie ya que, por defecto, no lo tiene. Para ello se debe añadir al usuario al grupo \code{dialout}.
+\item Arrancar la RaspberryPi con la imagen grabada, tal y como se explicó en la subsección \ref{subsec:raspbian} y \textbf{SIN} conectar los sensores\footnote{Es muy importante no conectar los sensores hasta estar 100\% seguros de que no existe ningún pin del componente GPIO de la RaspberryPi enviando un voltaje a un periférico conectado a él. Esto podría causar daños en los sensores si el voltaje es aplicado al pin de salida en lugar de al pin de entrada.}.
+\item Una vez arrancado el sistema, se puede acceder a él vía SSH. Se deberá dar acceso al usuario al puerto serie, ya que, por defecto, no lo tiene. Para ello, se debe añadir al usuario al grupo \code{dialout}.
 \item Se puede <<limpiar>> el estado de los pines mediante un simple script de Python, importando \emph{RPi.GPIO} y llamando al método \emph{cleanup}.
-\item Para conectar la RaspberryPi a la controladora de vuelo se puede usar un puerto USB, y un cable con un extremo USB-A y el otro \emph{microUSB}.
+\item Para conectar la RaspberryPi a la controladora de vuelo, se puede usar un puerto USB, un cable con un extremo USB-A y el otro \emph{microUSB}.
 \item El diagrama de conexionado de los sensores de ultrasonidos puede verse en la figura \ref{fig:concepHCPi}. 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{SR04layout_schem}
 	\caption[Diagrama de conexión de sensores a RaspberryPi]{Vista esquemática del conexionado de los sensores a la RaspberryPi.}\label{fig:concepHCPi}
 \end{figure}
-\item Es importante destacar que el voltaje de salida de los sensores es $5V$, y que por lo tanto puede dañar la RaspberryPi, ya que esta funciona a $3.3V$. Por ello se ha de hacer uso de algún elemento para reducir el voltaje o la corriente suministrada. En la vista esquemática proporcionada, existen divisores de voltaje que permiten reducir este voltaje. 
-\item La emisora puede conectarse a un ordenador, y si este la detecta como un \emph{joystick} puede utilizarse para controlar el \emph{drone} a través de la interfaz web. Para ello es necesario configurar la emisora para que proporcione la salida de los canales a través de la conexión USB. 
+\item Es importante destacar que el voltaje de salida de los sensores es $5V$, y que, por lo tanto, puede dañar la RaspberryPi, ya que esta funciona a $3.3V$. Por ello, se ha de hacer uso de algún elemento para reducir el voltaje o la corriente suministrada. En la vista esquemática proporcionada, existen divisores de voltaje que permiten reducir este voltaje. 
+\item La emisora puede conectarse a un ordenador, y si este la detecta como un \emph{joystick}, puede utilizarse para controlar el \emph{drone} a través de la interfaz web. Para ello es necesario configurar la emisora para que proporcione la salida de los canales a través de la conexión USB. 
 \end{itemize}
 
 
@@ -170,17 +170,18 @@ Para el desarrollo del proyecto se ha utilizado un repositorio Git local, al que
 \begin{enumerate}
 \item Abrir un terminal bash. 
 \item Moverse hasta el directorio en el que se quiera clonar el repositorio. Para ello puede utilizarse el comando \code{cd}.
-\item Clonar el repositorio mediante el comando:\\ \code{git clone git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git} para clonar la rama \emph{master}. Si se desea trabajar en alguna de las ramas en desarrollo, puede usarse el comando\\ \code{git clone -b NOMBRE\_RAMA git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git}
+\item Clonar el repositorio mediante el comando:\\ \code{git clone git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git} para clonar la rama \emph{master}. Si se desea trabajar en alguna de las ramas en desarrollo, puede usarse el comando\\ \code{\footnotesize git clone -b NOMBRE\_RAMA git@github.com:mbm0089/GII\_0\_17.02\_SNSI.git}
 \item Con esto se iniciará la descarga del repositorio completo.
 \end{enumerate}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{gitclone}
 	\caption[Clonado de repositorio Git]{Clonado del repositorio mediante terminal.}\label{fig:gitclone}
 \end{figure}
 
 \section{Compilación, instalación y ejecución del proyecto}
+\sectionmark{Compilación, instalación y ejecución}
 La siguiente sección describirá como instalar las dependencias necesarias, compilar el código y ejecutar el proyecto.
 
 \subsection{Instalación}
@@ -210,7 +211,7 @@ Ejecutar el proyecto a través del IDE es un proceso trivial. Una vez establecid
 
 \begin{itemize}
 \item En el caso de la aplicación web, en la raíz de la carpeta \texttt{/frontend/} se encuentra una clase llamada \emph{droneControlWebUI.py}. Si se ejecuta esta clase, se lanza el servidor web, y se carga la aplicación web creada. Se puede configurar los parámetros del servidor modificando los valores disponibles en la clase de forma muy sencilla.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{runwebui}
 	\caption[Ejecución de aplicación web]{Ejecución de la aplicación web.}\label{fig:runwebui}
@@ -218,14 +219,14 @@ Ejecutar el proyecto a través del IDE es un proceso trivial. Una vez establecid
 
 \item El caso del \emph{backend}, o el código que se ejecuta en la RaspberryPi, es similar. Si se ha seguido el proceso de creación de un intérprete remoto, ver \ref{subsec:pycharm}, éste puede ser seleccionado para ejecutar las clases del proyecto. La clase que debe ejecutarse para lanzar todo el sistema de control del \emph{drone} se encuentra en la carpeta \texttt{/backend/systemControl}, y tiene el nombre de \emph{ctrlWrapper.py}. De esta manera, bastará con establecer la configuración de ejecución de este script para que utilice el intérprete remoto.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{runbackend}
 	\caption[Ejecución del sistema de control]{Ejecución del sistema de control del \emph{drone}.}\label{fig:runbackend}
 \end{figure}
 \end{itemize}
 
-Si se quisiese ejecutar el proyecto desde una terminal, el proceso requiere de activar el entorno virtual creado, y de establecer una variable de entorno. Bastará con realizar los siguientes pasos:
+Si se quisiese ejecutar el proyecto desde una terminal, es necesario activar el entorno virtual creado, y de establecer una variable de entorno. Bastará con realizar los siguientes pasos:
 
 \begin{enumerate}
 \item Abrir un terminal bash.
@@ -234,7 +235,7 @@ Si se quisiese ejecutar el proyecto desde una terminal, el proceso requiere de a
 \item Ejecutar el script deseado desde la raíz del proyecto.\\ \code{python3 -m backend.systemControl.ctrlWrapper} o \\ \code{python3 -m frontend.droneControlWebUI}
 \end{enumerate}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{runconsole}
 	\caption[Ejecución del proyecto desde terminal]{Ejecución del proyecto desde un terminal bash.}\label{fig:runconsole}
@@ -249,13 +250,13 @@ Añadir nuevos controladores al sistema de control es relativamente sencillo. Pa
 \item Crear una clase para el \emph{controller} a generar: \texttt{improvedSpeedController.py}, por ejemplo, que implemente los métodos necesarios. Hacer \emph{commit} del nuevo fichero y la lógica generada.
 \item Refactorizar el código para mejorar su calidad. Hacer \emph{commit}.
 \item Incluir el nuevo controlador generado en el \texttt{ctrlWrapper.py}. Para ello solo se deben proporcionar los métodos requeridos por el controlador principal. 
-\item Una vez que se ha implementado correctamente el nuevo controlador, se debe sincronizar en la rama del nuevo desarrollador, anteriormente creada, mediante \code{git push}, y seguidamente incorporar esta rama a la rama de la \emph{release} en desarrollo, y existente en GitHub. Para ello, lo ideal es generar una \emph{pull-request} estableciendo la necesidad de una revisión, pero como se ha comentado solo existe un desarrollador, de manera que en el desarrollo se ha simplificado este paso:\\ \code{git request-pull nombre1erCommit origin new-controller}.\footnote{El origen del proyecto se habrá establecido a https://github.com/mbm0089/GII\_0\_17.02\_SNSI/}
+\item Una vez que se ha implementado correctamente el nuevo controlador, se debe sincronizar en la rama del nuevo desarrollador, anteriormente creada, mediante \code{git push}, y seguidamente incorporar esta rama a la rama de la \emph{release} en desarrollo, y existente en GitHub. Para ello, lo ideal es generar una \emph{pull-request} estableciendo la necesidad de una revisión, pero, como se ha comentado, solo existe un desarrollador, de manera que en el desarrollo se ha simplificado este paso:\\ \code{git request-pull nombre1erCommit origin new-controller}.\footnote{El origen del proyecto se habrá establecido a https://github.com/mbm0089/GII\_0\_17.02\_SNSI/}
 \end{enumerate}
 
 De esta forma se generará una \emph{pull-request} en el repositorio remoto hospedado en GitHub. 
 
 Sin embargo, y por comodidad, se ha hecho uso de un cliente de escritorio, que facilita enormemente el flujo de trabajo de Git, de forma que crear una \emph{pull-request} de un \emph{commit} concreto es tan sencillo como dar click derecho sobre el \emph{commit} deseado y pulsar sobre \emph{start a pull-request to origin/ from origin/v0.2.0}, tal y como se muestra en la Figura \ref{fig:pullrequest}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{pullrequest}
 	\caption[Creación de \emph{pull-request} desde GitKraken]{Creación de una \emph{pull-request} desde el cliente de escritorio GitKraken.}\label{fig:pullrequest}
@@ -276,7 +277,7 @@ Para ello, se deben seguir los siguientes pasos:
 \item Abrir un terminal bash.
 \item Desplazarse hasta la carpeta del proyecto. Puede usarse el comando \code{cd} para ello.
 \item Generar un fichero de configuración de los parámetros requeridos por el escáner de \emph{SonarCloud}, haciendo uso del editor preferido, tal y como puede verse en la Figura \ref{fig:sonarcloudconfig}.
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{sonarcloudconfig}
 	\caption[Configuración de SonarCloud]{Creación de un fichero de configuración para el servicio online de \emph{SonarCloud}.}\label{fig:sonarcloudconfig}
@@ -287,13 +288,13 @@ Se deberá establecer la organización del proyecto, mediante el atributo \textt
 Se deberá establecer la ubicación de las fuentes a utilizar, mediante el atributo \texttt{sources}
 Se deberá establecer el host al que conectarse (el escáner es de \emph{SonarQube}, así que pueden enviarse sus resultados a una instancia de un servidor \emph{SonarQube} local), mediante el atributo \texttt{host.url}.
 Se deberá establecer un \emph{token} para el login, el cual es generado en la creación del proyecto en \emph{SonarCloud}, mediante el atributo \texttt{login}.
-Por último se establecerán los directorios a tener en cuenta, mediante el atributo \texttt{sources}.
+Por último, se establecerán los directorios a tener en cuenta, mediante el atributo \texttt{sources}.
 
 \item Ejecutar el escáner de \emph{SonarQube} tal que:\\ \code{sonar-scanner -Dproject.settings=./sonar-project.properties}\footnote{Para ello es necesario que sonar-scanner se encuentre en el \emph{PATH} de ejecución}
 \end{enumerate}
 
 Seguidamente, entrando en \href{https://sonarcloud.io/dashboard?id=GII_0_17.02_SNSI}{SonarCloud}, pueden verse los resultados del último análisis, tal y como se muestra en la Figura \ref{fig:sonarcloudresults}
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{sonarcloudresults}
 	\caption[Resultados de SonarCloud]{Resultados del escaneo del proyecto en \emph{SonarCloud}.}\label{fig:sonarcloudresults}
@@ -314,7 +315,7 @@ En primer lugar es conveniente establecer la configuración de los test. Desde P
 Los test locales se pueden ejecutar de forma sencilla pulsando sobre la carpeta \texttt{testing} existente dentro de algunas de los paquetes que componen el sistema: 
 
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{testLocal}
 	\caption[Ejecución de test en intérprete local]{Ejecución de test y métricas de cubrimiento de forma local.}\label{fig:testLocal}
@@ -324,10 +325,10 @@ Tan solo con eso, ya se habrá generado la configuración de ejecución de test 
 
 El caso de los test a ejecutar en la RaspberryPi es algo más complejo. Éstos, requieren de crear las configuraciones para la ejecución de los diferentes test, estableciendo el intérprete remoto existente en el entorno virtual creado mediante los \emph{scripts} de instalación, ver la subsección \ref{subsec:installersh}.
 
-Para ello, se puede dar click derecho sobre la carpeta \texttt{testing} de alguna de las características que dependen de las librerías existentes en la RaspberryPi, como por ejemplo la contenida en \texttt{backend/comms/}. 
-A continuación se pulsa sobre \emph{Create py.test in test...}, tal y como puede verse en la Figura \ref{fig:createPytestRemote}.
+Para ello, se puede dar click derecho sobre la carpeta \texttt{testing} de alguna de las características que dependen de las librerías existentes en la RaspberryPi, como, por ejemplo, la contenida en \texttt{backend/comms/}. 
+A continuación, se pulsa sobre \emph{Create py.test in test...}, tal y como puede verse en la Figura \ref{fig:createPytestRemote}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{createPytestRemote}
 	\caption[Creación de configuración de test de ejecución remota]{Creación de la configuración para ejecutar test en un intérprete remoto.}\label{fig:createPytestRemote}
@@ -335,7 +336,7 @@ A continuación se pulsa sobre \emph{Create py.test in test...}, tal y como pued
 
 Seguidamente, se debe establecer el nombre y la ubicación del intérprete remoto, tal y como se muestra en la Figura \ref{fig:configRemoteTest}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{configRemoteTest}
 	\caption[Configuración de test de ejecución remota]{Configuración para ejecutar test en un intérprete remoto.}\label{fig:configRemoteTest}
@@ -351,7 +352,7 @@ Una vez ejecutada alguna de las pruebas, haciendo uso de las configuraciones exp
 
 \begin{itemize}
 \item En el lado derecho de la aplicación, se mostrará el resultado del cubrimiento de los test ejecutados, tal y como se muestra en la Figura \ref{fig:coverResults}. 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{coverResults}
 	\caption[Resultado de cubrimiento de test en intérprete local]{Resultado de métricas de cubrimiento ejecutado de forma local.}\label{fig:coverResults}
@@ -359,7 +360,7 @@ Una vez ejecutada alguna de las pruebas, haciendo uso de las configuraciones exp
 
 \item En la zona inferior el resultado de dichos test, tal y como se muestra en la Figura \ref{fig:testResults}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{testResults}
 	\caption[Resultado de test en intérprete local]{Resultado de test ejecutado de forma local.}\label{fig:testResults}
@@ -370,11 +371,11 @@ Una vez ejecutada alguna de las pruebas, haciendo uso de las configuraciones exp
 
 Sin duda las pruebas más interesantes, y complejas, son las de integración. Éstas, comprueban que la unión entre las clases o módulos se ha llevado a cabo sin producir errores. Es decir, las clases funcionan de forma individual, tal y como se comprobó con los test unitarios, y ahora hay que comprobar que se integran bien entre sí. 
 
-Para ello se pueden ejecutar las pruebas contenidas dentro de la carpeta \texttt{/backend/comms} o \texttt{/backend/systemControl}. Ambas baterías de pruebas se deben ejecutar en el intérprete remoto, ya que requieren de acceder a los sensores de distancia, así como a la controladora de vuelo. 
+Para ello, se pueden ejecutar las pruebas contenidas dentro de la carpeta \texttt{/backend/comms} o \texttt{/backend/systemControl}. Ambas baterías de pruebas se deben ejecutar en el intérprete remoto, ya que requieren acceder a los sensores de distancia, así como a la controladora de vuelo. 
 
 Una vez ejecutadas, se mostrarán los resultados por pantalla. 
 
-Cabe destacar, que el funcionamiento de algunas de estas pruebas, sobre todo las basadas en sensores, están condicionadas al correcto funcionamiento de los sensores. Por ejemplo, las pruebas contenidas en \texttt{/backend/systemControl} tratarán de acceder al sensor de altitud, y comprobará que la altura del \emph{drone}, respecto al suelo, no supera los 12 cm\footnote{El cálculo es aproximado dado el error existente en el sensor. Se admite un error de 1.5 cm}. Un fallo en estos test, puede indicar que el sensor no se encuentra en condiciones óptimas de funcionamiento, o que alguna conexión ha fallado. 
+Cabe destacar, que el funcionamiento de algunas de estas pruebas, sobre todo las basadas en sensores, están condicionadas al correcto funcionamiento de los sensores. Por ejemplo, las contenidas en \texttt{/backend/systemControl} tratarán de acceder al sensor de altitud, y comprobará que la altura del \emph{drone}, respecto al suelo, no supera los 12 cm\footnote{El cálculo es aproximado dado el error existente en el sensor. Se admite un error de 1.5 cm.}. Un fallo en estos test, puede indicar que el sensor no se encuentra en condiciones óptimas de funcionamiento, o que alguna conexión ha fallado. 
 
 De igual manera, las pruebas existentes en \texttt{/backend/comms} accederán al puerto serie y establecerán comunicación con la controladora de vuelo, para comprobar que la comunicación con esta es correcta, tratando de leer el estado del \emph{drone}. Un fallo en estos test, puede indicar que la controladora de vuelo no está respondiendo correctamente, que el cable USB que la conecta a la RaspberryPi está defectuoso, o que por algún motivo no se ha podido acceder al recurso.
 
@@ -393,121 +394,42 @@ Una vez instalada, se pueden ejecutar las pruebas ejecutando los siguientes paso
 \begin{enumerate}
 \item Abrir un terminal bash.
 \item Desplazarse hasta la ruta del proyecto. Puede hacerse mediante \code{cd}.
-\item Ejecutar el siguiente comando:\\ \code{coverage run --parallel-mode --omit backend/algorithms/testing/test\_*}\\ \code{ --omit backend/comms/testing/test\_MSPio.py}\\ \code{ --omit backend/systemControl/testing/test\_ctrlWrapper.py}\\ \code{ --omit frontend/model/migrations/*}\\ \code{--omit backend/algorithms/testing/test\_particleFilter.py}.
+\item Ejecutar el siguiente comando:\\ \code{\small coverage run --parallel-mode --omit backend/algorithms/testing/test\_*}\\ \code{$\hookrightarrow\,$\small --omit backend/comms/testing/test\_MSPio.py}\\ \code{$\hookrightarrow\,$\small  --omit backend/systemControl/testing/test\_ctrlWrapper.py}\\ \code{$\hookrightarrow\,$\small  --omit frontend/model/migrations/*}\\ \code{$\hookrightarrow\,$\small  --omit backend/algorithms/testing/test\_particleFilter.py}
 De esta forma, se habrá ejecutado el test perteneciente a la carpeta \texttt{/backend/algorithms/testing} y de nombre \texttt{test\_particleFilter.py}. 
 
 Mediante los diferentes \emph{omit} hemos ordenado a \emph{coverage} que omita esos directorios, para que no trate de medir cuantas líneas de código del test han testado los propios test.
 
-De forma análoga es necesario ejecutar todos los demás test existente en las demás carpetas, tal y como se muestra en la Figura \ref{fig:coverageRun}.
-\begin{figure}[H]
+De forma análoga es necesario ejecutar todos los demás test existentes en las demás carpetas, tal y como se muestra en la Figura \ref{fig:coverageRun}.
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{coverageRun}
 	\caption[Uso de \emph{coverage} para recabar métricas de test]{Uso de \emph{coverage} para recabar métricas de test ejecutados en un intérprete local.}\label{fig:coverageRun}
 \end{figure}
 
-Sin embargo existe un problema, y es que \emph{coverage} no es capaz de ejecutar test haciendo uso de un intérprete remoto, por lo que las pruebas de integración existentes en el \emph{backend}, y que dependan de hardware disponible en la \emph{RaspberryPi}, no podrán ser llevadas a cabo mediante esta herramienta para ser incluidas en las métricas de SonarCloud.
+Sin embargo, existe un problema, y es que \emph{coverage} no es capaz de ejecutar test haciendo uso de un intérprete remoto, por lo que las pruebas de integración existentes en el \emph{backend}, y que dependan de hardware disponible en la \emph{RaspberryPi}, no podrán ser llevadas a cabo mediante esta herramienta para ser incluidas en las métricas de SonarCloud.
 
 \item Seguidamente se combinan los resultados de las pruebas mediante \code{coverage combine}.
 \item Después se genera un reporte mediante \code{coverage report}.
 \item Y finalmente se exporta mediante \code{coverage xml}
 \end{enumerate}
 
-A continuación se puede ejecutar el escáner de SonarCloud, pero antes es necesario añadir una nueva línea a su archivo de configuración. Para ello:
+A continuación, se puede ejecutar el escáner de SonarCloud, pero antes es necesario añadir una nueva línea a su archivo de configuración. Para ello:
 \begin{enumerate}
 \item Abrir un terminal bash.
 \item Desplazarse hasta la ruta del proyecto. Puede hacerse mediante \code{cd}.
 \item Editar el archivo de configuración de SonarCloud mediante el editor de elección. 
-\item Añadir la siguiente línea: \texttt{sonar.python.coverage.reportPath=coverage.xml}.
+\item Añadir la siguiente línea:\\ \texttt{sonar.python.coverage.reportPath=coverage.xml}.
 \item Guardar y cerrar el archivo.
-\item Ejecutar el escáner de SonarCloud mediante\\ \code{sonar-scanner -Dproject.settings=./sonar-project.properties}
+\item Ejecutar el escáner de SonarCloud mediante\\ \code{\small sonar-scanner -Dproject.settings=./sonar-project.properties}
 \end{enumerate}
 
 Al poco, en el proyecto de SonarCloud, se verán las métricas actualizadas con la información del cubrimiento de los test realizados por \emph{coverage}. Ver Figura \ref{fig:sonarCloudCoverage}.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{sonarCloudCoverage}
 	\caption[Métricas de \emph{coverage} en SonarCloud]{Actualización de métricas de cubrimiento en SonarCloud mediante \emph{coverage}.}\label{fig:sonarCloudCoverage}
 \end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
