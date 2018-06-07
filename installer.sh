@@ -85,8 +85,6 @@ if [ $isEnv -eq 1 ]; then
     echo "[*] Python environment successfully activated"
     echo "[+] Installing dependencies, this may take a while..."
     python3 $setupFile install
-    echo "[*] SciPy makes a mess on setuptools, so... installing SciPy via pip..."
-    pip install scipy
     echo "[*] Done! Use "
     echo -e "\tsource ../$1/bin/activate"
     echo "to enable the Virtual Environment"
